@@ -4,7 +4,7 @@ import { AuroraText } from './ui/aurora-text';
 
 function BuildSoftware() {
   return (
-    <div className="container max-w-4xl mx-auto py-20">
+    <div className="container max-w-4xl mx-auto gap-4 py-20 flex items-center justify-center">
       <BeamingIcon />
       <div className="text-5xl font-semibold">
         <h2>
