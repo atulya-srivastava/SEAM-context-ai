@@ -1,4 +1,7 @@
+"use client"
+import { SignedIn, SignedOut, SignIn, SignInButton, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import React, { useState, useEffect, useRef } from "react";
 
 const DimensionLogoIcon = () => (
@@ -56,24 +59,20 @@ const Navbar = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "pt-2" : "pt-0"
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "pt-2" : "pt-0"
+        }`}
     >
       <div
-        className={`mx-auto flex items-center justify-between transition-all duration-300 ${
-          isScrolled ? "px-4" : "border-b-white/2 px-0"
-        }`}
+        className={`mx-auto flex items-center justify-between transition-all duration-300 ${isScrolled ? "px-4" : "border-b-white/2 px-0"
+          }`}
       >
         <nav
-          className={`flex items-center justify-between w-full  transition-all duration-300 ${
-            isScrolled ? " p-2" : "backdrop-blur-xl bg-white/2 p-4  px-20"
-          }`}
-        >
-          <div
-            className={`flex items-center space-x-3 transition-all duration-300 ${
-              isScrolled ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
+          className={`flex items-center justify-between w-full  transition-all duration-300 ${isScrolled ? " p-2" : "backdrop-blur-xl bg-white/2 p-4  px-20"
             }`}
+        >
+          <div onClick={() => redirect("/")}
+            className={`flex items-center space-x-3 transition-all duration-300 ${isScrolled ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
+              }`}
           >
             <DimensionLogoIcon />
             <span className="text-xl font-bold text-white">SEAM</span>
@@ -89,63 +88,55 @@ const Navbar = () => {
               style={hoveredPillStyle}
               className="absolute top-0 left-0 bg-white/10 rounded-full transition-all duration-300 ease-in-out"
             />
+           
             <Link
-              href="#"
+              href="/dashboard/ask"
               onMouseEnter={handleMouseEnter}
               className="relative z-10 px-4 py-1 hover:text-white transition-colors duration-200"
             >
-              About
+              Ask
             </Link>
             <Link
-              href="#"
+              href="/dashboard"
               onMouseEnter={handleMouseEnter}
               className="relative z-10 px-4 py-1 hover:text-white transition-colors duration-200"
             >
-              Careers
-              <NotificationBadge count={2} />
-            </Link>
-            <Link
-              href="#"
-              onMouseEnter={handleMouseEnter}
-              className="relative z-10 px-4 py-1 hover:text-white transition-colors duration-200"
-            >
-              Blog
-            </Link>
-            <Link
-              href="#"
-              onMouseEnter={handleMouseEnter}
-              className="relative z-10 px-4 py-1 hover:text-white transition-colors duration-200"
-            >
-              Changelog
+              Connect 
             </Link>
 
             {isScrolled && <div className="h-5 w-[1px] bg-white/20 mx-1" />}
 
             <div
-              className={`transition-all duration-500 ease-in-out overflow-hidden ${
-                isScrolled
-                  ? "opacity-100 max-w-xs translate-x-0 ml-2"
-                  : "opacity-0 max-w-0 -translate-x-4"
-              }`}
+              className={`transition-all duration-500 ease-in-out overflow-hidden ${isScrolled
+                ? "opacity-100 max-w-xs translate-x-0 ml-2"
+                : "opacity-0 max-w-0 -translate-x-4"
+                }`}
             >
               <button
-                onMouseEnter={handleMouseEnter}
+                onClick={() => SignIn}
                 className="relative z-10 px-4 py-1 text-sm font-medium text-white rounded-full bg-gradient-to-r from-fuchsia-500 to-orange-400 hover:from-fuchsia-600 hover:to-orange-500 transition-all duration-200 whitespace-nowrap"
               >
-               Login
+                Login
               </button>
             </div>
           </div>
 
           {/* join before */}
           <div
-            className={`transition-opacity duration-300 ${
-              isScrolled ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
-            }`}
+            className={`transition-opacity duration-300 ${isScrolled ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
+              }`}
           >
-            <button className="px-5 py-2 text-sm font-medium text-white rounded-sm bg-gradient-to-b from-black/10 to-white/10 border border-white/20 backdrop-blur-xl hover:bg-white/20 transition-all duration-300">
-              Login
-            </button>
+            <div className="px-5 py-2 text-sm font-medium text-white rounded-sm bg-gradient-to-b from-black/10 to-white/10 border border-white/20 backdrop-blur-xl hover:bg-white/20 transition-all duration-300">
+              <SignedOut>
+                <SignInButton mode="modal">
+                  <button>Login</button>
+                </SignInButton>
+              </SignedOut>
+
+              <SignedIn>
+                <UserButton />
+              </SignedIn>
+            </div>
           </div>
         </nav>
       </div>

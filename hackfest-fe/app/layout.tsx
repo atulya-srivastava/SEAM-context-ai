@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
+import Navbar from "@/components/NavBar";
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,7 +31,14 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ClerkProvider>
-          {children}
+          <div className="flex h-full  bg-gradient-to-b from-black to-gray-900  flex-col gap-1 ">
+            <Navbar />
+            <div className="pt-[80px] ">
+              {children}
+            </div>
+          </div>
+
+          <Toaster />
         </ClerkProvider>
 
       </body>
