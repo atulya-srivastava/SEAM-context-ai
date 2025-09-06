@@ -1,8 +1,5 @@
 import React from 'react'
 import { BorderBeam } from './ui/border-beam';
-import { Button } from './ui/button';
-import { Zap } from 'lucide-react';
-import Image from 'next/image';
 
 function BeamingIcon() {
   return (
