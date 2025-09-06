@@ -11,6 +11,8 @@ import GithubConnection from "./models/GithubConnection.js";
 import fetch from "node-fetch";
 import GithubRoutes from "./routes/github.js"
 import NotionRoutes from "./routes/notion.js"
+import chatRoutes from "./routes/chatRoutes.js"
+
 
 
 
@@ -35,6 +37,8 @@ app.use(session({ secret: process.env.SESSION_SECRET, resave: false, saveUniniti
 app.use(passport.initialize());
 app.use(passport.session());
 
+
+app.use('/api/chats', chatRoutes);
 app.use("/api/github", GithubRoutes)
 app.use("/api/notion", NotionRoutes);
 

@@ -5,6 +5,8 @@ const GithubConnectionSchema = new mongoose.Schema({
   githubUsername: { type: String, required: true },
   accessToken: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
+
+  
 });
 
 export default mongoose.model("GithubConnection", GithubConnectionSchema);
