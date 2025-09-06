@@ -1,12 +1,20 @@
 "use client";
+
 import { useState } from "react";
 import { marked } from "marked";
 import DOMPurify from "dompurify";
 import { useAuth } from "@clerk/nextjs";
+import { Bot, User, Send } from "lucide-react";
+import { PlaceholdersAndVanishInput } from "@/components/ui/placeholders-and-vanish-input";
+
+// Helper to safely render markdown
+const renderMarkdown = (text: string) => {
+    return DOMPurify.sanitize(marked(text || "", { gfm: true, breaks: true }));
+};
 
 export default function App() {
     const [question, setQuestion] = useState("");
-    const [response, setResponse] = useState(null);
+    const [response, setResponse] = useState<any>(null);
     const [loading, setLoading] = useState(false);
     const { getToken } = useAuth();
 
@@ -19,12 +27,11 @@ export default function App() {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`, // added authorization
+                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({ question }),
             });
             const data = await res.json();
-            console.log("Response Data:", data);
             setResponse(data);
         } catch (err) {
             console.error("❌ Error:", err);
@@ -34,164 +41,157 @@ export default function App() {
     };
 
     return (
-        <div className="min-h-screen  p-6 pt-[80px]">
-            <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-2xl p-6">
-                <h1 className="text-2xl font-bold mb-4">Ask your GitHub Repo</h1>
-
-                {/* Input */}
-                <div className="flex gap-2">
-                    <input
-                        type="text"
-                        value={question}
-                        onChange={(e) => setQuestion(e.target.value)}
-                        placeholder="Ask a question like 'What changed in posts.sql?'"
-                        className="flex-1 border rounded-lg px-3 py-2"
-                    />
-                    <button
-                        onClick={handleAsk}
-                        disabled={loading}
-                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
-                    >
-                        {loading ? "Asking..." : "Ask"}
-                    </button>
-                </div>
-
-                {/* Answer Section */}
-                {response && (
-                    <div className="mt-6 space-y-6">
-                        {/* Question */}
-                        <div>
-                            <h2 className="text-lg font-semibold">Question</h2>
-                            <p className="text-gray-700">{response.question}</p>
-                        </div>
-
-                        {/* Summary (user-friendly explanation) */}
-                        <div>
-                            <h2 className="text-lg font-semibold">Answer</h2>
-                            <div
-                                className="prose max-w-none bg-gray-50 p-3 rounded-lg border"
-                                dangerouslySetInnerHTML={{
-                                    __html: DOMPurify.sanitize(marked(response.summary || "")),
-                                }}
-                            />
-                        </div>
-
-                        {/* Project Info */}
-                        {(response.project_name ||
-                            response.language ||
-                            response.database) && (
-                                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                                    <h2 className="text-lg font-semibold mb-2">📌 Project Info</h2>
-                                    {response.project_name && (
-                                        <p>
-                                            <span className="font-medium">Project:</span>{" "}
-                                            {response.project_name}
-                                        </p>
-                                    )}
-                                    {response.language && (
-                                        <p>
-                                            <span className="font-medium">Language:</span>{" "}
-                                            {response.language}
-                                        </p>
-                                    )}
-                                    {response.database && (
-                                        <p>
-                                            <span className="font-medium">Database:</span>{" "}
-                                            {response.database}
-                                        </p>
-                                    )}
-                                    {response.features?.length > 0 && (
-                                        <p>
-                                            <span className="font-medium">Features:</span>{" "}
-                                            {response.features.join(", ")}
-                                        </p>
-                                    )}
-                                    {response.files?.length > 0 && (
-                                        <p>
-                                            <span className="font-medium">Files:</span>{" "}
-                                            {response.files.join(", ")}
-                                        </p>
-                                    )}
+        <div className="flex h-screen w-full bg-gradient-to-b from-black to-gray-900 text-gray-200 font-sans">
+            {/* ===== Main Chat Area ===== */}
+            <main className="flex-1 flex flex-col relative">
+                {/* Chat Messages */}
+                <div className="flex-1 overflow-y-auto p-6 md:p-10">
+                    <div className="max-w-4xl mx-auto flex flex-col gap-10 pt-10">
+                        {/* User Question */}
+                        {response && (
+                            <div className="flex items-start gap-4">
+                                <div className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold text-white bg-gradient-to-tr from-purple-400 to-blue-500">
+                                    <User size={24} />
                                 </div>
-                            )}
-
-                        {/* Commit Info */}
-                        {(response.contributor ||
-                            response.lastEdited ||
-                            response.commitUrl ||
-                            response.author) && (
-                                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                                    <h2 className="text-lg font-semibold mb-2">📝 Commit Info</h2>
-                                    {response.author && (
-                                        <p>
-                                            <span className="font-medium">Author:</span>{" "}
-                                            {response.author}
-                                        </p>
-                                    )}
-                                    {response.contributor && (
-                                        <p>
-                                            <span className="font-medium">Contributor:</span>{" "}
-                                            {response.contributor}
-                                        </p>
-                                    )}
-                                    {response.lastEdited && (
-                                        <p>
-                                            <span className="font-medium">Last Edited:</span>{" "}
-                                            {new Date(response.lastEdited).toLocaleString()}
-                                        </p>
-                                    )}
-                                    {response.commitUrl && (
-                                        <p>
-                                            <span className="font-medium">Commit URL:</span>{" "}
-                                            <a
-                                                href={response.commitUrl}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="text-blue-600 underline"
-                                            >
-                                                {response.commitUrl}
-                                            </a>
-                                        </p>
-                                    )}
-                                </div>
-                            )}
-
-                        {/* Matches */}
-                        {response.matches?.length > 0 && (
-                            <div>
-                                <h2 className="text-lg font-semibold">🔎 Matches</h2>
-                                <div className="space-y-4">
-                                    {response.matches.map((m, idx) => {
-                                        // Build GitHub file URL (latest branch OR exact commit)
-                                        const fileUrl = `https://github.com/${m.metadata.username}/${m.metadata.repo}/blob/${m.metadata.branch}/${m.metadata.file}`;
-
-                                        return (
-                                            <a
-                                                key={idx}
-                                                href={fileUrl}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="block p-4 border rounded-lg bg-gray-50 shadow-sm hover:bg-gray-100 transition"
-                                            >
-                                                <p className="text-sm text-gray-600 mb-2">
-                                                    <span className="font-medium">Repo:</span> {m.metadata.repo} <br />
-                                                    <span className="font-medium">File:</span> {m.metadata.file} <br />
-                                                    <span className="font-medium">Branch:</span> {m.metadata.branch} <br />
-                                                    <span className="font-medium">Score:</span> {m.score.toFixed(3)}
-                                                </p>
-                                                <pre className="text-xs bg-black text-green-400 p-2 rounded-lg overflow-x-auto">
-                                                    {m.text.slice(0, 400)}...
-                                                </pre>
-                                            </a>
-                                        );
-                                    })}
+                                <div className="flex flex-col gap-2 max-w-2xl">
+                                    <p className="font-bold text-gray-50">You</p>
+                                    <div className="bg-gray-800 p-5 rounded-lg border border-gray-700 text-gray-200">
+                                        {response.question}
+                                    </div>
                                 </div>
                             </div>
                         )}
 
+                        {/* AI Response */}
+                        {response && (
+                            <div className="flex items-start gap-4">
+                                <div className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold text-white bg-gradient-to-tr from-yellow-400 to-orange-500">
+                                    <Bot size={24} />
+                                </div>
+                                <div className="flex flex-col gap-2 max-w-2xl">
+                                    <p className="font-bold text-gray-50">SEAM</p>
+
+                                    {/* Summary */}
+                                    {response.summary && (
+                                        <div className="bg-gray-800 p-5 rounded-lg border border-gray-700 text-gray-200 markdown-content">
+                                            <div dangerouslySetInnerHTML={{ __html: renderMarkdown(response.summary) }} />
+                                        </div>
+                                    )}
+
+                                    {/* Project Info */}
+                                    {(response.project_name || response.language || response.database || response.features?.length > 0) && (
+                                        <div className="bg-blue-900/40 p-4 rounded-lg border border-blue-700 text-sm">
+                                            <h2 className="font-semibold mb-2 text-blue-300">📌 Project Info</h2>
+                                            {response.project_name && <p><b>Project:</b> {response.project_name}</p>}
+                                            {response.language && <p><b>Language:</b> {response.language}</p>}
+                                            {response.database && <p><b>Database:</b> {response.database}</p>}
+                                            {response.features?.length > 0 && <p><b>Features:</b> {response.features.join(", ")}</p>}
+                                            {response.files?.length > 0 && <p><b>Files:</b> {response.files.join(", ")}</p>}
+                                        </div>
+                                    )}
+
+                                    {/* Commit Info */}
+                                    {(response.author || response.contributor || response.lastEdited || response.commitUrl) && (
+                                        <div className="bg-green-900/40 p-4 rounded-lg border border-green-700 text-sm">
+                                            <h2 className="font-semibold mb-2 text-green-300">📝 Commit Info</h2>
+                                            {response.author && <p><b>Author:</b> {response.author}</p>}
+                                            {response.contributor && <p><b>Contributor:</b> {response.contributor}</p>}
+                                            {response.lastEdited && <p><b>Last Edited:</b> {new Date(response.lastEdited).toLocaleString()}</p>}
+                                            {response.commitUrl && (
+                                                <p>
+                                                    <b>Commit URL:</b>{" "}
+                                                    <a href={response.commitUrl} target="_blank" rel="noopener noreferrer" className="text-blue-400 underline">
+                                                        {response.commitUrl}
+                                                    </a>
+                                                </p>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {/* Matches */}
+                                    {response.matches?.length > 0 && (
+                                        <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
+                                            <h2 className="font-semibold mb-2 text-gray-200">🔎 Matches</h2>
+                                            <div className="space-y-4">
+                                                {response.matches.map((m: any, idx: number) => {
+                                                    const fileUrl = `https://github.com/${m.metadata.username}/${m.metadata.repo}/blob/${m.metadata.branch}/${m.metadata.file}`;
+                                                    return (
+                                                        <a
+                                                            key={idx}
+                                                            href={fileUrl}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="block p-4 border rounded-lg bg-gray-900 hover:bg-gray-700 transition"
+                                                        >
+                                                            <p className="text-sm text-gray-400 mb-2">
+                                                                <b>Repo:</b> {m.metadata.repo} <br />
+                                                                <b>File:</b> {m.metadata.file} <br />
+                                                                <b>Branch:</b> {m.metadata.branch} <br />
+                                                                <b>Score:</b> {m.score.toFixed(3)}
+                                                            </p>
+                                                            <pre className="text-xs bg-black text-green-400 p-2 rounded-lg overflow-x-auto">
+                                                                {m.text.slice(0, 300)}...
+                                                            </pre>
+                                                        </a>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Loading State */}
+                        {loading && (
+                            <div className="flex items-start gap-4">
+                                <div className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold text-white bg-gradient-to-tr from-yellow-400 to-orange-500">
+                                    <Bot size={24} />
+                                </div>
+                                <div className="flex flex-col gap-2 max-w-2xl">
+                                    <p className="font-bold text-gray-50">SEAM</p>
+                                    <div className="bg-gray-800 p-5 rounded-lg border border-gray-700">
+                                        <div className="flex items-center justify-center gap-2">
+                                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse"></div>
+                                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse [animation-delay:0.2s]"></div>
+                                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse [animation-delay:0.4s]"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
-                )}
-            </div>
+                </div>
+
+                {/* Input Box */}
+                <div className="fixed bottom-3 left-0 right-0 px-4 sm:px-6 md:px-10 pb-4 bg-transparent">
+                    <div className="max-w-4xl mx-auto">
+                        <div className="relative">
+                            <PlaceholdersAndVanishInput
+                                placeholders={[
+                                    "Ask a question about your repo...",
+                                    "What changed in the main branch?",
+                                    "Who contributed to this file?",
+                                    "Summarize the last commit",
+                                    "Which database is being used?",
+                                ]}
+                                onChange={(e) => setQuestion(e.target.value)}
+                                onSubmit={(e) => {
+                                    e.preventDefault();
+                                    if (!question.trim()) return;
+                                    handleAsk();
+                                }}
+                                className="w-full pl-4 pr-16 py-4 text-gray-200 bg-transparent border-2 border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
+                                disabled={loading}
+                            />
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+            </main>
         </div>
     );
 }

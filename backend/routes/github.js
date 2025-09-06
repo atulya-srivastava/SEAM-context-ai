@@ -4,6 +4,7 @@ import GithubConnection from "../models/GithubConnection.js";
 import { ClerkExpressRequireAuth } from "@clerk/clerk-sdk-node";
 import { groq } from "../groq.js";
 import { InferenceClient } from "@huggingface/inference";
+import { parse } from "dotenv";
 
 const router = express.Router();
 
