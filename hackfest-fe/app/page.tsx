@@ -14,12 +14,9 @@ import Footer from "@/components/Footer";
 
 function LandingPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black to-gray-900 relative overflow-hidden">
+    <div className="min-h-screen h-full w-fullrelative">
       <Spotlight xOffset={1200} duration={0} />
       <Spotlight />
-
-      <Navbar />
-
       <HeroSection />
       <JoinSection />
       <BuildSoftware />
