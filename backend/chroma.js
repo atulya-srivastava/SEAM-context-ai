@@ -1,7 +1,5 @@
 
-import axios from "axios";
 import { CloudClient } from "chromadb";
-import { InferenceClient } from "@huggingface/inference";
 import dotenv from "dotenv";
 import { CohereClient } from "cohere-ai";
 
@@ -13,8 +11,6 @@ export const client = new CloudClient({
     tenant: process.env.CHROMA_TENANT_ID,
     database: process.env.CHROMA_DB_NAME,
 });
-
-console.log("HF_TOKEN:", process.env.HF_TOKEN);
 
 const cohere = new CohereClient({
     token: process.env.COHERE_API_KEY,
