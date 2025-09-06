@@ -5,17 +5,16 @@ function JoinSection() {
     "/notion.png",
     "/teams1.png",
     "/docs1.png",
-    "/github1.svg",
-    "/svgslack.png",
+    "/download.png",
+    "/slackimg.png",
   ];
 
   return (
     <div className="flex flex-col justify-center items-center my-12 w-full">
-      <h3 className="text-[#e1e7fe] text-md">
-        Join the maintainers and contributors to the <br /> largest open-source
-        projects on our waitlist
+      <h3 className="text-[#e1e7fe] text-2xl text-bold">
+        We integrate many platforms on one single platform
       </h3>
-      <div className="flex justify-between gap-4 mt-4 ">
+      <div className="flex justify-between gap-8 mt-4 ">
         {url.map((e, idx) => (
           <Image
             key={e}
@@ -23,6 +22,7 @@ function JoinSection() {
             alt={`Logo ${idx + 1}`}
             width={180}
             height={100}
+            style={{ objectFit: "contain" }}
           />
         ))}
       </div>
