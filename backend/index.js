@@ -10,6 +10,7 @@ import connectDB from "./db.js";
 import GithubConnection from "./models/GithubConnection.js";
 import fetch from "node-fetch";
 import GithubRoutes from "./routes/github.js"
+import NotionRoutes from "./routes/notion.js"
 
 
 
@@ -35,6 +36,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/api/github", GithubRoutes)
+app.use("/api/notion", NotionRoutes);
 
 // GitHub OAuth Strategy
 passport.use(
