@@ -104,21 +104,9 @@ const Navbar = () => {
               Connect 
             </Link>
 
-            {isScrolled && <div className="h-5 w-[1px] bg-white/20 mx-1" />}
+            
 
-            <div
-              className={`transition-all duration-500 ease-in-out overflow-hidden ${isScrolled
-                ? "opacity-100 max-w-xs translate-x-0 ml-2"
-                : "opacity-0 max-w-0 -translate-x-4"
-                }`}
-            >
-              <button
-                onClick={() => SignIn}
-                className="relative z-10 px-4 py-1 text-sm font-medium text-white rounded-full bg-gradient-to-r from-fuchsia-500 to-orange-400 hover:from-fuchsia-600 hover:to-orange-500 transition-all duration-200 whitespace-nowrap"
-              >
-                Login
-              </button>
-            </div>
+            
           </div>
 
           {/* join before */}
