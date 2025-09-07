@@ -102,7 +102,7 @@ COHERE_API_KEY=<your-cohere-api-key>
 
 ## Technologies Used
 
-- **Frontend**: Next.js, Tailwind CSS
+- **Frontend**: Next.js, Tailwind CSS.
 - **Backend**: Node.js, MongoDB, Clerk for authentication
 - **AI & Embeddings**: Cohere for embeddings, Chroma for vector database storage
 - **Integrations**: GitHub, Slack, Notion, Google Drive, Gmail, Microsoft Teams, n8n
