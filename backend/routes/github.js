@@ -190,7 +190,7 @@ router.post("/ask", ClerkExpressRequireAuth(), async (req, res) => {
         let finalResponse = {
             question,
             summary: "",
-            combinedCode: "",
+            combinedCode: "", 
             contributor: "",
             lastEdited: "",
             commitUrl: "",
