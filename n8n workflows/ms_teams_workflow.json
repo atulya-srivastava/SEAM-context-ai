@@ -1,0 +1,898 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "url": "=https://graph.microsoft.com/v1.0/teams/{{ $json.id }}/channels",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1072,
+        192
+      ],
+      "id": "1b4c5352-894f-4271-8ed3-db904ed9f70d",
+      "name": "get channel2",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "GBK0a9qWFWNUFaZ4",
+          "name": "Unnamed credential 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.microsoft.com/v1.0/teams/{{ $json.teamId }}/channels/{{ $json.channelId }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -352,
+        192
+      ],
+      "id": "a3945209-63ff-47fa-ac45-cce7ef22ae16",
+      "name": "get chat2",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "GBK0a9qWFWNUFaZ4",
+          "name": "Unnamed credential 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Flatten Teams messages into clean objects, ignoring system messages\nlet result = [];\n\nfor (const item of items) {\n  const messages = item.json.value || [];\n  \n  for (const msg of messages) {\n    // Get content safely\n    let content = msg.body?.content || null;\n\n    // Skip trash/system messages\n    if (!content || content.trim() === \"<systemEventMessage/>\") {\n      continue;\n    }\n\n    let entry = {\n      teamId: msg.channelIdentity?.teamId || msg.eventDetail?.teamId || null,\n      channelId: msg.channelIdentity?.channelId || msg.eventDetail?.channelId || null,\n      displayName: msg.from?.user?.displayName || msg.eventDetail?.channelDisplayName || null,\n      content: content,\n      createdDateTime: msg.createdDateTime || null,\n      lastModifiedDateTime: msg.lastModifiedDateTime || null,\n    };\n    \n    result.push({ json: entry });\n  }\n}\n\nreturn result;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -144,
+        192
+      ],
+      "id": "18354573-dab6-4d37-b471-dfd16e5d0d7d",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.microsoft.com/v1.0/me/joinedTeams",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1536,
+        192
+      ],
+      "id": "774c35b0-5c5c-4e7b-a13b-37d41268d2aa",
+      "name": "get teams2",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "GBK0a9qWFWNUFaZ4",
+          "name": "Unnamed credential 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code Node (JavaScript)\nconst allChannels = [];\n\nitems.forEach(item => {\n  const data = item.json;\n\n  // Extract teamId using regex\n  const context = data[\"@odata.context\"] || \"\";\n  const match = context.match(/teams\\('([^']+)'\\)/);\n  const teamId = match ? match[1] : null;\n\n  // Collect all channels\n  (data.value || []).forEach(channel => {\n    allChannels.push({\n      channelId: channel.id || null,\n      displayName: channel.displayName || null,\n      teamId,\n    });\n  });\n});\n\n// Return as a single item with a list\nreturn [\n  {\n    json: {\n      channels: allChannels\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -816,
+        192
+      ],
+      "id": "b079ca07-7cdc-426b-85c3-a2b9f1695a36",
+      "name": "Code3"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the array under $json.value\nconst teams = $json.value || [];\n\n// Map only required fields\nreturn teams.map(team => ({\n  json: {\n    id: team.id,\n    displayName: team.displayName\n  }\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1312,
+        192
+      ],
+      "id": "3f58a885-2ccc-4137-b4fa-64e59738be3d",
+      "name": "Code node for team1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Access the array inside $json.channels\nconst channels = $json.channels || [];\n\n// Map each channel into a separate item\nreturn channels.map(ch => ({\n  json: {\n    channelId: ch.channelId,\n    displayName: ch.displayName,\n    teamId: ch.teamId\n  }\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -560,
+        192
+      ],
+      "id": "a81bbd8c-63a1-4152-8613-741bd95f5102",
+      "name": "code node for channels1"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "messages",
+          "mode": "list",
+          "cachedResultName": "messages"
+        },
+        "options": {
+          "queryName": "match_messagessa"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        704,
+        96
+      ],
+      "id": "de60eb5d-e3a3-40e3-b6ae-65f790d87d7c",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "Ogj0Sn3ONrg7mqb9",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        800,
+        400
+      ],
+      "id": "33f8e4c2-d450-4912-b9d0-cdae3633f043",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "rbz6f3NW4NYSraec",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ JSON.stringify($json) }}\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        1008,
+        336
+      ],
+      "id": "a6d08be3-af38-4a0b-9989-0c45e2229aa8",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "messages",
+          "mode": "list",
+          "cachedResultName": "messages"
+        },
+        "options": {
+          "queryName": "match_messagessa"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        160,
+        64
+      ],
+      "id": "a0ea6381-409a-403e-9ffb-d4962e2aacf6",
+      "name": "Supabase Vector Store2",
+      "credentials": {
+        "supabaseApi": {
+          "id": "Ogj0Sn3ONrg7mqb9",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        256,
+        368
+      ],
+      "id": "08dae375-e39f-484c-b81f-b1e0f3034c81",
+      "name": "Embeddings Google Gemini2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "rbz6f3NW4NYSraec",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.content }}",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "teamid",
+                "value": "={{ $json.teamId }}"
+              },
+              {
+                "name": "channel id",
+                "value": "={{ $json.channelId }}"
+              },
+              {
+                "name": "displayname",
+                "value": "={{ $json.displayName }}"
+              },
+              {
+                "name": "createdtime",
+                "value": "={{ $json.createdDateTime }}"
+              },
+              {
+                "name": "modifieidtime",
+                "value": "={{ $json.lastModifiedDateTime }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        416,
+        336
+      ],
+      "id": "397f7228-a0c3-4558-ab55-0e4002fbb6dc",
+      "name": "Default Data Loader1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2288,
+        208
+      ],
+      "id": "2e95555a-1e19-4e8b-b82a-2c31fdd01227",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "tableId": "messages",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "neq",
+              "keyValue": "0"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1936,
+        208
+      ],
+      "id": "a4f49569-d209-4f44-a01d-dbeb160ff18c",
+      "name": "Delete a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "Ogj0Sn3ONrg7mqb9",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=curent date and time :{{ $now }}\nuser input : {{ $json.body.chatInput }}\n",
+        "options": {
+          "systemMessage": "=You are a meticulous AI assistant. Your task is to answer the user's question by finding all relevant records in the provided context and formatting them individually.\n\nThe context is a set of message records, where each record has two parts:\n- content: The main message text.\n- metadata: A JSON object containing { teamId, channelId, displayName, createdDateTime }.\n\nYou must follow these rules precisely:\n\n1.  *Analyze the Entire Context:* Read the content and metadata for *every* record provided.\n\n2.  *Identify All Matches:* Compare the user's query against every record. Identify *all* records that are relevant to the query, whichever seem revelent.\n\n3.  *Process Each Match Individually:* For *each* record you identify as a match, you will create a separate JSON object. In each object:\n    - The \"answer\" key will contain a concise summary of that specific record's content.\n    - The other keys (teamId, channelId, etc.) will be populated from that specific record's metadata.\n\n4.  *Structured Array Output:* Your final answer must be a single *JSON array* that contains all the individual JSON objects you created in the previous step. Each object in the array must have the following structure:\n    {\n      \"answer\": \"A concise summary derived from the content field of this specific record.\",\n      \"teamId\": \"The value from this record's metadata object.\",\n      \"channelId\": \"The value from this record's metadata object.\",\n      \"displayName\": \"The value from this record's metadata object.\",\n      \"createdDateTime\": \"The value from this record's metadata object.\"\n    }\n\n5.  *No Matches:* If no relevant records are found, you must respond with an empty JSON array: []."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -512,
+        -992
+      ],
+      "id": "c5abb207-382a-454c-b053-7a61d00c6f53",
+      "name": "AI Agent9"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        -736
+      ],
+      "id": "e315b0ba-4f14-47d4-9721-949f78c4a709",
+      "name": "Google Gemini Chat Model10",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "EygsuywYqFu7wrZm",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "This tool retrieves relevant messages from the vector database.\nEach result contains:\n\ncontent: the actual message text\n\nmetadata: a JSON object with { teamId, channelId, displayName, createdDateTime, lastModifiedDateTime }\n\nWhen you use this tool:\n\nAlways read both content and metadata.\n\nUse content to answer the user's question.\n\nUse the fields within metadata to provide structured information or direct links to the source.",
+        "tableName": {
+          "__rl": true,
+          "value": "messages",
+          "mode": "list",
+          "cachedResultName": "messages"
+        },
+        "topK": 10,
+        "options": {
+          "queryName": "match_text"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        -464,
+        -704
+      ],
+      "id": "975b5d02-e132-4af2-8159-10d272f4dc11",
+      "name": "Supabase Vector Store6",
+      "credentials": {
+        "supabaseApi": {
+          "id": "Ogj0Sn3ONrg7mqb9",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -592,
+        -400
+      ],
+      "id": "50d724b4-5fc8-449a-b2dd-d182e9c77584",
+      "name": "Embeddings Google Gemini6",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "rbz6f3NW4NYSraec",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the input from the AI Agent node\nconst agentOutput = $input.first().json.output;\n\nlet data;\n\n// Use a regular expression to extract the JSON array string, which starts with '[' and ends with ']'\nconst jsonMatch = agentOutput.match(/\\[[\\s\\S]*\\]/);\n\nif (jsonMatch) {\n  try {\n    // If a JSON array-like string is found, parse it\n    const jsonString = jsonMatch[0];\n    data = JSON.parse(jsonString);\n  } catch (e) {\n    // Log the error for debugging if parsing fails\n    console.error(\"Failed to parse JSON array:\", e.message);\n    \n    // Fallback if parsing fails, return an error object for easier debugging\n    data = { \n      error: \"Failed to parse JSON from AI output.\", \n      rawOutput: agentOutput \n    };\n  }\n} else {\n  // If no JSON array is found, assume it's a plain text answer or an error\n  // This handles cases where the AI might respond with something other than the expected array.\n  data = { \n    answer: agentOutput \n  };\n}\n\n// Always return an object as the value of the 'json' property\nlet output;\nif (Array.isArray(data)) {\n  output = { result: data };\n} else {\n  output = data;\n}\nreturn [{ json: output }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -176,
+        -992
+      ],
+      "id": "39755bae-aa59-45ca-b859-0f95e712d296",
+      "name": "Code17"
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.microsoft.com/v1.0/me/joinedTeams",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        816,
+        -1008
+      ],
+      "id": "ab759ee1-5462-4c4b-8813-54d76da43557",
+      "name": "get teams6",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "GBK0a9qWFWNUFaZ4",
+          "name": "Unnamed credential 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.microsoft.com/v1.0/teams/{{ $json.teamId }}/channels",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1200,
+        -1008
+      ],
+      "id": "b2eceba8-f469-48f5-8f3a-1c3d0921bab7",
+      "name": "get channel6",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "GBK0a9qWFWNUFaZ4",
+          "name": "Unnamed credential 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Get the single output item from the 'Code17' node.\nconst code17output = $('Code17').first();\n\n// 2. Access the nested 'result' array from within that item's JSON.\n// This is the key change to fix the issue.\nconst itemsToMatch = code17output.json.result || [];\n\n// 3. Create a simple list of just the team IDs from the items in the 'result' array.\nconst idsToMatch = itemsToMatch.map(item => item.teamId);\n\n// 4. Get the complete list of all available teams from this node's direct input.\nconst allTeamsList = $input.first().json.value || [];\n\n// 5. Use .filter() to find every team in the main list whose ID exists in your idsToMatch list.\nconst matchedTeams = allTeamsList.filter(team => idsToMatch.includes(team.id));\n\n// 6. Format the list of found teams into the correct output structure.\nreturn matchedTeams.map(team => ({\n  json: {\n    teamId: team.id,\n    teamName: team.displayName\n  }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        992,
+        -1008
+      ],
+      "id": "516156d8-c15f-47f2-8ac3-1831b722cacf",
+      "name": "Code18",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Get all of your data sources\nconst allTasks = $('Code17').first().json.result || [];\nconst allTeamsWithNames = $('Code18').all(); // From the node that matched team IDs to names\nconst allChannelLists = $('get channel6').all(); // From the HTTP request node\n\n// 2. Build a Team Name Directory for fast lookups\n// Key: teamId, Value: teamName\nconst teamMap = new Map();\nfor (const teamItem of allTeamsWithNames) {\n  teamMap.set(teamItem.json.teamId, teamItem.json.teamName);\n}\n\n// 3. Build a Channel Directory that also includes the tenantId\n// Key: channelId, Value: { displayName, tenantId }\nconst channelMap = new Map();\nfor (const channelListItem of allChannelLists) {\n  const channels = channelListItem.json.value || [];\n  for (const channel of channels) {\n    if (channel) { // Ensure channel is not null\n      channelMap.set(channel.id, {\n        displayName: channel.displayName,\n        tenantId: channel.tenantId\n      });\n    }\n  }\n}\n\n// 4. Process each original task to enrich it with all required data\nconst finalResults = allTasks.map(task => {\n  const teamName = teamMap.get(task.teamId) || null;\n  const matchedChannel = channelMap.get(task.channelId);\n  \n  const channelName = matchedChannel ? matchedChannel.displayName : null;\n  const tenantId = matchedChannel ? matchedChannel.tenantId : null;\n\n  // 5. Construct the deep link URL right here in the code\n  let deepLinkUrl = null;\n  if (channelName && task.channelId && task.teamId && tenantId) {\n    // We use encodeURIComponent to safely handle special characters in channel names\n    deepLinkUrl = https://teams.microsoft.com/l/channel/${encodeURIComponent(task.channelId)}/${encodeURIComponent(channelName)}?groupId=${task.teamId}&tenantId=${tenantId};\n  }\n\n  // 6. Return a single, complete object with everything you need\n  return {\n    answer: task.answer,\n    user: task.displayName,\n    createdDate: task.createdDateTime,\n    teamName: teamName,\n    channelName: channelName,\n    deepLinkUrl: deepLinkUrl\n  };\n});\n\nreturn [{\n  json: {\n    results: finalResults\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1408,
+        -1008
+      ],
+      "id": "f89ddff5-6eb8-4180-b6ee-349ac4fef5f3",
+      "name": "Code19"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You have been assigned a list of tasks. Please create a clean, user-friendly summary of all of them.\n\nFor each task in the list, you must mention:\n1. The task description itself.\n2. The Team and Channel it belongs to.\n3. The full, clickable URL to view it directly.\n\nHere is the list of tasks in JSON format:\n{{ JSON.stringify($json.results) }}",
+        "options": {
+          "systemMessage": "=You are a professional assistant creating a summary of assigned tasks. Your response must be extremely clean and simple.\n\n*New Rules You MUST Follow:\n1.  **PLAIN TEXT ONLY:* Your entire response must be plain text. Do not use any Markdown formatting. This means no bullet points (* or -), no bolding (), no italics, and no horizontal lines.\n2.  *USE PARAGRAPHS:* Present each task as its own separate paragraph.\n3.  *SEPARATE WITH BLANK LINES:* Separate each task's paragraph with a single blank line to create clean spacing.\n4.  *NATURAL SENTENCES:* Do not use technical field names. Integrate all information into natural, user-friendly sentences.\n5.  *FULL URLS:* Every URL must be a full, clickable hyperlink."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1664,
+        -1008
+      ],
+      "id": "ed4f237b-9d6b-4044-83c6-84139a1917c4",
+      "name": "AI Agent10"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1696,
+        -800
+      ],
+      "id": "68d90c89-8eb3-495e-b644-9c96c5511bd7",
+      "name": "Google Gemini Chat Model11",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "EygsuywYqFu7wrZm",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e10ff836-ea00-44a9-9782-17ed349d4f9d",
+              "leftValue": "={{ $json.teamId }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        272,
+        -992
+      ],
+      "id": "0832a87b-8cdc-407d-97db-d0dc6c94712d",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4bd1216c-6acd-4906-aff2-606b9f9254e7",
+              "name": "answer",
+              "value": "\"no such item found\"",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        -848
+      ],
+      "id": "b7d7f69e-0128-41d2-90bd-b760e5691557",
+      "name": "Edit Fields6"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the array of results from the single input item\nconst results = $input.first().json.result;\n\n// Check if the result array exists but is empty\nif (results && results.length === 0) {\n  // If it's empty, return a single item with a custom message\n  return [{ json: { message: \"item not found\" } }];\n}\n\n// If the array has items, process them as before\nif (results) {\n  return results.map(item => ({ json: item }));\n}\n\n// If the 'result' key doesn't exist at all, return nothing\nreturn [];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        32,
+        -992
+      ],
+      "id": "dde21795-c92f-4e30-bedc-0e378b349cf2",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "09fa4a64-d642-45ca-9a6d-a647209ea082",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -848,
+        -992
+      ],
+      "id": "3a3710fb-45ef-4362-967c-175839eb3707",
+      "name": "Webhook",
+      "webhookId": "09fa4a64-d642-45ca-9a6d-a647209ea082"
+    }
+  ],
+  "connections": {
+    "get channel2": {
+      "main": [
+        [
+          {
+            "node": "Code3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get chat2": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get teams2": {
+      "main": [
+        [
+          {
+            "node": "Code node for team1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code3": {
+      "main": [
+        [
+          {
+            "node": "code node for channels1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code node for team1": {
+      "main": [
+        [
+          {
+            "node": "get channel2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "code node for channels1": {
+      "main": [
+        [
+          {
+            "node": "get chat2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini2": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store2",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader1": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store2",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Delete a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete a row": {
+      "main": [
+        [
+          {
+            "node": "get teams2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent9": {
+      "main": [
+        [
+          {
+            "node": "Code17",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model10": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent9",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store6": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent9",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini6": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store6",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code17": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get teams6": {
+      "main": [
+        [
+          {
+            "node": "Code18",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get channel6": {
+      "main": [
+        [
+          {
+            "node": "Code19",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code18": {
+      "main": [
+        [
+          {
+            "node": "get channel6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code19": {
+      "main": [
+        [
+          {
+            "node": "AI Agent10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model11": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent10",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "get teams6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "ca11069b846ff51273988eb2aec9a92f0740d9102ca3d0b2f09fee308dcae838"
+  }
+}
+
+

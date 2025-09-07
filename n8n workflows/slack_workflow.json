@@ -1,0 +1,653 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "resource": "channel",
+        "operation": "history",
+        "channelId": {
+          "__rl": true,
+          "value": "C09CG3KUECD",
+          "mode": "list",
+          "cachedResultName": "new-channel"
+        },
+        "returnAll": true,
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        -32,
+        -80
+      ],
+      "id": "51b75928-84f7-4ff9-962e-c0023950d4f3",
+      "name": "Get the history of a channel",
+      "webhookId": "7f239e2e-336e-49bb-ab15-1c2509111f90",
+      "credentials": {
+        "slackApi": {
+          "id": "L9R2GpG9tOmV4kRI",
+          "name": "Slack account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "slack_history",
+          "mode": "list",
+          "cachedResultName": "slack_history"
+        },
+        "options": {
+          "queryName": "match_slack_documents"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        784,
+        16
+      ],
+      "id": "2730e7eb-7a6c-4d78-a564-eb15754f3209",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "h8lnn5qniumc9DDq",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        784,
+        192
+      ],
+      "id": "4c508f4a-ce3e-4328-92e2-40f26369f030",
+      "name": "Embeddings Google Gemini1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ODPL4lNmqJ4UJKho",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.text }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        944,
+        192
+      ],
+      "id": "7164d91c-fbe7-4cc9-bef7-cdbe3faba4b8",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -80
+      ],
+      "id": "42d9cbb4-71b1-41cb-ba14-d12737cee0d8",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "public": true,
+        "mode": "webhook",
+        "options": {
+          "responseMode": "lastNode"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        80,
+        736
+      ],
+      "id": "ee952ae4-2b98-4115-b2ea-7ac0058c4ea1",
+      "name": "When chat message received",
+      "webhookId": "6368b33f-87a1-4a01-8c7e-574ca3bc5b5d"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a highly-organized assistant that answers questions using information from company records. Your primary goal is to provide accurate answers with clear, traceable, and correctly formatted citations.\n\nFollow these rules strictly:\n1.  Answer First: Construct the main body of your answer using only the information available in the provided context.\n2.  Inline Citations: As you write, place a numbered bracket, like [1], [2], [3], etc., immediately after the piece of information you are referencing.\n3.  Create a Citation List: After the main answer is complete, add a heading titled \"Citations\".\n4.  Format the List: On the line immediately following the \"Citations\" heading, begin listing all the sources you used. Each entry in this list MUST:\n    - Start with the corresponding numbered bracket (e.g., [1], [2]).\n    - Contain the full, visible, and clickable link by formatting it in Markdown like this: [https://full-url.com](https://full-url.com).\n5.  Accuracy is Key: The numbers in your answer must perfectly match the numbers in the citation list. If the answer is not in the context, state that you do not have that information. and dont provide any context or citation links\n\n---\nHere is an example of the desired format:\nThe Q3 financial report shows a 15% increase in revenue [1]. The project deadline for 'Project Phoenix' has been moved to December 1st [2].\n\nCitations\n[1] [https://company.slack.com/archives/C123/p456](https://company.slack.com/archives/C123/p456)\n[2] [https://company.slack.com/archives/C789/p101](https://company.slack.com/archives/C789/p101)"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        368,
+        656
+      ],
+      "id": "6bb5f3fb-48cd-4825-a023-6b2337279799",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        320,
+        864
+      ],
+      "id": "c0de81fd-c948-46b9-a004-979c865f0796",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ODPL4lNmqJ4UJKho",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        448,
+        864
+      ],
+      "id": "52e770a4-2c99-4fb9-bbed-fd922b4405f4",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "dNDKttpowAOPFuk7",
+          "name": "main postgres"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        640,
+        976
+      ],
+      "id": "54cb059b-6cd5-46e7-8f9b-7a15fa9b6dc4",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ODPL4lNmqJ4UJKho",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "You are a helpful assistant that answers questions using context from Slack messages. \nFor every piece of information you provide, also use the metadata:  \n- citation_link → include as source reference in your answer.  \n- username → identify who wrote the message.  \n- timestamp → include when needed.  \n- channel → include if relevant.  \n- source → indicate the platform.  \n\nNever invent information. If the context does not contain the answer, respond with \"Please provide more context\"  \n",
+        "tableName": {
+          "__rl": true,
+          "value": "slack_history",
+          "mode": "list",
+          "cachedResultName": "slack_history"
+        },
+        "options": {
+          "queryName": "match_slack_documents"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        640,
+        816
+      ],
+      "id": "ec5dea6a-1637-48d9-b79b-fd27ad9b518c",
+      "name": "Supabase Vector Store1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "h8lnn5qniumc9DDq",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "const slackTriggerItems = $items(\"Get the history of a channel\");\nconst userInfoItems = $items(\"Get information about a user\");\n\nreturn slackTriggerItems.map((item, index) => {\n    const userInfo = userInfoItems[index].json;\n    const text = item.json.text;\n    const userId = item.json.user;\n    const username = userInfo.real_name || userInfo.display_name || userId;\n    const ts = item.json.ts;\n    const channel = item.json.channel;\n\n    const milliseconds = parseFloat(ts) * 1000;\n    const date = new Date(milliseconds);\n    const pad = (n) => n.toString().padStart(2, '0');\n    const formatted = ${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())};\n\n    const permalink = https://team-seam-workspace.slack.com/archives/${channel}/p${ts.replace('.', '')};\n\n    // Create model-ready text in the requested format\n    const modelText = Message from ${username} at ${formatted}: ${text} \\n citations_link: ${permalink};\n\n    return {\n        json: {\n            text: modelText,\n            metadata: {\n                link: permalink,\n                channel: channel,\n                user: username,\n                timestamp: formatted,\n                source: \"slack\"\n            }\n        }\n    };\n});\n"
+      },
+      "name": "Prepare Text for Embedding",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        560,
+        48
+      ],
+      "id": "a77a6730-cb10-4106-8316-64b5e405b38a"
+    },
+    {
+      "parameters": {
+        "trigger": [
+          "message"
+        ],
+        "watchWorkspace": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.slackTrigger",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        336
+      ],
+      "id": "dfa38424-d02c-4d41-8b7f-a646cdeac539",
+      "name": "Slack Trigger",
+      "webhookId": "8b62fe87-c68d-49b4-9dc2-6b1103eff8b8",
+      "credentials": {
+        "slackApi": {
+          "id": "0ylKR1eopqQj98wv",
+          "name": "Slack account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "user": {
+          "__rl": true,
+          "value": "={{ $json.user }}",
+          "mode": "id"
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        176,
+        80
+      ],
+      "id": "41296ab3-97da-489d-a3d6-99aff20e84d4",
+      "name": "Get information about a user",
+      "webhookId": "8e91e05d-0045-4ec0-8e34-b2569be13f5d",
+      "alwaysOutputData": false,
+      "retryOnFail": false,
+      "executeOnce": false,
+      "credentials": {
+        "slackApi": {
+          "id": "0ylKR1eopqQj98wv",
+          "name": "Slack account 5"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        352,
+        -112
+      ],
+      "id": "0a87df88-7481-48c8-ab2c-baae55a53241",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "user": {
+          "__rl": true,
+          "value": "={{ $json.user }}",
+          "mode": "id"
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        128,
+        464
+      ],
+      "id": "a72de9bc-1651-4970-bb51-0e8407686977",
+      "name": "Get information about a user1",
+      "webhookId": "8e91e05d-0045-4ec0-8e34-b2569be13f5d",
+      "alwaysOutputData": false,
+      "retryOnFail": false,
+      "executeOnce": false,
+      "credentials": {
+        "slackApi": {
+          "id": "0ylKR1eopqQj98wv",
+          "name": "Slack account 5"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        320,
+        352
+      ],
+      "id": "61d51545-ef03-4a15-a11d-efb3e0b277ff",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "functionCode": "const slackTriggerItems = $items(\"Slack Trigger\");\nconst userInfoItems = $items(\"Get information about a user1\");\n\nreturn slackTriggerItems.map((item, index) => {\n    const userInfo = userInfoItems[index].json;\n    const text = item.json.text;\n    const userId = item.json.user;\n    const username = userInfo.real_name || userInfo.display_name || userId;\n    const ts = item.json.ts;\n    const channel = item.json.channel;\n\n    const milliseconds = parseFloat(ts) * 1000;\n    const date = new Date(milliseconds);\n    const pad = (n) => n.toString().padStart(2, '0');\n    const formatted = ${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())};\n\n    const permalink = https://team-seam-workspace.slack.com/archives/${channel}/p${ts.replace('.', '')};\n\n    return {\n        json: {\n            text: text,\n            metadata: {\n                citation_link: permalink,\n                channel: channel,\n                username: username,\n                timestamp: formatted,\n                source: \"slack\"\n            }\n        }\n    };\n});\n"
+      },
+      "name": "Prepare Text for Embedding1",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        496,
+        352
+      ],
+      "id": "db12fa9f-7668-4205-8b84-111e914ff154"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "slack_history",
+          "mode": "list",
+          "cachedResultName": "slack_history"
+        },
+        "options": {
+          "queryName": "match_slack_documents"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        784,
+        384
+      ],
+      "id": "11bc776e-3b46-4917-be0f-bcfe1278187e",
+      "name": "Supabase Vector Store2",
+      "credentials": {
+        "supabaseApi": {
+          "id": "h8lnn5qniumc9DDq",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        816,
+        624
+      ],
+      "id": "8b901fa4-448c-4e1e-ba76-dd3f218aeb18",
+      "name": "Embeddings Google Gemini3",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ODPL4lNmqJ4UJKho",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $('Prepare Text for Embedding1').item.json.text }}",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "citation_link",
+                "value": "={{ $('Prepare Text for Embedding1').item.json.metadata.citation_link }}"
+              },
+              {
+                "name": "channel",
+                "value": "={{ $('Prepare Text for Embedding1').item.json.metadata.channel }}"
+              },
+              {
+                "name": "=username",
+                "value": "={{ $('Prepare Text for Embedding1').item.json.metadata.username }}"
+              },
+              {
+                "name": "timestamp",
+                "value": "={{ $('Prepare Text for Embedding1').item.json.metadata.timestamp }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        944,
+        624
+      ],
+      "id": "7c5dac1a-d7ab-4091-8656-3903af115995",
+      "name": "Default Data Loader2"
+    }
+  ],
+  "connections": {
+    "Get the history of a channel": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get information about a user",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get the history of a channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store1": {
+      "ai_vectorStore": [
+        []
+      ],
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Text for Embedding": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get information about a user1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get information about a user": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Prepare Text for Embedding",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get information about a user1": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Prepare Text for Embedding1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Text for Embedding1": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini3": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store2",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader2": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store2",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9f58c1913c3ef1f8b30f67a66c2869c6968db45738784e57ddb32ab6010f7394"
+  }
+}
