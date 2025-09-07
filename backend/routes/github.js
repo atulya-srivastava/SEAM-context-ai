@@ -4,7 +4,8 @@ import GithubConnection from "../models/GithubConnection.js";
 import { ClerkExpressRequireAuth } from "@clerk/clerk-sdk-node";
 import { groq } from "../groq.js";
 import { InferenceClient } from "@huggingface/inference";
-import { parse } from "dotenv";
+import Chat from "../models/chatModel.js";
+
 
 const router = express.Router();
 
@@ -181,7 +182,7 @@ router.post("/ask", ClerkExpressRequireAuth(), async (req, res) => {
         const { userId } = req.auth;
         console.log("User ID:", userId);
         if (!userId) return res.status(403).json({ error: "Unauthorized" });
-        const { question } = req.body;
+        const { question, chatId } = req.body;
         if (!question) {
             return res.status(400).json({ error: "Question is required" });
         }
@@ -305,8 +306,33 @@ Answer in a user-friendly way, and include a JSON block with structured details 
                 score: result.distances[0][idx],
             })),
         };
-        console.log("Final response:", finalResponse);
-        return res.json(finalResponse);
+
+        let chat;
+        if (chatId) {
+            // Existing chat → push messages
+            chat = await Chat.findById(chatId);
+            if (!chat) return res.status(404).json({ error: "Chat not found" });
+        } else {
+            // New chat
+            chat = new Chat({ userId, title: "New Chat", messages: [] });
+        }
+
+        // Push user message
+        chat.messages.push({
+            content: question,
+            role: "user",
+        });
+
+        // Push bot response
+        chat.messages.push({
+            content: finalResponse.summary,
+            role: "bot",
+            meta: finalResponse, // store structured response in meta
+        });
+
+        await chat.save();
+
+        return res.json({ chatId: chat._id, ...finalResponse });
     } catch (err) {
         console.error("❌ Query error:", err);
         res
@@ -437,7 +463,7 @@ router.post("/repos/:owner/:repo/sync-branch", ClerkExpressRequireAuth(), async 
         if (!connection) return res.status(403).json({ error: "No GitHub token" });
 
         const collection = await client.getOrCreateCollection({ name: "github_code" });
-       
+
 
         // 1. Delete old branch data
         await collection.delete({
@@ -564,7 +590,7 @@ router.get(
             }
 
             console.log("Fetching branches for:", owner, repo);
-           
+
             // Fetch branches from GitHub API
             const response = await fetch(
                 `https://api.github.com/repos/${owner}/${repo}/branches`,
