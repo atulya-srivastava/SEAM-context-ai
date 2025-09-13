@@ -802,6 +802,7 @@ How can I help you today?`,
                               className="p-1 hover:text-gray-200 transition-colors"
                               onClick={() => {
                                 navigator.clipboard.writeText(msg.text);
+                                toast.success("Response copied to clipboard!");
                               }}
                             >
                               <Copy size={16} />
