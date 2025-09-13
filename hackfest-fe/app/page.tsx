@@ -23,7 +23,6 @@ function LandingPage() {
       <FeaturesSection />
       <StatsSection />
       <TestimonialsSection />
-      <PricingSection />
       <CTASection />
       <Footer />
     </div>
