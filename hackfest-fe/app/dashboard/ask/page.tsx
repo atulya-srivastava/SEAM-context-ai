@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
 import toast from "react-hot-toast";
+import TextareaAutosize from "react-textarea-autosize";
 
 // TypeScript declaration for CDN scripts
 declare global {
@@ -896,7 +897,7 @@ How can I help you today?`,
                 </div>
 
                 <form onSubmit={handleFormSubmit} className="relative">
-                  <textarea
+                  {/* <textarea
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={(e) => {
@@ -913,6 +914,25 @@ How can I help you today?`,
                     className="w-full bg-transparent border border-gray-600 rounded-lg p-4 pr-16 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow text-base"
                     rows={1}
                     disabled={isLoading}
+                  /> */}
+                  <TextareaAutosize
+                    value={input}
+                    onChange={(e : any) => setInput(e.target.value)}
+                    onKeyDown={(e: any) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        handleFormSubmit(e as any);
+                      }
+                    }}
+                    placeholder={
+                      currentMode === "github"
+                        ? "e.g., 'Summarize the file structure of my latest repo'"
+                        : "Ask SEAM anything..."
+                    }
+                    className="w-full bg-transparent border border-gray-600 rounded-xl p-4 pr-16 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow text-base"
+                    disabled={isLoading}
+                    minRows={1} 
+                    maxRows={6} 
                   />
                   <button
                     type="submit"
