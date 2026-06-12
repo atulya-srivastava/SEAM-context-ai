@@ -115,15 +115,15 @@ const Navbar = () => {
               }`}
           >
             <div className="px-5 py-2 text-sm font-medium text-white rounded-sm bg-gradient-to-b from-black/10 to-white/10 border border-white/20 backdrop-blur-xl hover:bg-white/20 transition-all duration-300">
-              <SignedOut>
+              <Show when="signed-out">
                 <SignInButton mode="modal">
                   <button>Login</button>
                 </SignInButton>
-              </SignedOut>
+              </Show>
 
-              <SignedIn>
+              <Show when="signed-in">
                 <UserButton />
-              </SignedIn>
+              </Show>
             </div>
           </div>
         </nav>
