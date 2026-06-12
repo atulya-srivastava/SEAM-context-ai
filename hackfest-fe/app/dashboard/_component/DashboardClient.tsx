@@ -3,11 +3,13 @@
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
+import { useAuth } from "@clerk/nextjs";
 
 export default function DashboardClient() {
   const searchParams = useSearchParams();
   const githubStatus = searchParams.get("githubStatus");
   const router = useRouter();
+  const { userId } = useAuth();
 
   useEffect(() => {
     if (githubStatus === "success") {
@@ -25,7 +27,11 @@ export default function DashboardClient() {
 
       <button
         onClick={() => {
-          window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/github`;
+          if (userId) {
+            window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/github?userId=${userId}`;
+          } else {
+            toast.error("Please log in first");
+          }
         }}
         className="px-4 py-2 bg-gray-700 rounded mt-4"
       >

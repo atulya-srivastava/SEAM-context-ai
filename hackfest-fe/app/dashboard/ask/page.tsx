@@ -385,7 +385,11 @@ ${originalResponse}`;
         const GEMINI_API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
 
         if (!GEMINI_API_KEY) {
-            throw new Error("Gemini API key not configured");
+            return new Promise<string>((resolve) => {
+                setTimeout(() => {
+                    resolve("Hello! I am SEAM, your intelligent search assistant. To use live Gemini responses, please set the `NEXT_PUBLIC_GEMINI_API_KEY` environment variable in your `.env` file. Currently, I am running in local demonstration mode.");
+                }, 500);
+            });
         }
 
         const model = "gemini-1.5-flash-latest"; // Using a standard model name
