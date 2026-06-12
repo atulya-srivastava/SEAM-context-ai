@@ -49,6 +49,7 @@ passport.use(
             clientID: process.env.GITHUB_CLIENT_ID,
             clientSecret: process.env.GITHUB_CLIENT_SECRET,
             callbackURL: process.env.GITHUB_CALLBACK_URL,
+            state: false,
         },
         (accessToken, refreshToken, profile, done) => {
             // TODO: Save token in DB associated with Clerk orgId
@@ -75,28 +76,44 @@ app.get("/auth/github", (req, res, next) => {
 });
 
 // GitHub Callback
-app.get(
-    "/auth/github/callback",
-    passport.authenticate("github", { failureRedirect: "/" }),
-    async (req, res) => {
-        const userId = req.query.state; // Clerk userId passed in state
-        const { profile, accessToken } = req.user;
-
-        if (!userId) {
-            // Failed Clerk session
+app.get("/auth/github/callback", (req, res, next) => {
+    passport.authenticate("github", (err, user, info) => {
+        if (err) {
+            console.error("❌ Passport authentication error:", err);
+            return res.redirect(`${process.env.FRONTEND_URL || "http://localhost:3000"}/dashboard?githubStatus=failed&error=${encodeURIComponent(err.message)}`);
+        }
+        if (!user) {
+            console.warn("⚠️ No user returned from passport:", info);
             return res.redirect(`${process.env.FRONTEND_URL || "http://localhost:3000"}/dashboard?githubStatus=failed`);
         }
+        req.logIn(user, async (loginErr) => {
+            if (loginErr) {
+                console.error("❌ Passport login error:", loginErr);
+                return res.redirect(`${process.env.FRONTEND_URL || "http://localhost:3000"}/dashboard?githubStatus=failed`);
+            }
+            
+            const userId = req.query.state;
+            const { profile, accessToken } = user;
 
-        await GithubConnection.findOneAndUpdate(
-            { userId },
-            { userId, githubUsername: profile.username, accessToken },
-            { upsert: true, new: true }
-        );
+            if (!userId) {
+                console.warn("⚠️ No userId (state) found in callback query parameters.");
+                return res.redirect(`${process.env.FRONTEND_URL || "http://localhost:3000"}/dashboard?githubStatus=failed&error=missing_userid`);
+            }
 
-        // Redirect with success query param
-        res.redirect(`${process.env.FRONTEND_URL || "http://localhost:3000"}/dashboard?githubStatus=success`);
-    }
-);
+            try {
+                await GithubConnection.findOneAndUpdate(
+                    { userId },
+                    { userId, githubUsername: profile.username, accessToken },
+                    { upsert: true, new: true }
+                );
+                return res.redirect(`${process.env.FRONTEND_URL || "http://localhost:3000"}/dashboard?githubStatus=success`);
+            } catch (dbErr) {
+                console.error("❌ DB save error:", dbErr);
+                return res.redirect(`${process.env.FRONTEND_URL || "http://localhost:3000"}/dashboard?githubStatus=failed`);
+            }
+        });
+    })(req, res, next);
+});
 
 app.get("/api/github/repos", ClerkExpressRequireAuth(), async (req, res) => {
     const { userId } = req.auth;
