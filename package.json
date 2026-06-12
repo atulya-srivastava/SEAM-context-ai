@@ -1,9 +1,0 @@
-{
-  "workspaces": [
-    "hackfest-fe",
-    "backend"
-  ],
-  "dependencies": {
-    "react-textarea-autosize": "^8.5.9"
-  }
-}
