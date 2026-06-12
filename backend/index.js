@@ -66,19 +66,25 @@ passport.deserializeUser((obj, done) => done(null, obj));
 app.get("/", (req, res) => res.json({ status: "Backend running ✅" }));
 
 // GitHub Login
-app.get("/auth/github", passport.authenticate("github", { scope: ["repo"] }));
+app.get("/auth/github", (req, res, next) => {
+    const { userId } = req.query;
+    passport.authenticate("github", {
+        scope: ["repo"],
+        state: userId
+    })(req, res, next);
+});
 
 // GitHub Callback
 app.get(
     "/auth/github/callback",
     passport.authenticate("github", { failureRedirect: "/" }),
     async (req, res) => {
-        const { userId } = req.auth || {}; // Clerk userId
+        const userId = req.query.state; // Clerk userId passed in state
         const { profile, accessToken } = req.user;
 
         if (!userId) {
             // Failed Clerk session
-            return res.redirect("http://localhost:3000/dashboard?githubStatus=failed");
+            return res.redirect(`${process.env.FRONTEND_URL || "http://localhost:3000"}/dashboard?githubStatus=failed`);
         }
 
         await GithubConnection.findOneAndUpdate(
@@ -88,14 +94,14 @@ app.get(
         );
 
         // Redirect with success query param
-        res.redirect("http://localhost:3000/dashboard?githubStatus=success");
+        res.redirect(`${process.env.FRONTEND_URL || "http://localhost:3000"}/dashboard?githubStatus=success`);
     }
 );
 
 app.get("/api/github/repos", ClerkExpressRequireAuth(), async (req, res) => {
-    const { orgId, userId } = req.auth;
+    const { userId } = req.auth;
 
-    const connection = await GithubConnection.findOne({ orgId, userId });
+    const connection = await GithubConnection.findOne({ userId });
     if (!connection) {
         return res.status(403).json({ error: "No GitHub connection found" });
     }
@@ -109,8 +115,8 @@ app.get("/api/github/repos", ClerkExpressRequireAuth(), async (req, res) => {
 });
 
 app.get("/api/github/issues", ClerkExpressRequireAuth(), async (req, res) => {
-    const { orgId, userId } = req.auth;
-    const connection = await GithubConnection.findOne({ orgId, userId });
+    const { userId } = req.auth;
+    const connection = await GithubConnection.findOne({ userId });
 
     if (!connection) {
         return res.status(403).json({ error: "No GitHub connection found" });

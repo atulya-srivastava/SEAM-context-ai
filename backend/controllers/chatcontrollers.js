@@ -136,10 +136,7 @@ export const deleteMessageInChat = async (req, res) => {
     const chat = await Chat.findOne({ _id: req.params.chatId, userId });
     if (!chat) return res.status(404).json({ message: 'Chat not found' });
 
-    const message = chat.messages.id(req.params.messageId);
-    if (!message) return res.status(404).json({ message: 'Message not found' });
-
-    message.remove();
+    chat.messages.pull(req.params.messageId);
     await chat.save();
 
     res.status(200).json({ message: 'Message deleted successfully', chat });
