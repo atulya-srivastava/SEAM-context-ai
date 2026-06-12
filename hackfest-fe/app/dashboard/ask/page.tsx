@@ -352,7 +352,7 @@ How can I help you today?`,
         }
 
         try {
-            const model = "gemini-1.5-flash-latest";
+            const model = "gemini-3.5-flash";
             const simplifyPrompt = `Please analyze the following response and provide a simplified, concise version that highlights only the essential points and key information. Make it easy to understand and focus on the most important aspects:
 
 ${originalResponse}`;
@@ -392,7 +392,7 @@ ${originalResponse}`;
             });
         }
 
-        const model = "gemini-1.5-flash-latest"; // Using a standard model name
+        const model = "gemini-3.5-flash"; // Using a standard model name
         const response = await fetch(
             `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`,
             {
