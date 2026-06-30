@@ -11,8 +11,9 @@ Teams rely on multiple tools like Slack, Google Docs, Notion, GitHub, and Drive,
 ## Solution
 
 - **Unified AI Knowledge Layer**: Integrates with GitHub, Slack, Notion, Google Drive, Gmail, and Microsoft Teams.
-- **Embeddings & Vector Database**: Uses embeddings (powered by Cohere) stored in a vector database (Chroma) for efficient retrieval.
+- **Embeddings & Vector Database**: Uses embeddings (powered by Google Gemini) stored in a Postgres vector database (Supabase pgvector) with Row-Level Security (RLS) for multi-tenant data isolation.
 - **Natural Language Queries**: Allows users to search with queries like, "Show me all Slack conversations about API keys from last week."
+- **AI Intent Classification**: Employs a locally fine-tuned DistilBERT model to automatically route user queries to the correct integrations without relying on keyword heuristics.
 - **Simplify Feature**: Provides concise, pinpointed responses when users need summarized results.
 
 [![Screenshot-2025-09-07-101944.png](https://i.postimg.cc/FKP4j1zC/Screenshot-2025-09-07-101944.png)](https://postimg.cc/5HFTJ4w8)
@@ -20,10 +21,10 @@ Teams rely on multiple tools like Slack, Google Docs, Notion, GitHub, and Drive,
 ## Hackathon MVP Features
 
 - **Integration**: Connects with GitHub, Slack, Notion, Google Drive, Gmail, and Microsoft Teams.
-- **Modern Chat UI**: A user-friendly interface for natural language queries with auto-detection for specific platforms or combinations.
+- **Modern Chat UI**: A user-friendly interface for natural language queries with auto-detection (powered by DistilBERT) for specific platforms or combinations.
 - **Search Flexibility**: Users can search within a single platform (e.g., Slack or Drive) or across multiple platforms, with results appended and contextualized.
 - **Simplify Option**: Condenses results into concise, to-the-point responses.
-- **Embedding Storage**: Stores embeddings locally or in a hosted vector database (Chroma).
+- **Embedding Storage**: Stores embeddings securely in a hosted Supabase pgvector database, protected by Postgres Row-Level Security (RLS).
 
 [![IMG-20250907-WA0007.jpg](https://i.postimg.cc/KvcQRJj1/IMG-20250907-WA0007.jpg)](https://postimg.cc/kDZWHNxC)
 
@@ -79,13 +80,14 @@ GITHUB_CLIENT_ID=<your-github-client-id>
 GITHUB_CLIENT_SECRET=<your-github-client-secret>
 GITHUB_CALLBACK_URL=<your-github-callback-url>
 GITHUB_WEBHOOK_SECRET=<your-github-webhook-secret>
+CLERK_PUBLISHABLE_KEY=<your-clerk-publishable-key>
 CLERK_SECRET_KEY=<your-clerk-secret-key>
 SESSION_SECRET=<your-session-secret>
 MONGO_DB_URI=<your-mongodb-uri>
-CHROMA_API_KEY=<your-chroma-api-key>
-CHROMA_TENANT_ID=<your-chroma-tenant-id>
-CHROMA_DB_NAME=<your-chroma-db-name>
-COHERE_API_KEY=<your-cohere-api-key>
+GROQ_API_KEY=<your-groq-api-key>
+SUPABASE_URL=<your-supabase-url>
+SUPABASE_SERVICE_ROLE_KEY=<your-supabase-service-role-key>
+GEMINI_API_KEY=<your-gemini-api-key>
 ```
 
 ## Usage
@@ -103,6 +105,6 @@ COHERE_API_KEY=<your-cohere-api-key>
 ## Technologies Used
 
 - **Frontend**: Next.js, Tailwind CSS.
-- **Backend**: Node.js, MongoDB, Clerk for authentication
-- **AI & Embeddings**: Cohere for embeddings, Chroma for vector database storage
+- **Backend**: Node.js, Express, MongoDB, Clerk for authentication
+- **AI & Embeddings**: Google Gemini for embeddings, Supabase pgvector for vector storage, DistilBERT (via @xenova/transformers) for intent classification.
 - **Integrations**: GitHub, Slack, Notion, Google Drive, Gmail, Microsoft Teams, n8n
