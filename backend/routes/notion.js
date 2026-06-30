@@ -1,5 +1,5 @@
 import express from "express";
-import { addToChroma, client, getCollection, getEmbedding } from "../chroma.js";
+import { addDocuments, searchDocuments, getEmbedding } from "../supabase.js";
 import GithubConnection from "../models/GithubConnection.js";
 import { ClerkExpressRequireAuth } from "@clerk/clerk-sdk-node";
 import { groq } from "../groq.js";

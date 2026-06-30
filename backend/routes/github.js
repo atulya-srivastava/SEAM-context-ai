@@ -1,5 +1,5 @@
 import express from "express";
-import { addToChroma, client, getCollection, getEmbedding } from "../chroma.js";
+import { addDocuments, searchDocuments, deleteByBranch, getEmbedding } from "../supabase.js";
 import GithubConnection from "../models/GithubConnection.js";
 import { ClerkExpressRequireAuth } from "@clerk/clerk-sdk-node";
 import { groq } from "../groq.js";
@@ -25,19 +25,18 @@ router.post("/sync-issues", ClerkExpressRequireAuth(), async (req, res) => {
     });
 
     const issues = await ghRes.json();
-    // prepare docs for Chroma
+    // prepare docs for Supabase
     const docs = issues.map((i) => ({
-        id: i.id,
+        id: `issue-${i.id}`,
         text: `${i.title} - ${i.body}`,
-        metadata: { url: i.html_url, repo: i.repository.url },
+        metadata: { repo: i.repository?.full_name || "unknown" },
     }));
 
-    await addToChroma(docs);
+    await addDocuments(docs, userId);
 
-    console.log("Synced issues to ChromaDB:", docs);
+    console.log("Synced issues to Supabase:", docs.length);
 
-
-    res.json({ message: "Synced issues into ChromaDB", count: docs.length });
+    res.json({ message: "Synced issues into Supabase", count: docs.length });
 });
 
 export default router;
@@ -67,97 +66,15 @@ router.get("/all-repos", ClerkExpressRequireAuth(), async (req, res) => {
 });
 
 
-// routes/github.js
+// TODO: /repos route commented out — it used a separate "github_repos" ChromaDB collection.
+// The /all-repos endpoint above fetches repos directly from GitHub API and still works.
+// If repo-level semantic search is needed later, create a github_repos table in Supabase.
+
+/*
 router.get("/repos", async (req, res) => {
-    try {
-        const conn = await GithubConnection.findOne();
-        if (!conn) return res.status(404).json({ error: "No GitHub connection found" });
-
-        // ✅ helper function to fetch ALL branches with pagination
-        async function getAllBranches(owner, repo, token) {
-            let branches = [];
-            let page = 1;
-
-            while (true) {
-                const res = await fetch(
-                    `https://api.github.com/repos/${owner}/${repo}/branches?per_page=100&page=${page}`,
-                    {
-                        headers: {
-                            Authorization: `token ${token}`,
-                            "User-Agent": "HackQuest-App",
-                        },
-                    }
-                );
-                const data = await res.json();
-
-                if (!Array.isArray(data) || data.length === 0) break;
-
-                branches = branches.concat(data.map((b) => b.name));
-                page++;
-            }
-
-            return branches;
-        }
-
-        // 1. Fetch all repos
-        const response = await fetch(
-            "https://api.github.com/user/repos?per_page=100",
-            {
-                headers: {
-                    Authorization: `token ${conn.accessToken}`,
-                    "User-Agent": "HackQuest-App",
-                },
-            }
-        );
-        const repos = await response.json();
-
-        // 2. Create collection (drop previous data)
-        const collection = await client.getOrCreateCollection({ name: "github_repos" });
-
-        console.log("🗑️ Old repos deleted from Chroma");
-
-        let successCount = 0;
-
-        // 3. Loop repos one by one
-        for (const repo of repos) {
-            // fetch branches for each repo
-            const branchNames = await getAllBranches(
-                repo.owner.login,
-                repo.name,
-                conn.accessToken
-            );
-
-            const text = `Repo: ${repo.name}\nDescription: ${repo.description || "No description"
-                }\nBranches: ${branchNames.join(", ") || "No branches"}`;
-
-            // 🚀 Embed ONE repo at a time
-            const embedding = await getEmbedding(text);
-
-            await collection.add({
-                ids: [repo.id.toString()],
-                documents: [text],
-                embeddings: [embedding],
-                metadatas: [{
-                    name: repo.name || "",
-                    url: repo.html_url || "",
-                    stars: repo.stargazers_count ?? 0,
-                    language: repo.language || "unknown",
-                    branches: branchNames.join(", "),  // ✅ safe string
-                }],
-            });
-
-            successCount++;
-        }
-
-        console.log("Repos with branches stored in Chroma ✅");
-        res.json({ message: "Repos synced with branches", count: successCount });
-    } catch (err) {
-        console.error("Error in /repos:", err);
-        res.status(500).json({ error: "Failed to fetch repos" });
-    }
+    // ... old ChromaDB github_repos code removed ...
 });
-
-
+*/
 
 
 // routes/github.js
@@ -181,11 +98,11 @@ function parseLLMResponse(raw) {
 
 
 router.post("/ask", ClerkExpressRequireAuth(), async (req, res) => {
+    const { question, chatId } = req.body;
     try {
         const { userId } = req.auth;
         console.log("User ID:", userId);
         if (!userId) return res.status(403).json({ error: "Unauthorized" });
-        const { question, chatId } = req.body;
         if (!question) {
             return res.status(400).json({ error: "Question is required" });
         }
@@ -208,23 +125,7 @@ router.post("/ask", ClerkExpressRequireAuth(), async (req, res) => {
             /changes.*in\s+(.+)\s+in\s+(\w+)\s+branch\s+of\s+(\w+)/i
         );
 
-        // Common function to query Chroma and get context
-        const queryChroma = async (embedding, filters = {}, nResults = 5) => {
-            const collection = await client.getOrCreateCollection({
-                name: "github_code",
-            });
-
-            const where = { userId, ...filters };
-
-            return collection.query({
-                queryEmbeddings: [embedding],
-                where,
-                nResults,
-            });
-        };
-
         let result, context;
-        const embedding = await getEmbedding(question);
 
         if (match) {
             // File-specific query
@@ -233,34 +134,31 @@ router.post("/ask", ClerkExpressRequireAuth(), async (req, res) => {
                 `📂 Detected file-change query for ${repoName}/${branchName}/${fileName}`
             );
 
-            result = await queryChroma(embedding, {
-                repo: repoName,
-                branch: branchName,
-                file: { $contains: fileName },
-            }, 10);
+            // Search with repo+branch filter, then post-filter by file name
+            let results = await searchDocuments(question, userId, { repo: repoName, branch: branchName }, 20);
 
-            context = result.documents[0]
+            const fileFiltered = results.filter(r => r.file && r.file.includes(fileName.trim()));
+            result = fileFiltered.length > 0 ? fileFiltered.slice(0, 10) : results.slice(0, 10);
+
+            context = result
                 .map((doc, idx) => {
-                    const meta = result.metadatas[0][idx];
-                    return `Snippet ${idx + 1} from ${meta.file}:\n${doc}\n
-Author: ${meta.author} (${meta.username})
-Repo: ${meta.repo}
-Branch: ${meta.branch}
-Last Edited: ${meta.lastEdited}
-Commit: ${meta.commit}
-Commit URL: ${meta.commitUrl}`;
+                    return `Snippet ${idx + 1} from ${doc.file}:\n${doc.content}\n
+Author: ${doc.author} (${doc.username})
+Repo: ${doc.repo}
+Branch: ${doc.branch}
+Last Edited: ${doc.last_edited}
+Commit: ${doc.commit_sha}`;
                 })
                 .join("\n\n");
         } else {
             // Fallback semantic search
-            result = await queryChroma(embedding);
+            result = await searchDocuments(question, userId);
 
-            context = result.documents[0]
+            context = result
                 .map((doc, idx) => {
-                    const meta = result.metadatas[0][idx];
-                    return `From ${meta.repo}/${meta.branch}/${meta.file}:\n${doc}\n
-Author: ${meta.author}
-Commit: ${meta.commit}`;
+                    return `From ${doc.repo}/${doc.branch}/${doc.file}:\n${doc.content}\n
+Author: ${doc.author}
+Commit: ${doc.commit_sha}`;
                 })
                 .join("\n\n");
         }
@@ -303,10 +201,18 @@ Answer in a user-friendly way, and include a JSON block with structured details 
             ...finalResponse,
             summary: explanation,
             ...metadata, // contributor, lastEdited, commitUrl, etc.
-            matches: result.documents[0].map((doc, idx) => ({
-                text: doc,
-                metadata: result.metadatas[0][idx],
-                score: result.distances[0][idx],
+            matches: result.map((doc) => ({
+                text: doc.content,
+                metadata: {
+                    repo: doc.repo,
+                    branch: doc.branch,
+                    file: doc.file,
+                    author: doc.author,
+                    username: doc.username,
+                    commit_sha: doc.commit_sha,
+                    last_edited: doc.last_edited,
+                },
+                score: doc.similarity,
             })),
         };
 
@@ -343,11 +249,11 @@ Answer in a user-friendly way, and include a JSON block with structured details 
         const lowerQ = (question || "").toLowerCase();
         let fallbackSummary = "I analyzed the repository. ";
         if (lowerQ.includes("db") || lowerQ.includes("database")) {
-            fallbackSummary += "The database connection is initiated in `db.js` using Mongoose and connects to MongoDB. Vector embeddings are stored and searched in ChromaDB.";
+            fallbackSummary += "The database connection is initiated in `db.js` using Mongoose and connects to MongoDB. Vector embeddings are stored and searched in Supabase pgvector.";
         } else if (lowerQ.includes("auth") || lowerQ.includes("login") || lowerQ.includes("clerk")) {
             fallbackSummary += "Authentication is managed via Clerk in the frontend and validated in the backend with ClerkExpressRequireAuth. GitHub connections use Passport-GitHub OAuth.";
         } else {
-            fallbackSummary += "Here is a quick summary: The codebase consists of a Next.js 15 frontend under `hackfest-fe/` and an Express backend under `backend/`. It uses ChromaDB for semantic vector searches of codebase files.";
+            fallbackSummary += "Here is a quick summary: The codebase consists of a Next.js 15 frontend under `hackfest-fe/` and an Express backend under `backend/`. It uses Supabase pgvector for semantic vector searches of codebase files.";
         }
 
         const fallbackResponse = {
@@ -360,7 +266,7 @@ Answer in a user-friendly way, and include a JSON block with structured details 
             commitUrl: "https://github.com/atulya-srivastava/seam",
             project_name: "SEAM-context-ai",
             language: "JavaScript / TypeScript",
-            database: "MongoDB / ChromaDB",
+            database: "MongoDB / Supabase pgvector",
             matches: []
         };
         
@@ -388,8 +294,6 @@ router.post("/sync-all-repos-code", ClerkExpressRequireAuth(), async (req, res) 
         });
         const repos = await reposRes.json();
         if (!Array.isArray(repos)) return res.status(400).json({ error: "Failed to fetch repos" });
-
-        const collection = await client.getOrCreateCollection({ name: "github_code" });
 
         let totalFiles = 0;
         let totalRepos = 0;
@@ -429,13 +333,11 @@ router.post("/sync-all-repos-code", ClerkExpressRequireAuth(), async (req, res) 
                 const size = 800;
                 for (let i = 0; i < content.length; i += size) {
                     const chunk = content.slice(i, i + size);
-                    const emb = await getEmbedding(chunk);
-                    await collection.add({
-                        ids: [`${repoName}-${file.path}-${i}`],
-                        documents: [chunk],
-                        embeddings: [emb],
-                        metadatas: [{ repo: repoName, file: file.path, chunk: i }],
-                    });
+                    await addDocuments([{
+                        id: `${repoName}-${file.path}-${i}`,
+                        text: chunk,
+                        metadata: { repo: repoName, file: file.path, chunk: i, branch },
+                    }], userId);
                 }
 
                 totalFiles++;
@@ -445,7 +347,7 @@ router.post("/sync-all-repos-code", ClerkExpressRequireAuth(), async (req, res) 
         }
 
         res.json({
-            message: "✅ Synced all repos into ChromaDB",
+            message: "✅ Synced all repos into Supabase pgvector",
             repos: totalRepos,
             files: totalFiles,
         });
@@ -456,29 +358,6 @@ router.post("/sync-all-repos-code", ClerkExpressRequireAuth(), async (req, res) 
 });
 
 
-// routes/github.js
-// router.get("/repos/:owner/:repo/branches", ClerkExpressRequireAuth(), async (req, res) => {
-//     try {
-//         const { orgId, userId } = req.auth;
-//         const { owner, repo } = req.params;
-
-//         const connection = await GithubConnection.findOne({ orgId, userId });
-//         if (!connection) return res.status(403).json({ error: "No GitHub token" });
-
-//         const response = await fetch(
-//             `https://api.github.com/repos/${owner}/${repo}/branches`,
-//             { headers: { Authorization: `token ${connection.accessToken}` } }
-//         );
-//         const branches = await response.json();
-
-//         res.json(branches.map(b => ({ name: b.name, commit: b.commit.sha })));
-//     } catch (err) {
-//         console.error("❌ Error fetching branches:", err);
-//         res.status(500).json({ error: "Failed to fetch branches" });
-//     }
-// });
-
-// routes/github.js
 // Sync a specific branch of a repo with commit metadata
 router.post("/repos/:owner/:repo/sync-branch", ClerkExpressRequireAuth(), async (req, res) => {
     try {
@@ -489,13 +368,8 @@ router.post("/repos/:owner/:repo/sync-branch", ClerkExpressRequireAuth(), async 
         const connection = await GithubConnection.findOne({ userId });
         if (!connection) return res.status(403).json({ error: "No GitHub token" });
 
-        const collection = await client.getOrCreateCollection({ name: "github_code" });
-
-
         // 1. Delete old branch data
-        await collection.delete({
-            where: { $and: [{ repo }, { branch }] }
-        });
+        await deleteByBranch(repo, branch, userId);
 
         // 2. Fetch commit history for this branch
         const commitsRes = await fetch(
@@ -568,14 +442,10 @@ router.post("/repos/:owner/:repo/sync-branch", ClerkExpressRequireAuth(), async 
             const size = 800;
             for (let i = 0; i < content.length; i += size) {
                 const chunk = content.slice(i, i + size);
-                const emb = await getEmbedding(chunk);
-
-                await collection.add({
-                    ids: [`${repo}-${branch}-${file.path}-${i}`],
-                    documents: [chunk],
-                    embeddings: [emb],
-                    metadatas: [{
-                        userId,
+                await addDocuments([{
+                    id: `${repo}-${branch}-${file.path}-${i}`,
+                    text: chunk,
+                    metadata: {
                         repo,
                         branch,
                         file: file.path,
@@ -583,10 +453,10 @@ router.post("/repos/:owner/:repo/sync-branch", ClerkExpressRequireAuth(), async 
                         author: commitMeta.author || "Unknown",
                         email: commitMeta.email || "Unknown",
                         username: commitMeta.username || "Unknown",
-                        commit: commitMeta.sha || "Unknown",
-                        lastEdited: commitMeta.lastEdited || "Unknown"
-                    }],
-                });
+                        commit_sha: commitMeta.sha || "Unknown",
+                        last_edited: commitMeta.lastEdited || "Unknown",
+                    },
+                }], userId);
             }
 
             totalFiles++;
