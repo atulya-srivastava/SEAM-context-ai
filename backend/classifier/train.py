@@ -21,6 +21,7 @@ from transformers import (
     AutoModelForSequenceClassification,
     TrainingArguments,
     Trainer,
+    DataCollatorWithPadding
 )
 from optimum.onnxruntime import ORTModelForSequenceClassification
 from optimum.onnxruntime.configuration import AutoQuantizationConfig
@@ -35,7 +36,7 @@ OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "model")
 DATASET_PATH = os.path.join(os.path.dirname(__file__), "dataset.csv")
 
 # --- Load dataset ---
-print("📂 Loading dataset from", DATASET_PATH)
+print("Loading dataset from", DATASET_PATH)
 texts, labels = [], []
 with open(DATASET_PATH, "r") as f:
     reader = csv.reader(f)
@@ -47,7 +48,7 @@ with open(DATASET_PATH, "r") as f:
                 texts.append(text)
                 labels.append(LABEL2ID[label])
 
-print(f"✅ Loaded {len(texts)} samples")
+print(f"Loaded {len(texts)} samples")
 for label_name, label_id in LABEL2ID.items():
     count = labels.count(label_id)
     print(f"   {label_name}: {count}")
@@ -61,10 +62,12 @@ train_texts, test_texts, train_labels, test_labels = train_test_split(
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 
 def tokenize(examples):
-    return tokenizer(examples["text"], padding="max_length", truncation=True, max_length=128)
+    return tokenizer(examples["text"], truncation=True, max_length=128)
 
 train_dataset = Dataset.from_dict({"text": train_texts, "label": train_labels}).map(tokenize, batched=True)
 test_dataset = Dataset.from_dict({"text": test_texts, "label": test_labels}).map(tokenize, batched=True)
+
+data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
 
 # --- Train ---
 model = AutoModelForSequenceClassification.from_pretrained(
@@ -96,14 +99,16 @@ trainer = Trainer(
     args=training_args,
     train_dataset=train_dataset,
     eval_dataset=test_dataset,
+    tokenizer=tokenizer,
+    data_collator=data_collator,
     compute_metrics=compute_metrics,
 )
 
-print("\n🚀 Training DistilBERT...")
+print("\nTraining DistilBERT...")
 trainer.train()
 
 # --- Evaluate ---
-print("\n📊 Evaluation:")
+print("\n Evaluation:")
 preds = trainer.predict(test_dataset)
 pred_labels = np.argmax(preds.predictions, axis=-1)
 print(classification_report(test_labels, pred_labels, target_names=LABELS))
@@ -113,14 +118,18 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 model.save_pretrained(OUTPUT_DIR)
 tokenizer.save_pretrained(OUTPUT_DIR)
 
-# --- Export to ONNX + quantize ---
-print("\n📦 Exporting to ONNX + quantizing...")
+# --- Export to ONNX ---
+print("\n Exporting to ONNX...")
 ort_model = ORTModelForSequenceClassification.from_pretrained(OUTPUT_DIR, export=True)
-qconfig = AutoQuantizationConfig.avx512_vnni(is_static=False, per_channel=False)
 ort_model.save_pretrained(OUTPUT_DIR)
 
-print(f"\n✅ Model saved to {OUTPUT_DIR}/")
-print("Files:")
-for f in os.listdir(OUTPUT_DIR):
-    size = os.path.getsize(os.path.join(OUTPUT_DIR, f))
-    print(f"   {f} ({size // 1024} KB)")
+onnx_dir = os.path.join(OUTPUT_DIR, "onnx")
+os.makedirs(onnx_dir, exist_ok=True)
+
+if os.path.exists(os.path.join(OUTPUT_DIR, "model.onnx")):
+    os.rename(os.path.join(OUTPUT_DIR, "model.onnx"), os.path.join(onnx_dir, "model.onnx"))
+
+if os.path.exists(os.path.join(OUTPUT_DIR, "model.safetensors")):
+    os.remove(os.path.join(OUTPUT_DIR, "model.safetensors"))
+
+print(f"\n Model saved to {OUTPUT_DIR}/")

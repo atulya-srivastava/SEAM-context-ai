@@ -4,3 +4,4 @@ node_modules
 backend/classifier/venv/
 backend/classifier/model/*.onnx
 backend/classifier/model/*.safetensors
+backend/classifier/model/onnx
