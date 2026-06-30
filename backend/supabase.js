@@ -1,4 +1,10 @@
 // Supabase client + Gemini embedding (replaces chroma.js + Cohere)
+// 
+// SECURITY: Row-Level Security (RLS) is enabled on the github_code table.
+// Policies enforce that authenticated users can only access their own rows
+// via (user_id = auth.jwt() ->> 'sub'). The backend uses service_role key
+// which bypasses RLS for server-side operations. All queries still filter
+// by userId from Clerk auth as an application-level safeguard.
 import { createClient } from "@supabase/supabase-js";
 import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
