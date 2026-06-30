@@ -14,18 +14,18 @@ import os
 import csv
 import numpy as np
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, f1_score
 from datasets import Dataset
 from transformers import (
     AutoTokenizer,
     AutoModelForSequenceClassification,
     TrainingArguments,
     Trainer,
-    DataCollatorWithPadding
+    DataCollatorWithPadding,
+    EarlyStoppingCallback
 )
-from optimum.onnxruntime import ORTModelForSequenceClassification
+from optimum.onnxruntime import ORTModelForSequenceClassification, ORTQuantizer
 from optimum.onnxruntime.configuration import AutoQuantizationConfig
-import torch
 
 # --- Config ---
 MODEL_NAME = "distilbert-base-uncased"
@@ -75,7 +75,7 @@ model = AutoModelForSequenceClassification.from_pretrained(
 )
 
 training_args = TrainingArguments(
-    output_dir="./classifier/checkpoints",
+    output_dir=os.path.join(os.path.dirname(__file__), "checkpoints"),
     eval_strategy="epoch",
     save_strategy="epoch",
     learning_rate=2e-5,
@@ -84,7 +84,7 @@ training_args = TrainingArguments(
     num_train_epochs=5,
     weight_decay=0.01,
     load_best_model_at_end=True,
-    metric_for_best_model="accuracy",
+    metric_for_best_model="f1",
     logging_steps=10,
 )
 
@@ -92,7 +92,8 @@ def compute_metrics(eval_pred):
     logits, labels = eval_pred
     preds = np.argmax(logits, axis=-1)
     acc = (preds == labels).mean()
-    return {"accuracy": acc}
+    f1 = f1_score(labels, preds, average="weighted")
+    return {"accuracy": acc, "f1": f1}
 
 trainer = Trainer(
     model=model,
@@ -102,6 +103,7 @@ trainer = Trainer(
     tokenizer=tokenizer,
     data_collator=data_collator,
     compute_metrics=compute_metrics,
+    callbacks=[EarlyStoppingCallback(early_stopping_patience=2)],
 )
 
 print("\nTraining DistilBERT...")
@@ -121,15 +123,42 @@ tokenizer.save_pretrained(OUTPUT_DIR)
 # --- Export to ONNX ---
 print("\n Exporting to ONNX...")
 ort_model = ORTModelForSequenceClassification.from_pretrained(OUTPUT_DIR, export=True)
-ort_model.save_pretrained(OUTPUT_DIR)
-
 onnx_dir = os.path.join(OUTPUT_DIR, "onnx")
 os.makedirs(onnx_dir, exist_ok=True)
 
-if os.path.exists(os.path.join(OUTPUT_DIR, "model.onnx")):
-    os.rename(os.path.join(OUTPUT_DIR, "model.onnx"), os.path.join(onnx_dir, "model.onnx"))
+# Save unquantized model to onnx_dir
+ort_model.save_pretrained(onnx_dir)
 
-if os.path.exists(os.path.join(OUTPUT_DIR, "model.safetensors")):
-    os.remove(os.path.join(OUTPUT_DIR, "model.safetensors"))
+# --- Quantize ONNX model ---
+print("\n Quantizing ONNX model...")
+quantizer = ORTQuantizer.from_pretrained(ort_model)
+qconfig = AutoQuantizationConfig.avx2(is_static=False, per_channel=False)
+quantizer.quantize(save_dir=onnx_dir, quantization_config=qconfig)
 
-print(f"\n Model saved to {OUTPUT_DIR}/")
+# --- Cleanup ---
+print("\n Cleaning up redundant files...")
+
+# 1. Delete the unquantized ONNX model
+unquantized_onnx = os.path.join(onnx_dir, "model.onnx")
+if os.path.exists(unquantized_onnx):
+    os.remove(unquantized_onnx)
+
+# 2. Delete the PyTorch weights (safetensors)
+safetensors_path = os.path.join(OUTPUT_DIR, "model.safetensors")
+if os.path.exists(safetensors_path):
+    os.remove(safetensors_path)
+
+# 3. Clean up the training checkpoints directory
+import shutil
+checkpoints_dir = os.path.abspath(training_args.output_dir)
+if os.path.exists(checkpoints_dir):
+    shutil.rmtree(checkpoints_dir)
+
+# 4. Remove duplicate configuration/tokenizer files created by Optimum inside the onnx folder.
+# We keep only 'model_quantized.onnx' and 'ort_config.json' inside onnx/.
+for filename in os.listdir(onnx_dir):
+    if filename not in ["model_quantized.onnx", "ort_config.json"]:
+        os.remove(os.path.join(onnx_dir, filename))
+
+print(f"\n Model training, export, and cleanup completed successfully.")
+print(f" Clean model files saved to {OUTPUT_DIR}/")

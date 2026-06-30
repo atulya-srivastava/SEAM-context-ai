@@ -14,7 +14,7 @@ export async function loadClassifier() {
   if (!classifier) {
     console.log("🧠 Loading intent classifier...");
     classifier = await pipeline("text-classification", "model", {
-      quantized: false,
+      quantized: true,
     });
     console.log("✅ Intent classifier loaded");
   }
