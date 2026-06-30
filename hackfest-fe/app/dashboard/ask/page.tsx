@@ -220,32 +220,20 @@ How can I help you today?`,
         }
     }, [messages, isLoading]);
 
-    // Determine which API to use based on input
-    const determineAPIMode = (input: string): "github" | "integration" | "general" => {
-        const githubKeywords = [
-            "repo", "repository", "commit", "branch", "file", "code", "github",
-            "project", "contributor", "author", "merge", "pull request", "diff",
-            "clone", "fork", "push", "pull", "main", "master", "develop"
-        ];
-
-        const lowerInput = input.toLowerCase();
-        const hasGithubKeywords = githubKeywords.some(keyword =>
-            lowerInput.includes(keyword)
-        );
-
-        // Priority 1: GitHub-related content always goes to GitHub API
-        if (hasGithubKeywords) {
-            return "github";
+    // Determine which API to use based on input (DistilBERT classifier)
+    const determineAPIMode = async (input: string): Promise<"github" | "integration" | "general"> => {
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/classify`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ text: input }),
+            });
+            const data = await res.json();
+            return data.intent || "general";
+        } catch (err) {
+            console.error("Classification error, falling back to general:", err);
+            return "general";
         }
-
-        // Priority 2: If integrations are active and it's NOT GitHub content
-        const hasActiveIntegrations = Object.values(activeIntegrations).some(Boolean);
-        if (hasActiveIntegrations) {
-            return "integration";
-        }
-
-        // Priority 3: General AI for everything else
-        return "general";
     };
 
    
@@ -426,7 +414,7 @@ ${originalResponse}`;
         setIsLoading(true);
 
         try {
-            let apiMode = currentMode === "auto" ? determineAPIMode(currentInput) :
+            let apiMode = currentMode === "auto" ? await determineAPIMode(currentInput) :
                 currentMode === "github" ? "github" :
                     Object.values(activeIntegrations).some(Boolean) ? "integration" : "general";
 

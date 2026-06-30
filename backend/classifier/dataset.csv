@@ -1,0 +1,1000 @@
+what is a REST API,general
+explain how OAuth works,general
+what's the difference between SQL and NoSQL,general
+what is the purpose of the HTTP 403 status code,general
+how does a CDN speed up website loading,general
+what is the difference between encryption and hashing,general
+explain the concept of object-relational mapping,general
+what does ACID compliance mean in databases,general
+what is the role of a reverse proxy server,general
+how do websockets differ from standard HTTP,general
+what is the purpose of a subnet mask,general
+explain how DNS resolution works step by step,general
+what is asymmetric cryptography,general
+what is the difference between a process and a thread,general
+explain the Model-View-Controller design pattern,general
+what is the difference between authentication and authorization,general
+how does public key infrastructure work,general
+what is cross-origin resource sharing,general
+explain the concept of a dead-letter queue,general
+what is the difference between a symmetric and asymmetric cipher,general
+what is the difference between compiler and interpreter,general
+explain functional programming paradigm basics,general
+what are the solid principles in object-oriented design,general
+what is a memory leak and how does it happen,general
+explain the difference between pass-by-value and pass-by-reference,general
+what is garbage collection in Java,general
+what's the difference between abstract class and interface,general
+what are dynamic programming algorithms used for,general
+explain duck typing in Python,general
+what is a closure in JavaScript,general
+what is the difference between synchronous and asynchronous code,general
+how does type casting work in C++,general
+what is the purpose of pointers in C,general
+explain polymorphism with a real-world example,general
+what is a higher-order function,general
+what is method overloading vs method overriding,general
+explain the concept of concurrency vs parallelism,general
+what is lazy loading in web development,general
+what are generics in programming languages,general
+explain mutable vs immutable objects,general
+what is infrastructure as code,general
+explain the difference between horizontal and vertical scaling,general
+what is a microservice architecture,general
+how does serverless computing work,general
+what is the purpose of a load balancer,general
+explain containerization vs virtualization,general
+what is Kubernetes and why is it used,general
+what is a blue-green deployment strategy,general
+explain the CAP theorem in distributed systems,general
+what is continuous integration and continuous deployment,general
+what is edge computing,general
+how does a message broker like Kafka work,general
+what is log aggregation in microservices,general
+explain the purpose of a health check endpoint,general
+what is a relational database management system,general
+what's the difference between a data warehouse and a data lake,general
+how does a multi-tenant application architecture work,general
+what is sharding in database systems,general
+explain circuit breaker pattern in microservices,general
+what is the role of an API gateway,general
+what is the time complexity of binary search,general
+explain how a hash table handles collisions,general
+what's the difference between a stack and a queue,general
+how does the quicksort algorithm work,general
+what is a directed acyclic graph,general
+explain the difference between BFS and DFS,general
+what is a binary search tree,general
+how does Dijkstra's algorithm find the shortest path,general
+what is big O notation used for,general
+what is a linked list and when should you use it,general
+explain the concept of space complexity,general
+what is a heap data structure,general
+how does merge sort work,general
+what is the difference between a tree and a graph,general
+what is a memoization technique,general
+explain how a trie data structure works,general
+what is a priority queue,general
+how does a red-black tree maintain balance,general
+what is the time complexity of inserting into an array,general
+explain the bubble sort algorithm,general
+what is a man-in-the-middle attack,general
+how does a firewall protect a network,general
+what is the difference between TCP and UDP,general
+explain how SQL injection works,general
+what is cross-site scripting,general
+what does the TLS handshake do,general
+how do JSON Web Tokens work,general
+what is a DDoS attack,general
+explain the concept of zero trust security,general
+what is the difference between IPv4 and IPv6,general
+how does a VPN encrypt your traffic,general
+what is multi-factor authentication,general
+explain salt in password hashing,general
+what is a buffer overflow vulnerability,general
+what's the difference between symmetric and public-key encryption,general
+how does port forwarding work,general
+what is the purpose of the SSH protocol,general
+explain cross-site request forgery,general
+what is penetration testing,general
+what are security certificates used for,general
+what is the capital of Australia,general
+how many planets are in the solar system,general
+who wrote Romeo and Juliet,general
+what is the speed of light in a vacuum,general
+which is the largest ocean on Earth,general
+what year did World War II end,general
+what are the three states of matter,general
+who painted the Mona Lisa,general
+what is the tallest mountain in the world,general
+how long does it take for Earth to orbit the Sun,general
+what is the chemical symbol for gold,general
+who discovered penicillin,general
+what is the smallest country in the world,general
+how many bones are in the adult human body,general
+what is the currency of Japan,general
+who was the first person to step on the moon,general
+what is the main language spoken in Brazil,general
+what causes a solar eclipse,general
+who developed the theory of relativity,general
+what is the deep ocean trench called,general
+what is inflation in economics,general
+explain the concept of supply and demand,general
+how do central banks determine interest rates,general
+what is the difference between stocks and bonds,general
+how does photosynthesis work in plants,general
+what is the purpose of the United Nations,general
+how many continents are there on Earth,general
+what is the boiling point of water in Celsius,general
+who invented the printing press,general
+what is the greenhouse effect,general
+what is the function of the human heart,general
+how do vaccines stimulate the immune system,general
+what is the capital of Canada,general
+who was the first president of the United States,general
+what is the primary component of the air we breathe,general
+how deep is the Mariana Trench,general
+what is the hardiest animal known to science,general
+who wrote the Odyssey,general
+what is the difference between a virus and a bacteria,general
+how does a magnifying glass work,general
+what is machine learning,general
+explain how a neural network learns,general
+what's the difference between supervised and unsupervised learning,general
+what is a large language model,general
+how do self-driving cars perceive their surroundings,general
+what is the difference between AI and machine learning,general
+explain computer vision basics,general
+what is reinforcement learning,general
+how does natural language processing work,general
+what is a decision tree in machine learning,general
+explain overfitting in data science,general
+what is deep learning,general
+how do recommendation algorithms work,general
+what is a Turing test,general
+what is data mining,general
+explain generative adversarial networks,general
+what is an artificial neuron,general
+what is linear regression used for,general
+explain natural language generation,general
+what is bias in machine learning models,general
+what is an operating system,general
+how does open-source software license work,general
+what is the purpose of the Linux kernel,general
+what's the difference between Unix and Linux,general
+how does virtual memory work in an OS,general
+what is a file system,general
+explain the difference between BIOS and UEFI,general
+what is the function of RAM in a computer,general
+how does a CPU process instructions,general
+what is a GPU used for besides gaming,general
+what is a URL shortener and how does it work,general
+explain how markdown text formatting works,general
+what is the difference between a web browser and a search engine,general
+how does a cache memory function,general
+what is pixel density,general
+explain cookies vs local storage,general
+what is a bit and a byte,general
+how does cloud storage ensure data redundancy,general
+what is open-source hardware,general
+what is a command line interface,general
+what is JSON and why is it popular,general
+what's the difference between XML and HTML,general
+what is responsive web design,general
+explain the difference between SVG and PNG images,general
+what is Unicode encoding,general
+what does UI and UX stand for,general
+explain the purpose of CSS variables,general
+what is accessible design or WCAG,general
+what is the difference between dark mode and light mode contrast standards,general
+explain semantic HTML elements,general
+what is an aspect ratio,general
+what is vector graphics,general
+how does gzip compression work,general
+what is base64 encoding used for,general
+explain the typography terms serif vs sans-serif,general
+what is metadata,general
+what is the difference between UTF-8 and UTF-16,general
+what is information architecture,general
+explain wireframing in design,general
+what is color theory basics,general
+show me all my public repositories,github
+list my repositories updated in the last week,github
+do I have any archived repositories?,github
+find the repository named backend-service,github
+get a list of all forks of my website repo,github
+which repositories are written in typescript?,github
+show repositories with open security alerts,github
+list my private repos,github
+what is the description of the API-gateway repo?,github
+display repositories ordered by stars,github
+how many repositories do I own?,github
+show me repositories with pending invitations,github
+find repositories containing the keyword auth,github
+list repositories that use the MIT license,github
+show my most active repositories this month,github
+do I have any empty repositories?,github
+list all templates available in my organization,github
+find repos that have not been updated for over a year,github
+show the storage size of my main repository,github
+list all microservices repositories,github
+find where AWS_SECRET_KEY is used in my code,github
+search for the function calculateTotal in all repos,github
+where is the database connection string defined?,github
+show me lines of code mentioning TODO or FIXME,github
+find all dockerfiles across my repositories,github
+search for the Express app initialization code,github
+find references to the deprecated login endpoint,github
+show me where the api route for products is handled,github
+search for package.json dependencies,github
+where did I import the logger module?,github
+find all python scripts in the analytics repo,github
+show code blocks containing hardcoded passwords,github
+search for the handleWebhook function definition,github
+where are the environment variables loaded in this project?,github
+find all unit tests for the authentication module,github
+search my code for Stripe API integrations,github
+where is the main entry point of the application?,github
+find references to v1/users in my codebase,github
+show me the CORS configuration code,github
+search for error handling blocks in the billing repo,github
+show me the latest commits on main branch,github
+who made the last commit to the frontend repo?,github
+list all commits from John Doe in the last month,github
+what was the commit message for the last release?,github
+show commits that modified the README file,github
+give me a list of commits on the staging branch,github
+find the commit that broke the build yesterday,github
+show commits containing the word hotfix,github
+list the history of commits for the auth controller,github
+what changes were made in commit a1b2c3d?,github
+show me commits made over the weekend,github
+list all cherry-picked commits in this branch,github
+who approved the last merge commit?,github
+show all commits related to issue #42,github
+what is the total number of commits in the main branch?,github
+show commits that updated the database schema,github
+list all unpushed commits on my local tracking branch,github
+who authored the commit adding the payment gateway?,github
+show me the commit logs for the last 24 hours,github
+find commits that reverted previous changes,github
+list all active branches in the core repository,github
+which branches are fully merged into main?,github
+show me the latest created tags,github
+are there any stale branches older than 3 months?,github
+what is the default branch for the mobile-app repo?,github
+show the git graph of branches for this project,github
+list branches that have open pull requests,github
+who created the feature/oauth branch?,github
+when was the release-v2.0 tag created?,github
+show branches that are ahead of main,github
+list all protected branches in this repo,github
+are there any unmerged branches belonging to me?,github
+show me the commit that the v1.5.0 tag points to,github
+find branches matching the pattern user-*,github
+what is the latest release tag in this repository?,github
+list all remote branches for the web-app project,github
+show the differences between develop and main branches,github
+which branch has the latest updates on the UI?,github
+list all tags created by the automation bot,github
+show branches that have no recent activity,github
+what files changed in the auth module,github
+show the contents of config.json on the production branch,github
+list all files modified in the last pull request,github
+who wrote the database migration code,github
+show me the git blame for line 45 of index.js,github
+what is the size of the main bundle file?,github
+list all configuration files in the deployment folder,github
+show the file tree structure of the assets directory,github
+when was the .gitignore file last modified?,github
+show the differences between the current file and its previous version,github
+list all markdown files in the documentation repo,github
+who deleted the utility script last week?,github
+show me the history of changes for server.js,github
+what files were added in the latest release?,github
+are there any large files tracking in git LFS?,github
+show me the code ownership for the routing module,github
+list all files that match the extension .yaml,github
+find the file where the port number is configured,github
+show me the raw content of the docker-compose file,github
+who modified the security policy file?,github
+list all open pull requests assigned to me,github
+show the code changes in pull request #105,github
+which pull requests are waiting for my review?,github
+show me closed pull requests that were never merged,github
+what is the status of the checks on PR #312?,github
+list all pull requests targeting the release branch,github
+who opened the pull request to fix the login bug?,github
+show comments on the latest pull request,github
+are there any merge conflicts in PR #77?,github
+list pull requests that have been approved but not merged,github
+show me all draft pull requests,github
+what is the review history for pull request #14?,github
+list PRs labeled as bug or hotfix,github
+show me the pull requests merged in the last 48 hours,github
+who requested changes on my current pull request?,github
+find pull requests that reference issue #99,github
+show the conversation thread on the database PR,github
+list all pull requests created by external contributors,github
+what is the automated test result for PR #204?,github
+show me the deployment status of pull request #45,github
+list the last 5 commits targeting hotfix/login,github
+who changed the schema.sql in the develop branch?,github
+what is the build status of the last commit on main?,github
+show me the commit logs for index.tsx from the last week,github
+who authored the commit that added paymentGateway to docker-compose.yml?,github
+are there any unmerged branches tracking the feature/auth branch?,github
+find references to paymentGateway inside the user-profile codebase,github
+get a list of private files inside the user-profile folder,github
+who changed the package.json in the hotfix/login branch?,github
+list the files changed in the latest merge to staging,github
+get a list of recent files inside the shopping-cart folder,github
+who is assigned as a reviewer for PR #404?,github
+are there any open commits for the user-profile service?,github
+are there any stale files that belong to John?,github
+who changed the server.js in the staging branch?,github
+show the git blame history for main.go,github
+which commits are currently failing their CI/CD tests?,github
+who changed the docker-compose.yml in the develop branch?,github
+show me the commit logs for docker-compose.yml from the last week,github
+find references to corsOrigin inside the notifications codebase,github
+list the last last 3 commits targeting main,github
+show the absolute path for README.md in the frontend-app repository,github
+list the files changed in the latest merge to develop,github
+list the files changed in the latest merge to main,github
+get a list of recent files inside the authentication folder,github
+show the git diff for schema.sql between v1.0 and feature/ui,github
+show the git blame history for index.tsx,github
+get a list of private files inside the authentication folder,github
+show me all deprecated branches in frontend-app,github
+list the last last 3 commits targeting release-v1,github
+show the git blame history for server.js,github
+who authored the commit that added api_key to README.md?,github
+check if docker-compose.yml contains any hardcoded api_key,github
+who changed the main.go in the develop branch?,github
+who is assigned as a reviewer for PR #101?,github
+what is the build status of the last commit on develop?,github
+are there any unmerged tags tracking the develop branch?,github
+get a list of stale files inside the user-profile folder,github
+who changed the docker-compose.yml in the main branch?,github
+show me all archived pull requests in frontend-app,github
+check if main.go contains any hardcoded errorHandler,github
+what is the build status of the last commit on staging?,github
+get a list of active files inside the shopping-cart folder,github
+which repositories are currently failing their linting tests?,github
+are there any unmerged tags tracking the main branch?,github
+who changed the main.go in the staging branch?,github
+who changed the main.go in the feature/auth branch?,github
+show the git diff for main.go between v1.0 and v2.0,github
+who changed the schema.sql in the release-v1 branch?,github
+which pull requests are currently failing their linting tests?,github
+list the files changed in the latest merge to feature/auth,github
+show the git blame history for docker-compose.yml,github
+where did we define the api_key property in README.md?,github
+list the last 5 commits targeting staging,github
+are there any open commits for the authentication service?,github
+list the files changed in the latest merge to release-v1,github
+who changed the schema.sql in the hotfix/login branch?,github
+are there any open repositories for the user-profile service?,github
+find all JWT_SECRET files that were modified by me,github
+get a list of recent files inside the notifications folder,github
+are there any stale pull requests that belong to Sarah?,github
+show me the commit logs for main.go from the last 24 hours,github
+are there any unmerged commits tracking the staging branch?,github
+are there any unmerged branches tracking the release-v1 branch?,github
+are there any unmerged tags tracking the feature/auth branch?,github
+are there any open files for the user-profile service?,github
+what is the build status of the last commit on hotfix/login?,github
+show me the commit logs for package.json from the last  sday,github
+show the absolute path for README.md in the core-api repository,github
+where did we define the JWT_SECRET property in README.md?,github
+find references to paymentGateway inside the billing codebase,github
+are there any unmerged commits tracking the release-v1 branch?,github
+show me all active commits in the organization profile,github
+who authored the commit that added JWT_SECRET to docker-compose.yml?,github
+get a list of public files inside the shopping-cart folder,github
+list the last 20 commits targeting release-v1,github
+which files are currently failing their unit test tests?,github
+who changed the index.tsx in the main branch?,github
+show me the commit logs for server.js from the last 24 hours,github
+show me the commit logs for README.md from the last  sday,github
+find references to paymentGateway inside the analytics codebase,github
+get a list of private files inside the shopping-cart folder,github
+list the last 20 commits targeting develop,github
+find all paymentGateway files that were modified by the automation bot,github
+are there any unmerged repositories tracking the release-v1 branch?,github
+list the last 10 commits targeting release-v1,github
+check if index.tsx contains any hardcoded api_key,github
+who changed the index.tsx in the develop branch?,github
+are there any stale tags that belong to the automation bot?,github
+who is assigned as a reviewer for PR #55?,github
+show me all private pull requests in the organization profile,github
+who changed the docker-compose.yml in the staging branch?,github
+are there any open files for the authentication service?,github
+are there any unmerged repositories tracking the develop branch?,github
+show the git diff for schema.sql between develop and v2.0,github
+show me the commit logs for docker-compose.yml from the last month,github
+who authored the commit that added api_key to server.js?,github
+where did we define the database_url property in schema.sql?,github
+show the absolute path for README.md in the my account repository,github
+show me the commit logs for server.js from the last  sday,github
+find references to paymentGateway inside the notifications codebase,github
+are there any unmerged tags tracking the release-v1 branch?,github
+who changed the README.md in the hotfix/login branch?,github
+show the git diff for README.md between develop and v2.0,github
+show me the commit logs for main.go from the last  sday,github
+show the git diff for server.js between v1.0 and feature/ui,github
+who changed the package.json in the feature/auth branch?,github
+check if index.tsx contains any hardcoded paymentGateway,github
+find references to redisConfig inside the shopping-cart codebase,github
+list the last last 3 commits targeting develop,github
+find all api_key files that were modified by John,github
+who changed the schema.sql in the main branch?,github
+show me all archived repositories in the organization profile,github
+list the files changed in the latest merge to hotfix/login,github
+which branches are currently failing their GitHub Actions tests?,github
+find references to api_key inside the authentication codebase,github
+list the last last 3 commits targeting hotfix/login,github
+are there any stale commits that belong to John?,github
+are there any unmerged commits tracking the hotfix/login branch?,github
+show the git diff for index.tsx between v1.0 and staging,github
+are there any open repositories for the shopping-cart service?,github
+show the git diff for schema.sql between main and feature/ui,github
+get a list of private files inside the billing folder,github
+are there any unmerged files tracking the main branch?,github
+are there any unmerged repositories tracking the hotfix/login branch?,github
+who changed the docker-compose.yml in the feature/auth branch?,github
+check if index.tsx contains any hardcoded corsOrigin,github
+find all paymentGateway files that were modified by Sarah,github
+find references to corsOrigin inside the billing codebase,github
+find references to redisConfig inside the analytics codebase,github
+check if schema.sql contains any hardcoded corsOrigin,github
+show the git blame history for schema.sql,github
+show me the commit logs for package.json from the last 24 hours,github
+list the last 10 commits targeting staging,github
+get a list of deprecated files inside the notifications folder,github
+find references to errorHandler inside the billing codebase,github
+show the git diff for main.go between main and feature/ui,github
+who authored the commit that added corsOrigin to package.json?,github
+get a list of deprecated files inside the user-profile folder,github
+check if README.md contains any hardcoded errorHandler,github
+show me the commit logs for schema.sql from the last  sday,github
+show me all stale pull requests in my account,github
+which repositories are currently failing their SonarQube tests?,github
+find all paymentGateway files that were modified by John,github
+show me the commit logs for schema.sql from the last week,github
+are there any stale files that belong to the automation bot?,github
+which pull requests are currently failing their unit test tests?,github
+where did we define the paymentGateway property in schema.sql?,github
+list the last 20 commits targeting staging,github
+get a list of recent files inside the analytics folder,github
+are there any open branches for the user-profile service?,github
+show me all recent tags in the organization profile,github
+which files are currently failing their GitHub Actions tests?,github
+who changed the server.js in the develop branch?,github
+who authored the commit that added corsOrigin to README.md?,github
+where did we define the paymentGateway property in README.md?,github
+get a list of private files inside the analytics folder,github
+check if README.md contains any hardcoded paymentGateway,github
+get a list of archived files inside the authentication folder,github
+where did we define the corsOrigin property in package.json?,github
+show the absolute path for schema.sql in the frontend-app repository,github
+show the git diff for README.md between develop and staging,github
+are there any stale commits that belong to the DevOps team?,github
+are there any open pull requests for the billing service?,github
+who authored the commit that added JWT_SECRET to README.md?,github
+show the git blame history for package.json,github
+show the git diff for docker-compose.yml between develop and staging,github
+find references to redisConfig inside the authentication codebase,github
+are there any unmerged branches tracking the staging branch?,github
+who is assigned as a reviewer for PR #1234?,github
+show me the commit logs for server.js from the last month,github
+are there any stale repositories that belong to John?,github
+are there any open repositories for the authentication service?,github
+are there any open files for the notifications service?,github
+which repositories are currently failing their GitHub Actions tests?,github
+who changed the schema.sql in the staging branch?,github
+who authored the commit that added paymentGateway to server.js?,github
+which repositories are currently failing their unit test tests?,github
+where did we define the paymentGateway property in docker-compose.yml?,github
+show the absolute path for index.tsx in the the organization profile repository,github
+where did we define the paymentGateway property in package.json?,github
+who authored the commit that added paymentGateway to index.tsx?,github
+check if README.md contains any hardcoded JWT_SECRET,github
+show me all stale commits in core-api,github
+are there any open commits for the shopping-cart service?,github
+are there any stale branches that belong to the automation bot?,github
+who changed the README.md in the release-v1 branch?,github
+are there any stale files that belong to Sarah?,github
+find all database_url files that were modified by me,github
+are there any stale branches that belong to Sarah?,github
+show the absolute path for package.json in the the backend repo repository,github
+who changed the index.tsx in the staging branch?,github
+show the git diff for package.json between develop and v2.0,github
+show me all deprecated files in frontend-app,github
+are there any open tags for the user-profile service?,github
+who changed the server.js in the feature/auth branch?,github
+show the absolute path for docker-compose.yml in the my account repository,github
+who authored the commit that added paymentGateway to schema.sql?,github
+are there any unmerged branches tracking the hotfix/login branch?,github
+list the last 10 commits targeting develop,github
+are there any unmerged pull requests tracking the feature/auth branch?,github
+get a list of stale files inside the notifications folder,github
+check if docker-compose.yml contains any hardcoded JWT_SECRET,github
+which commits are currently failing their linting tests?,github
+find all database_url files that were modified by Sarah,github
+are there any stale commits that belong to the automation bot?,github
+where did we define the api_key property in docker-compose.yml?,github
+get a list of deprecated files inside the shopping-cart folder,github
+show the absolute path for index.tsx in the my account repository,github
+where did we define the errorHandler property in schema.sql?,github
+are there any stale files that belong to me?,github
+what is the build status of the last commit on release-v1?,github
+show the absolute path for server.js in the the organization profile repository,github
+are there any open commits for the analytics service?,github
+find all errorHandler files that were modified by the DevOps team,github
+find references to redisConfig inside the notifications codebase,github
+show me the commit logs for README.md from the last month,github
+find all api_key files that were modified by Sarah,github
+show me all deprecated repositories in my account,github
+list the last 10 commits targeting hotfix/login,github
+are there any stale pull requests that belong to the DevOps team?,github
+are there any open tags for the billing service?,github
+show me all deprecated branches in core-api,github
+find references to errorHandler inside the analytics codebase,github
+show me the commit logs for server.js from the last week,github
+are there any unmerged tags tracking the hotfix/login branch?,github
+are there any stale tags that belong to John?,github
+who authored the commit that added paymentGateway to README.md?,github
+which tags are currently failing their linting tests?,github
+check if server.js contains any hardcoded corsOrigin,github
+which commits are currently failing their unit test tests?,github
+what is the build status of the last commit on feature/auth?,github
+who changed the index.tsx in the release-v1 branch?,github
+show the git diff for main.go between develop and v2.0,github
+list the last 5 commits targeting release-v1,github
+find all database_url files that were modified by the automation bot,github
+show me the commit logs for package.json from the last month,github
+who changed the schema.sql in the feature/auth branch?,github
+are there any stale branches that belong to me?,github
+find all database_url files that were modified by John,github
+who changed the package.json in the release-v1 branch?,github
+where did we define the JWT_SECRET property in package.json?,github
+where did we define the api_key property in main.go?,github
+which pull requests are currently failing their GitHub Actions tests?,github
+check if docker-compose.yml contains any hardcoded corsOrigin,github
+check if docker-compose.yml contains any hardcoded errorHandler,github
+show the git diff for main.go between develop and feature/ui,github
+are there any stale files that belong to the DevOps team?,github
+show me all private repositories in the organization profile,github
+show the git diff for schema.sql between v1.0 and staging,github
+check if main.go contains any hardcoded redisConfig,github
+check if docker-compose.yml contains any hardcoded redisConfig,github
+where did we define the database_url property in package.json?,github
+find all JWT_SECRET files that were modified by Sarah,github
+where did we define the api_key property in package.json?,github
+are there any open tags for the authentication service?,github
+who authored the commit that added JWT_SECRET to server.js?,github
+show the absolute path for main.go in the the organization profile repository,github
+get a list of stale files inside the analytics folder,github
+are there any open repositories for the billing service?,github
+show the git diff for package.json between v1.0 and feature/ui,github
+show me all private repositories in the backend repo,github
+who changed the server.js in the release-v1 branch?,github
+where did we define the errorHandler property in package.json?,github
+show the absolute path for schema.sql in the my account repository,github
+which branches are currently failing their unit test tests?,github
+get a list of public files inside the user-profile folder,github
+find all JWT_SECRET files that were modified by the automation bot,github
+are there any open repositories for the analytics service?,github
+find references to corsOrigin inside the authentication codebase,github
+show the absolute path for docker-compose.yml in the the organization profile repository,github
+show me all archived branches in the backend repo,github
+find references to database_url inside the user-profile codebase,github
+who changed the main.go in the hotfix/login branch?,github
+find all corsOrigin files that were modified by the DevOps team,github
+where did we define the database_url property in index.tsx?,github
+who changed the package.json in the develop branch?,github
+where did we define the api_key property in schema.sql?,github
+are there any stale tags that belong to me?,github
+check if server.js contains any hardcoded redisConfig,github
+find slack messages about the API deadline,integration
+did anyone post about the client lunch on slack?,integration
+search my slack history for the zoom link,integration
+show me recent messages from John in the engineering channel,integration
+what did Sarah say about the product design on slack?,integration
+find slack conversations mentioning the production outage,integration
+list any slack threads where I was mentioned today,integration
+search slack for messages containing the keyword database,integration
+show me slack messages from the marketing channel last week,integration
+did anyone share the wifi password on slack?,integration
+find direct messages from Mark about the contract,integration
+search slack for code snippets shared in the last 24 hours,integration
+what were the action items listed in the project channel?,integration
+find slack messages from yesterday about the deployment status,integration
+did someone upload a PDF to the general slack channel?,integration
+search my slack stars or pinned items for the roadmap,integration
+show me updates on the billing issue from the dev slack channel,integration
+what did the team decide about the remote work policy on slack?,integration
+find slack conversations regarding the q3 goals,integration
+did David send any slack messages about his sick leave?,integration
+search slack for password reset requests,integration
+show me slack messages containing links to github,integration
+find notifications from the jira bot in slack,integration
+what was discussed in the random channel this morning?,integration
+search my slack channels for the onboarding guide,integration
+did anyone mention my name in the design channel?,integration
+find slack comments about the website redesign,integration
+show recent threads from the sales group in slack,integration
+search slack for mentions of the candidate resume,integration
+what did HR post in the announcements channel on slack?,integration
+find slack messages about the server migration schedule,integration
+did anyone follow up about the invoice on slack?,integration
+search slack for messages from the finance team,integration
+show me the last message in the customer support channel,integration
+find slack threads discussing the security vulnerability,integration
+did anyone drop a spreadsheet in the ops slack channel?,integration
+search slack for the latest API token updates,integration
+what did the product manager say about the release date?,integration
+find slack messages containing the phrase urgent support,integration
+show me unread slack messages in the project alpha channel,integration
+did anyone post the notes from the standup on slack?,integration
+search slack for feedback on the beta app,integration
+find conversations with the design lead on slack,integration
+what links were shared in the resources channel today?,integration
+search slack for the office relocation update,integration
+did anyone ask for a code review in the backend channel?,integration
+find slack messages about the corporate retreat,integration
+show me mentions of the word bug in the qa channel,integration
+search slack for conversations about the pricing strategy,integration
+did the boss post anything in the leadership channel?,integration
+find slack discussions about the interview feedback,integration
+show me images shared in the social channel recently,integration
+search slack for references to the legacy system,integration
+what did the tech lead say about microservices on slack?,integration
+find slack messages regarding the customer onboarding flow,integration
+did anyone attach an image to the ui-feedback channel?,integration
+search slack for the performance review template,integration
+show me messages from today mentioning the client presentation,integration
+find slack threads where I need to reply,integration
+did someone link the dashboard in the analytics channel?,integration
+search slack for messages about the hackathon,integration
+what was the last thing said in the frontend channel?,integration
+find slack history about the holiday schedule,integration
+did anyone ping me about the code deployment?,integration
+search slack for messages from the data science group,integration
+show me mentions of the quarter end in slack,integration
+find slack messages talking about the user churn rate,integration
+did anyone share the slide deck on the presentation channel?,integration
+search slack for instructions on setting up the dev environment,integration
+what did the intern ask in the help channel?,integration
+find slack messages about the database backup failure,integration
+show me recent polls created in the team slack,integration
+search slack for comments on the marketing budget,integration
+did anyone give a shoutout in the kudos channel?,integration
+find slack messages regarding the new feature flags,integration
+show me the thread about the mobile app crash logs,integration
+search slack for user feedback screenshots,integration
+did anyone outline the sprint goals in the agile channel?,integration
+find slack messages about updating the npm packages,integration
+what was the feedback on the product demo shared on slack?,integration
+search my drive for the budget spreadsheet,integration
+find the google doc titled marketing strategy,integration
+show me recent presentations shared with me on drive,integration
+look for a spreadsheet with financial projections in drive,integration
+find the product requirement document in my google drive,integration
+search google drive for files modified this week,integration
+show me PDFs related to the tax return in my drive,integration
+find the slide deck for tomorrow's pitch in drive,integration
+search my drive for documents authored by Jessica,integration
+look for the project timeline excel file in drive,integration
+find the meeting notes folder in google drive,integration
+show me all sheets containing the word inventory,integration
+search drive for the employee handbook document,integration
+find the logo design assets inside my google drive,integration
+look for the legal contract PDF in drive,integration
+search drive for spreadsheets updated in the last 48 hours,integration
+show me files in my drive that are shared publicly,integration
+find the user interview recordings folder in drive,integration
+search google drive for the technical architecture doc,integration
+look for the team structure presentation in drive,integration
+find the onboarding document for new hires in drive,integration
+search drive for documents with expense report in the name,integration
+show me the latest files added to the shared drive,integration
+find the google sheet tracking project milestones,integration
+look for the vendor agreement doc in google drive,integration
+search my drive for brainstorming docs,integration
+find the wireframes presentation on drive,integration
+show me all document templates in my google drive,integration
+search drive for the Q4 sales forecast sheet,integration
+look for the backup data zip file in drive,integration
+find the release notes document in google drive,integration
+search drive for folders named client assets,integration
+show me spreadsheets that contain formulas for ROI,integration
+find the brand guidelines presentation in drive,integration
+look for the content calendar google sheet,integration
+search my drive for resume or CV files,integration
+find the project charter document in drive,integration
+show me text files updated by the automation script in drive,integration
+search google drive for the user feedback form responses,integration
+look for the system architecture diagrams folder in drive,integration
+find the equity grant document in google drive,integration
+search drive for files that mention machine learning,integration
+show me files shared by the CEO in my drive,integration
+find the google doc about the hiring plan,integration
+look for the pricing matrix spreadsheet in drive,integration
+search my drive for the database schema document,integration
+find the press release draft in google drive,integration
+show me presentation slides created this month,integration
+search drive for files with compliance in the title,integration
+look for the case study document in google drive,integration
+find the sprint planning document on drive,integration
+search drive for folders shared with external users,integration
+show me files matching the extension .csv in my drive,integration
+find the disaster recovery plan doc in drive,integration
+look for the conversion rate optimization audit in drive,integration
+search my drive for notes on the competitor analysis,integration
+find the company values presentation in drive,integration
+show me old documents in drive that haven't been opened in a year,integration
+search drive for the penetration testing report,integration
+look for the customer journey map doc on drive,integration
+find the project checklist spreadsheet in google drive,integration
+search drive for the office safety protocol,integration
+show me files inside the marketing campaign folder,integration
+find the google doc containing the privacy policy,integration
+look for the API specification sheet in drive,integration
+search my drive for the hardware inventory list,integration
+find the contractor timesheet document on drive,integration
+show me all presentation files related to the AGM,integration
+search drive for documents matching key metrics,integration
+look for the performance metrics spreadsheet in drive,integration
+find the product roadmap slide deck in google drive,integration
+search drive for files containing the word confidential,integration
+show me folders created by me in the shared drive,integration
+find the board meeting presentation in google drive,integration
+look for the user testing feedback document in drive,integration
+search my drive for the software license agreement,integration
+find the SEO audit report document on drive,integration
+show me the latest revisions on the project plan sheet,integration
+search drive for the server setup guide,integration
+look for the beta tester list spreadsheet in drive,integration
+search notion for the engineering wiki,integration
+find the notion page about database migrations,integration
+show me my recently visited pages in notion,integration
+look for the content strategy board in notion,integration
+find the notion database tracking software bugs,integration
+search notion for the meeting minutes from yesterday,integration
+show me notion pages that contain the tag urgent,integration
+find the product roadmap page in my notion workspace,integration
+search notion for the design system documentation,integration
+look for the employee onboarding checklist on notion,integration
+find the notion database for client contacts,integration
+show me all notion pages shared with the team,integration
+search notion for notes on the technical kick-off,integration
+find the company holiday calendar page in notion,integration
+look for the project alpha overview page in notion,integration
+search notion for items updated by me this week,integration
+show me notion pages with the word template in the title,integration
+find the personal todo list page in notion,integration
+search notion for the marketing asset library,integration
+look for the code review guidelines page in notion,integration
+find the sprint retro page in my notion workspace,integration
+search notion for documents labeled as draft,integration
+show me active databases inside my notion account,integration
+find the standup notes database in notion,integration
+look for the security policies folder or page in notion,integration
+search notion for the user research repository,integration
+find the product launch plan on notion,integration
+show me recently archived pages in notion,integration
+search notion for the release engineering wiki,integration
+look for the billing and invoices tracker in notion,integration
+find the notion page containing the deployment checklist,integration
+search notion for team meeting agendas,integration
+show me pages in my private workspace in notion,integration
+find the knowledge base page for customer support in notion,integration
+look for the okr tracker dashboard on notion,integration
+search notion for notes regarding the interview with Alex,integration
+find the system architecture overview page in notion,integration
+show me updates on the marketing campaign page in notion,integration
+search notion for the brand identity guidelines,integration
+look for the bug reporting template page in notion,integration
+find the growth hacking experiments board on notion,integration
+search notion for documents mentioning third-party APIs,integration
+show me notion sub-pages under the engineering directory,integration
+find the competitor comparison matrix page in notion,integration
+look for the testing strategy documentation on notion,integration
+search notion for the server configuration notes,integration
+find the content calendar table in notion,integration
+show me comments left on the product spec page in notion,integration
+search notion for the corporate restructuring announcement,integration
+look for the office reopening guidelines on notion,integration
+find the script deployment logs page in notion,integration
+search notion for the remote developer handbook,integration
+show me pages created in the last 7 days on notion,integration
+find the database schema definition inside notion,integration
+look for the partner integration notes on notion,integration
+search notion for the user feedback classification page,integration
+find the company history wiki page in notion,integration
+show me checklists inside the task management page in notion,integration
+search notion for the network infrastructure map,integration
+look for the user personas summary page on notion,integration
+find the agile planning framework page in notion,integration
+search notion for the standard operating procedures,integration
+show me pages matching the keyword analytics in notion,integration
+find the customer retention strategies page in notion,integration
+look for the UI component library spec on notion,integration
+search notion for notes from the sales kickoff meeting,integration
+find the data governance framework page in notion,integration
+show me database entries assigned to me in notion,integration
+search notion for the legal compliance overview,integration
+look for the localization and translation board on notion,integration
+find the api deprecation timeline page in notion,integration
+search notion for the employee benefits summary,integration
+show me blocks containing code snippets in notion,integration
+find the release branch strategy page in notion,integration
+look for the incident management post-mortem on notion,integration
+search notion for the product analytics dashboard page,integration
+find the user session observation notes in notion,integration
+show me inline tables inside the research page in notion,integration
+search notion for the customer support workflows,integration
+look for the inventory management overview page on notion,integration
+what emails did I get about the deployment,integration
+find emails from accounting regarding the tax invoice,integration
+search my inbox for confirmation of the flight booking,integration
+show me unread emails from the product team,integration
+did I get an email with the coupon code?,integration
+search my archive for messages from the landlord,integration
+find emails containing attachments from AWS,integration
+show me emails received in the last 3 hours,integration
+look for the newsletter subscription confirmation email,integration
+find emails about the interview schedule for tomorrow,integration
+search inbox for emails from support@github.com,integration
+show me emails that are flagged or starred,integration
+did I receive the contract renewal email yet?,integration
+search emails for the keyword password reset,integration
+find the email thread about the marketing budget approval,integration
+show me recent emails with the subject line warning,integration
+look for emails containing the zoom meeting details,integration
+find emails sent by the CEO regarding organization changes,integration
+search my spam folder for the activation link,integration
+show me emails from yesterday mentioning the project status,integration
+did I get an email update from the recruitment team?,integration
+search emails for the terms terms and conditions,integration
+find emails from Stripe about the monthly payouts,integration
+show me threads with more than 5 replies in my inbox,integration
+look for the order confirmation email from Amazon,integration
+find emails containing the design mockups zip attachment,integration
+search inbox for alerts from the server monitoring tool,integration
+show me sent emails that haven't received a reply,integration
+did anyone email me the conference ticket?,integration
+search emails for feedback on the presentation deck,integration
+find emails related to the health insurance policy,integration
+show me emails from specific sender john@company.com,integration
+look for the verification code email from the bank,integration
+find emails regarding the domain name registration renewal,integration
+search my inbox for references to the legal dispute,integration
+show me newsletters received this morning,integration
+did the client send an email about the project delays?,integration
+search emails for invitations to the webinar,integration
+find emails containing the string log error,integration
+show me emails categorized as promotions or social,integration
+look for the onboarding instructions email from HR,integration
+find emails with an attachment named summary.xlsx,integration
+search inbox for discussions about the employee equity plan,integration
+show me emails from the engineering mailing list,integration
+did I get an email about the database backup success?,integration
+search emails for messages containing the word receipt,integration
+find emails from the vendor regarding shipment tracking,integration
+show me unread newsletters in my inbox,integration
+look for the email thread concerning the system upgrade,integration
+find emails sent to the sales alias today,integration
+search my mailbox for the feedback questionnaire link,integration
+show me emails from LinkedIn about job matches,integration
+did I receive the NDA document via email?,integration
+search emails for the subject project contract agreement,integration
+find emails containing the contact details of the candidate,integration
+show me emails that mention the budget deficit,integration
+look for the weekly analytics report email,integration
+find emails from the security operations center,integration
+search inbox for messages containing the keyword voucher,integration
+show me automated reports from Google Analytics via email,integration
+did the manager email the performance review schedule?,integration
+search emails for communication with external consultants,integration
+find emails that discuss the software release timeline,integration
+show me the oldest emails in my urgent folder,integration
+look for the cancellation notice email from the provider,integration
+find emails regarding the office holiday closure,integration
+search inbox for messages from the customer success team,integration
+show me emails that have been snoozed,integration
+did I get an email about the API token expiration?,integration
+search emails for messages containing the word reservation,integration
+find emails with feedback on the product specifications document,integration
+show me emails containing a calendar invite,integration
+look for the bug tracking summary report email,integration
+find emails regarding the annual general meeting setup,integration
+search my inbox for communications about the tax audit,integration
+show me emails sent by me with attachments over 10MB,integration
+did the legal team send an email with the final sign-off?,integration
+search emails for the word greeting or welcome,integration
+find emails about the server downtime notification,integration
+show me threads matching the label work-related,integration
+search teams for messages about the agile sprint,integration
+find teams chats mentioning the customer database error,integration
+show me recent notifications from the teams general channel,integration
+did anyone share a link in the teams chat during the call?,integration
+look for direct messages from Robert on teams regarding the bugs,integration
+search teams history for the deployment password,integration
+find teams messages from the qa team about the regression tests,integration
+show me mentions of my name in the engineering teams channel,integration
+did the manager post the announcement on teams?,integration
+search teams for conversations containing the keyword architecture,integration
+find teams messages from yesterday about the product launch,integration
+show me pinned messages in the sales teams channel,integration
+look for files uploaded to the teams chat room,integration
+search teams for messages from the finance group,integration
+find teams chats containing the phrase urgent fix,integration
+show me unread messages in my teams application,integration
+did someone share the slide deck on the teams channel?,integration
+search teams for notifications from the azure devops bot,integration
+find teams threads discussing the client onboarding issues,integration
+show recent direct messages from the design lead on teams,integration
+search teams for references to the software license keys,integration
+find teams messages containing images or screenshots of errors,integration
+what did Amanda post in the teams announcement channel?,integration
+search teams for discussions about the server migration status,integration
+did anyone follow up about the contract on teams?,integration
+find teams chats regarding the marketing budget spreadsheet,integration
+show me comments on the project timeline file inside teams,integration
+search teams for instructions on the environment configuration,integration
+find teams threads about the company picnic planning,integration
+did the tech lead post the api contract on teams?,integration
+search teams for mentions of the candidate interview feedback,integration
+show me updates on the customer service dashboard from teams,integration
+find teams messages regarding the user authentication failure,integration
+did anyone link the staging server URL on teams?,integration
+search teams for conversations about the remote work policies,integration
+find teams chats containing the keyword feedback,integration
+show me messages from the developer group in teams today,integration
+look for the excel sheet uploaded to the teams channel,integration
+search teams for messages containing the word roadmap,integration
+find teams threads about fixing the broken unit tests,integration
+did anyone ask for help in the teams support channel?,integration
+search teams for conversations about the product pricing structure,integration
+find teams messages regarding the database cluster performance,integration
+show me files shared in the teams channel recently,integration
+look for messages from the system administrator on teams,integration
+search teams for comments about the brand asset design,integration
+find teams chats that contain links to external documentation,integration
+show me teams messages with the tag important,integration
+did anyone mention the holiday schedule on the teams group?,integration
+search teams for the transcript of the last team meeting,integration
+find teams messages about setting up the production webhook,integration
+show me mentions of the billing issue on teams,integration
+look for direct messages from HR on teams regarding compliance,integration
+search teams for the current layout spec sheet,integration
+find teams conversations discussing the mobile app performance,integration
+did anyone drop a zip file in the teams dev channel?,integration
+search teams for messages about user retention graphs,integration
+find teams chats regarding the quarterly review slides,integration
+show me messages from today containing the phrase deployment success,integration
+look for the user registration bug discussion on teams,integration
+search teams for updates from the continuous integration pipeline,integration
+find teams threads talking about the api refactoring project,integration
+did anyone send the meeting notes via teams chat?,integration
+search teams for messages from the data analytics team,integration
+find teams conversations concerning the office hardware inventory,integration
+show me messages in the infrastructure team channel,integration
+look for teams chats with the security officer about audits,integration
+search teams for the word hotfix in the release channel,integration
+find teams messages about updating the continuous deployment settings,integration
+did anyone post the code review request on teams?,integration
+search teams for discussions about user persona documents,integration
+find teams chats regarding the system health report,integration
+show me threads where I was tagged in the teams group,integration
+look for the logo redesign feedback inside teams,integration
+search teams for messages containing the word compliance,integration
+find teams conversations about the front-end framework upgrade,integration
+did anyone share the wireframe images on teams?,integration
+search teams for instructions on troubleshooting the local environment,integration
+find teams messages regarding the partner integration api keys,integration
+show me the last thread in the general discussion teams channel,integration

@@ -12,6 +12,7 @@ import fetch from "node-fetch";
 import GithubRoutes from "./routes/github.js"
 import NotionRoutes from "./routes/notion.js"
 import chatRoutes from "./routes/chatRoutes.js"
+import { classifyIntent, loadClassifier } from "./classifier/classify.js"
 
 
 
@@ -41,6 +42,19 @@ app.use(passport.session());
 app.use('/api/chats', chatRoutes);
 app.use("/api/github", GithubRoutes)
 app.use("/api/notion", NotionRoutes);
+
+// Intent classification endpoint (DistilBERT)
+app.post("/api/classify", async (req, res) => {
+    try {
+        const { text } = req.body;
+        if (!text) return res.status(400).json({ error: "text is required" });
+        const intent = await classifyIntent(text);
+        res.json({ intent });
+    } catch (err) {
+        console.error("Classification error:", err);
+        res.json({ intent: "general" }); // fallback to general on error
+    }
+});
 
 // GitHub OAuth Strategy
 passport.use(

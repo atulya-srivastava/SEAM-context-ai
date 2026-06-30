@@ -1,0 +1,73 @@
+ Loading dataset from /home/atulya/Desktop/seam/backend/classifier/dataset.csv
+✅ Loaded 1000 samples
+   general: 200
+   github: 400
+   integration: 400
+Map: 100%|█████████████████████████████████████████████████████████████████| 800/800 [00:00<00:00, 13349.37 examples/s]
+Map: 100%|█████████████████████████████████████████████████████████████████| 200/200 [00:00<00:00, 12171.16 examples/s]
+Some weights of DistilBertForSequenceClassification were not initialized from the model checkpoint at distilbert-base-uncased and are newly initialized: ['classifier.bias', 'classifier.weight', 'pre_classifier.bias', 'pre_classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+
+🚀 Training DistilBERT...
+{'loss': 1.0606, 'grad_norm': 2.6768527030944824, 'learning_rate': 1.9280000000000002e-05, 'epoch': 0.2}               
+{'loss': 0.9295, 'grad_norm': 2.160055637359619, 'learning_rate': 1.8480000000000003e-05, 'epoch': 0.4}                
+{'loss': 0.7173, 'grad_norm': 3.3638992309570312, 'learning_rate': 1.768e-05, 'epoch': 0.6}                            
+{'loss': 0.5232, 'grad_norm': 3.03473162651062, 'learning_rate': 1.688e-05, 'epoch': 0.8}                              
+{'loss': 0.3352, 'grad_norm': 2.4221973419189453, 'learning_rate': 1.6080000000000002e-05, 'epoch': 1.0}               
+{'eval_loss': 0.2094307690858841, 'eval_accuracy': 0.995, 'eval_runtime': 0.6974, 'eval_samples_per_second': 286.787, 'eval_steps_per_second': 18.641, 'epoch': 1.0}                                                                           
+{'loss': 0.2112, 'grad_norm': 2.42051100730896, 'learning_rate': 1.5280000000000003e-05, 'epoch': 1.2}                 
+{'loss': 0.1527, 'grad_norm': 1.7263621091842651, 'learning_rate': 1.448e-05, 'epoch': 1.4}                            
+{'loss': 0.1097, 'grad_norm': 0.8608427047729492, 'learning_rate': 1.3680000000000003e-05, 'epoch': 1.6}               
+{'loss': 0.0975, 'grad_norm': 0.587734043598175, 'learning_rate': 1.2880000000000002e-05, 'epoch': 1.8}                
+{'loss': 0.0742, 'grad_norm': 0.36011382937431335, 'learning_rate': 1.2080000000000001e-05, 'epoch': 2.0}              
+{'eval_loss': 0.03375440463423729, 'eval_accuracy': 1.0, 'eval_runtime': 0.7005, 'eval_samples_per_second': 285.508, 'eval_steps_per_second': 18.558, 'epoch': 2.0}                                                                            
+{'loss': 0.0573, 'grad_norm': 11.91326904296875, 'learning_rate': 1.128e-05, 'epoch': 2.2}                             
+{'loss': 0.0261, 'grad_norm': 0.2758044898509979, 'learning_rate': 1.0480000000000001e-05, 'epoch': 2.4}               
+{'loss': 0.031, 'grad_norm': 0.28330275416374207, 'learning_rate': 9.68e-06, 'epoch': 2.6}                             
+{'loss': 0.0381, 'grad_norm': 0.20424698293209076, 'learning_rate': 8.880000000000001e-06, 'epoch': 2.8}               
+{'loss': 0.0211, 'grad_norm': 0.17179016768932343, 'learning_rate': 8.08e-06, 'epoch': 3.0}                            
+{'eval_loss': 0.014585012570023537, 'eval_accuracy': 1.0, 'eval_runtime': 0.6998, 'eval_samples_per_second': 285.807, 'eval_steps_per_second': 18.577, 'epoch': 3.0}                                                                           
+{'loss': 0.0157, 'grad_norm': 0.13259245455265045, 'learning_rate': 7.280000000000001e-06, 'epoch': 3.2}               
+{'loss': 0.0153, 'grad_norm': 0.20874696969985962, 'learning_rate': 6.480000000000001e-06, 'epoch': 3.4}               
+{'loss': 0.0131, 'grad_norm': 0.14090017974376678, 'learning_rate': 5.68e-06, 'epoch': 3.6}                            
+{'loss': 0.0125, 'grad_norm': 0.13591422140598297, 'learning_rate': 4.880000000000001e-06, 'epoch': 3.8}               
+{'loss': 0.0123, 'grad_norm': 0.3751518726348877, 'learning_rate': 4.08e-06, 'epoch': 4.0}                             
+{'eval_loss': 0.009926727041602135, 'eval_accuracy': 1.0, 'eval_runtime': 0.7016, 'eval_samples_per_second': 285.078, 'eval_steps_per_second': 18.53, 'epoch': 4.0}                                                                            
+{'loss': 0.0111, 'grad_norm': 0.2526317536830902, 'learning_rate': 3.2800000000000004e-06, 'epoch': 4.2}               
+{'loss': 0.0109, 'grad_norm': 0.2010032683610916, 'learning_rate': 2.4800000000000004e-06, 'epoch': 4.4}               
+{'loss': 0.01, 'grad_norm': 0.11715283244848251, 'learning_rate': 1.6800000000000002e-06, 'epoch': 4.6}                
+{'loss': 0.01, 'grad_norm': 0.10867493599653244, 'learning_rate': 8.8e-07, 'epoch': 4.8}                               
+{'loss': 0.0101, 'grad_norm': 0.11033549904823303, 'learning_rate': 8e-08, 'epoch': 5.0}                               
+{'eval_loss': 0.009235911071300507, 'eval_accuracy': 1.0, 'eval_runtime': 0.7042, 'eval_samples_per_second': 284.017, 'eval_steps_per_second': 18.461, 'epoch': 5.0}                                                                           
+{'train_runtime': 58.0092, 'train_samples_per_second': 68.955, 'train_steps_per_second': 4.31, 'train_loss': 0.18022359481453895, 'epoch': 5.0}                                                                                                
+100%|████████████████████████████████████████████████████████████████████████████████| 250/250 [00:58<00:00,  4.31it/s]
+
+📊 Evaluation:
+100%|██████████████████████████████████████████████████████████████████████████████████| 13/13 [00:00<00:00, 20.13it/s]
+              precision    recall  f1-score   support
+
+     general       1.00      1.00      1.00        40
+      github       1.00      1.00      1.00        80
+ integration       1.00      1.00      1.00        80
+
+    accuracy                           1.00       200
+   macro avg       1.00      1.00      1.00       200
+weighted avg       1.00      1.00      1.00       200
+
+
+📦 Exporting to ONNX + quantizing...
+The model /home/atulya/Desktop/seam/backend/classifier/model was already converted to ONNX but got `export=True`, the model will be converted to ONNX once again. Don't forget to save the resulting model with `.save_pretrained()`
+`torch_dtype` is deprecated! Use `dtype` instead!
+/home/atulya/Desktop/seam/backend/classifier/venv/lib/python3.12/site-packages/transformers/modeling_attn_mask_utils.py:196: TracerWarning: torch.tensor results are registered as constants in the trace. You can safely ignore this warning if you use this function to create tensors out of constant variables that would be the same every time you call this function. In any other case, this might cause the trace to be incorrect.
+  inverted_mask = torch.tensor(1.0, dtype=dtype) - expanded_mask
+
+✅ Model saved to /home/atulya/Desktop/seam/backend/classifier/model/
+Files:
+   config.json (0 KB)
+   tokenizer_config.json (1 KB)
+   special_tokens_map.json (0 KB)
+   tokenizer.json (694 KB)
+   model.onnx (261655 KB)
+   model.safetensors (261558 KB)
+   vocab.txt (226 KB)
+(venv) atulya@atspc:~/Desktop/seam/backend/classifier$ 
