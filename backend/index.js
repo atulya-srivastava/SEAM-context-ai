@@ -6,7 +6,7 @@ import session from "express-session";
 import passport from "passport";
 import { Strategy as GitHubStrategy } from "passport-github2";
 import { ClerkExpressWithAuth, ClerkExpressRequireAuth } from "@clerk/clerk-sdk-node";
-import connectDB from "./db.js";
+import connectDB from "./config/db.js";
 import GithubConnection from "./models/GithubConnection.js";
 import fetch from "node-fetch";
 import GithubRoutes from "./routes/github.js"

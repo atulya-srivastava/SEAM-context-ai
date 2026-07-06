@@ -1,8 +1,11 @@
 import express from "express";
-import { addDocuments, searchDocuments, deleteByBranch, getEmbedding } from "../supabase.js";
+import { addDocuments, searchDocuments, deleteByBranch, getEmbedding } from "../lib/supabase.js";
 import GithubConnection from "../models/GithubConnection.js";
 import { ClerkExpressRequireAuth } from "@clerk/clerk-sdk-node";
-import { groq } from "../groq.js";
+import { chatModel } from "../lib/groq.js";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { JsonOutputParser } from "@langchain/core/output_parsers";
+import { RunnableSequence } from "@langchain/core/runnables";
 import { InferenceClient } from "@huggingface/inference";
 import Chat from "../models/chatModel.js";
 
@@ -77,24 +80,56 @@ router.get("/repos", async (req, res) => {
 */
 
 
-// routes/github.js
-function parseLLMResponse(raw) {
-    let explanation = raw.trim();
-    let metadata = {};
+// --- LangChain LCEL Chains ---
+// Architecture: ChatPromptTemplate → ChatGroq → JsonOutputParser
+// Both chains enforce JSON-only output, eliminating fragile regex parsing.
 
-    // Try to extract JSON block with regex
-    const match = raw.match(/\{[\s\S]*\}/);
-    if (match) {
-        try {
-            metadata = JSON.parse(match[0]);
-            explanation = raw.replace(match[0], "").trim();
-        } catch (err) {
-            console.warn("⚠️ Failed to parse JSON block:", err);
-        }
-    }
+const FILE_CHANGE_SYSTEM = `You are an expert assistant analyzing GitHub code changes.
+Respond ONLY with valid JSON (no markdown fences, no extra text) matching this shape:
+{{
+  "summary": "beginner-friendly explanation of what changed",
+  "contributor": "author name (username)",
+  "lastEdited": "ISO timestamp or empty string",
+  "commitUrl": "GitHub commit URL or empty string",
+  "combinedCode": "relevant merged code snippet",
+  "project_name": "repository name",
+  "language": "primary programming language",
+  "database": "database technology if present, else empty string"
+}}`;
 
-    return { explanation, metadata };
-}
+const GENERAL_QA_SYSTEM = `You are an expert assistant for GitHub repository Q&A.
+Respond ONLY with valid JSON (no markdown fences, no extra text) matching this shape:
+{{
+  "summary": "clear, user-friendly answer to the question",
+  "contributor": "primary contributor if identifiable, else empty string",
+  "repo": "repository name",
+  "file": "relevant file path if applicable, else empty string",
+  "branch": "branch name if applicable, else empty string",
+  "commit": "commit SHA if applicable, else empty string",
+  "project_name": "project name",
+  "language": "primary programming language",
+  "database": "database technology if present, else empty string"
+}}`;
+
+const jsonParser = new JsonOutputParser();
+
+const fileChangeChain = RunnableSequence.from([
+    ChatPromptTemplate.fromMessages([
+        ["system", FILE_CHANGE_SYSTEM],
+        ["user", "User Question: {question}\n\nRelevant Context:\n{context}"],
+    ]),
+    chatModel,
+    jsonParser,
+]);
+
+const generalChain = RunnableSequence.from([
+    ChatPromptTemplate.fromMessages([
+        ["system", GENERAL_QA_SYSTEM],
+        ["user", "User Question: {question}\n\nRelevant Context:\n{context}"],
+    ]),
+    chatModel,
+    jsonParser,
+]);
 
 
 router.post("/ask", ClerkExpressRequireAuth(), async (req, res) => {
@@ -163,39 +198,10 @@ Commit: ${doc.commit_sha}`;
                 .join("\n\n");
         }
 
-        // 🔎 Ask LLM
-        const completion = await groq.chat.completions.create({
-            model: "llama-3.3-70b-versatile",
-            messages: [
-                {
-                    role: "system",
-                    content: match
-                        ? `You are an assistant analyzing GitHub code.
-Explain the changes in beginner-friendly language.
-Then return a JSON block with:
-{
-  "contributor": "author name (username)",
-  "lastEdited": "timestamp",
-  "commitUrl": "GitHub commit link",
-  "combinedCode": "merged code snippet",
-  "project_name": "repo name",
-  "language": "main programming language",
-  "database": "if any"
-  }`
-                        : `You are an assistant for GitHub repo Q&A.
-Answer in a user-friendly way, and include a JSON block with structured details like contributor, repo, file, branch, commit, project_name, language, database.`,
-                },
-                {
-                    role: "user",
-                    content: `User Question: ${question}\n\nRelevant Context:\n${context}`,
-                },
-            ],
-            temperature: 0,
-        });
-
-        // ✅ Parse safely
-        const rawAnswer = completion.choices[0].message.content;
-        const { explanation, metadata } = parseLLMResponse(rawAnswer);
+        // 🔗 Run LangChain LCEL chain: PromptTemplate → ChatGroq → JsonOutputParser
+        const chain = match ? fileChangeChain : generalChain;
+        const metadata = await chain.invoke({ question, context });
+        const explanation = metadata.summary || "";
 
         finalResponse = {
             ...finalResponse,
