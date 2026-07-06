@@ -6,15 +6,9 @@ import { chatModel } from "../lib/groq.js";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { JsonOutputParser } from "@langchain/core/output_parsers";
 import { RunnableSequence } from "@langchain/core/runnables";
-import { InferenceClient } from "@huggingface/inference";
 import Chat from "../models/chatModel.js";
 
-
 const router = express.Router();
-
-
-
-const hf = new InferenceClient(process.env.HF_TOKEN);
 
 router.post("/sync-issues", ClerkExpressRequireAuth(), async (req, res) => {
     const { userId } = req.auth; // Clerk middleware
@@ -41,8 +35,6 @@ router.post("/sync-issues", ClerkExpressRequireAuth(), async (req, res) => {
 
     res.json({ message: "Synced issues into Supabase", count: docs.length });
 });
-
-export default router;
 
 router.get("/all-repos", ClerkExpressRequireAuth(), async (req, res) => {
     try {
@@ -196,6 +188,16 @@ Author: ${doc.author}
 Commit: ${doc.commit_sha}`;
                 })
                 .join("\n\n");
+        }
+
+        // Guard: no relevant documents found — return early instead of hallucinating
+        if (result.length === 0) {
+            return res.json({
+                chatId: chatId || null,
+                question,
+                summary: "No relevant documents found in your indexed repositories for this query. Try syncing your repos or rephrasing the question.",
+                matches: [],
+            });
         }
 
         // 🔗 Run LangChain LCEL chain: PromptTemplate → ChatGroq → JsonOutputParser
@@ -522,3 +524,5 @@ router.get(
         }
     }
 );
+
+export default router;
