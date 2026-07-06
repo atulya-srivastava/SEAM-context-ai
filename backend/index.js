@@ -10,7 +10,6 @@ import connectDB from "./config/db.js";
 import GithubConnection from "./models/GithubConnection.js";
 import fetch from "node-fetch";
 import GithubRoutes from "./routes/github.js"
-import NotionRoutes from "./routes/notion.js"
 import chatRoutes from "./routes/chatRoutes.js"
 import { classifyIntent, loadClassifier } from "./classifier/classify.js"
 
@@ -40,8 +39,7 @@ app.use(passport.session());
 
 
 app.use('/api/chats', chatRoutes);
-app.use("/api/github", GithubRoutes)
-app.use("/api/notion", NotionRoutes);
+app.use("/api/github", GithubRoutes);
 
 // Intent classification endpoint (DistilBERT)
 app.post("/api/classify", async (req, res) => {
