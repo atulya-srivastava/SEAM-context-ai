@@ -262,74 +262,68 @@ router.post("/ask", ClerkExpressRequireAuth(), async (req, res) => {
             /changes.*in\s+(.+)\s+in\s+(\w+)\s+branch\s+of\s+(\w+)/i
         );
 
-        let result, context;
+        let result = [];
+        let context = "";
 
         if (match) {
             // File-specific query
             const [_, fileName, branchName, repoName] = match;
-            console.log(
-                `📂 Detected file-change query for ${repoName}/${branchName}/${fileName}`
-            );
+            console.log(`📂 Detected file-change query for ${repoName}/${branchName}/${fileName}`);
 
-            // Search with repo+branch filter, then post-filter by file name
-            let results = await searchDocuments(question, userId, { repo: repoName, branch: branchName }, 20);
-
-            const fileFiltered = results.filter(r => r.file && r.file.includes(fileName.trim()));
-            result = fileFiltered.length > 0 ? fileFiltered.slice(0, 10) : results.slice(0, 10);
-
-            context = result
-                .map((doc, idx) => {
-                    return `Snippet ${idx + 1} from ${doc.file}:\n${doc.content}\n
-Author: ${doc.author} (${doc.username})
-Repo: ${doc.repo}
-Branch: ${doc.branch}
-Last Edited: ${doc.last_edited}
-Commit: ${doc.commit_sha}`;
-                })
-                .join("\n\n");
+            try {
+                let results = await searchDocuments(question, userId, { repo: repoName, branch: branchName }, 20);
+                if (Array.isArray(results)) {
+                    const fileFiltered = results.filter(r => r.file && r.file.includes(fileName.trim()));
+                    result = fileFiltered.length > 0 ? fileFiltered.slice(0, 10) : results.slice(0, 10);
+                }
+            } catch (searchErr) {
+                console.warn("⚠️ File vector search error:", searchErr.message);
+            }
         } else {
             // Semantic search via Supabase pgvector RPC
-            result = await searchDocuments(question, userId);
-
-            // Fallback: If RPC match threshold returned 0 records, retrieve user's indexed code directly
-            if (!result || result.length === 0) {
-                const { data: dbData } = await supabase
-                    .from("github_code")
-                    .select("*")
-                    .eq("user_id", userId)
-                    .limit(5);
-
-                if (dbData && dbData.length > 0) {
-                    result = dbData.map((d) => ({
-                        content: d.content,
-                        repo: d.repo,
-                        branch: d.branch || "main",
-                        file: d.file,
-                        author: d.author || "Unknown",
-                        commit_sha: d.commit_sha || "Unknown",
-                        last_edited: d.last_edited || "Unknown",
-                        similarity: 0.5,
-                    }));
-                }
+            try {
+                result = await searchDocuments(question, userId);
+            } catch (searchErr) {
+                console.warn("⚠️ Vector search error, attempting direct table query:", searchErr.message);
             }
 
-            context = (result || [])
-                .map((doc) => {
-                    return `From ${doc.repo}/${doc.branch || "main"}/${doc.file}:\n${doc.content}\n
-Author: ${doc.author || "Unknown"}
-Commit: ${doc.commit_sha || "Unknown"}`;
-                })
-                .join("\n\n");
+            // Fallback: If RPC match threshold returned 0 records, retrieve user's indexed code directly
+            if (!Array.isArray(result) || result.length === 0) {
+                try {
+                    const { data: dbData } = await supabase
+                        .from("github_code")
+                        .select("*")
+                        .eq("user_id", userId)
+                        .limit(5);
+
+                    if (dbData && dbData.length > 0) {
+                        result = dbData.map((d) => ({
+                            content: d.content,
+                            repo: d.repo,
+                            branch: d.branch || "main", 
+                            file: d.file,
+                            author: d.author || "Unknown",
+                            commit_sha: d.commit_sha || "Unknown",
+                            last_edited: d.last_edited || "Unknown",
+                            similarity: 0.5,
+                        }));
+                    }
+                } catch (dbErr) {
+                    console.warn("⚠️ Direct table query error:", dbErr.message);
+                }
+            }
         }
 
-        // Guard: no relevant documents found — return early instead of hallucinating
-        if (!result || result.length === 0) {
-            return res.json({
-                chatId: chatId || null,
-                question,
-                summary: "No indexed repository files found. Please make sure to sync your repositories on the Repos page first.",
-                matches: [],
-            });
+        context = (Array.isArray(result) ? result : [])
+            .map((doc) => {
+                return `From ${doc.repo}/${doc.branch || "main"}/${doc.file}:\n${doc.content}\n
+Author: ${doc.author || "Unknown"}
+Commit: ${doc.commit_sha || "Unknown"}`;
+            })
+            .join("\n\n");
+
+        if (!context || context.trim() === "") {
+            context = "No specific indexed codebase context found. Please answer the question accurately using general programming knowledge.";
         }
 
         // 🔗 Run LangChain LCEL chain with resilient fallback
@@ -339,21 +333,26 @@ Commit: ${doc.commit_sha || "Unknown"}`;
             metadata = await chain.invoke({ question, context });
         } catch (chainErr) {
             console.warn("⚠️ Chain JSON parsing failed, running raw Groq fallback:", chainErr.message);
-            const rawResponse = await chatModel.invoke([
-                ["system", "You are SEAM (Context AI). Answer the user's question directly, clearly, and in detail based on the codebase context provided:\n\n" + context],
-                ["user", question]
-            ]);
-            metadata = {
-                summary: typeof rawResponse.content === "string" ? rawResponse.content : JSON.stringify(rawResponse.content)
-            };
+            try {
+                const rawResponse = await chatModel.invoke([
+                    ["system", "You are SEAM (Context AI). Answer the user's question directly, clearly, and in detail based on the codebase context provided:\n\n" + context],
+                    ["user", question]
+                ]);
+                metadata = {
+                    summary: typeof rawResponse.content === "string" ? rawResponse.content : JSON.stringify(rawResponse.content)
+                };
+            } catch (groqErr) {
+                console.error("❌ Groq fallback error:", groqErr.message);
+                metadata = { summary: "Sorry, I could not process your request at this time." };
+            }
         }
         const explanation = metadata.summary || "No explanation generated.";
 
         finalResponse = {
             ...finalResponse,
             summary: explanation,
-            ...metadata, // contributor, lastEdited, commitUrl, etc.
-            matches: result.map((doc) => ({
+            ...metadata,
+            matches: Array.isArray(result) ? result.map((doc) => ({
                 text: doc.content,
                 metadata: {
                     repo: doc.repo,
@@ -364,36 +363,30 @@ Commit: ${doc.commit_sha || "Unknown"}`;
                     commit_sha: doc.commit_sha,
                     last_edited: doc.last_edited,
                 },
-                score: doc.similarity,
-            })),
+                score: doc.similarity || 0,
+            })) : [],
         };
 
-        let chat;
-        if (chatId) {
-            // Existing chat → push messages
-            chat = await Chat.findById(chatId);
-            if (!chat) return res.status(404).json({ error: "Chat not found" });
-        } else {
-            // New chat
-            chat = new Chat({ userId, title: "New Chat", messages: [] });
+        // Save chat history safely
+        let responseChatId = chatId || null;
+        try {
+            let chat;
+            if (chatId) {
+                chat = await Chat.findById(chatId);
+            }
+            if (!chat) {
+                chat = new Chat({ userId, title: question.slice(0, 30), messages: [] });
+            }
+
+            chat.messages.push({ content: question, role: "user" });
+            chat.messages.push({ content: finalResponse.summary, role: "bot", meta: finalResponse });
+            await chat.save();
+            responseChatId = chat._id;
+        } catch (chatErr) {
+            console.warn("⚠️ Failed to save chat to database:", chatErr.message);
         }
 
-        // Push user message
-        chat.messages.push({
-            content: question,
-            role: "user",
-        });
-
-        // Push bot response
-        chat.messages.push({
-            content: finalResponse.summary,
-            role: "bot",
-            meta: finalResponse, // store structured response in meta
-        });
-
-        await chat.save();
-
-        return res.json({ chatId: chat._id, ...finalResponse });
+        return res.json({ chatId: responseChatId, ...finalResponse });
     } catch (err) {
         console.error("❌ Error in /ask endpoint:", err);
         return res.status(500).json({

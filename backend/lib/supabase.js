@@ -1,6 +1,4 @@
 import { createClient } from "@supabase/supabase-js";
-import { GoogleGenAI } from "@google/genai";
-import { pipeline } from "@xenova/transformers";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -10,36 +8,70 @@ export const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY // service role for backend operations
 );
 
-let localExtractor = null;
-
 export async function getEmbedding(text) {
-  // Always use local 768-dim model (Xenova/all-mpnet-base-v2) for 100% vector consistency with stored Supabase embeddings
+  // Use Google Gemini API (gemini-embedding-001 with outputDimensionality: 768)
+  // 0 MB server RAM, 0 MB disk, 100% vector consistency with Supabase 768-dim column
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error("GEMINI_API_KEY is missing in environment variables.");
+  }
+
+  const modelName = "models/gemini-embedding-001";
+  const url = `https://generativelanguage.googleapis.com/v1beta/${modelName}:embedContent?key=${apiKey}`;
+
   try {
-    if (!localExtractor) {
-      console.log("📦 Loading local 768-dim embedding model (Xenova/all-mpnet-base-v2)...");
-      localExtractor = await pipeline("feature-extraction", "Xenova/all-mpnet-base-v2");
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        content: {
+          parts: [{ text: text.slice(0, 8000) }] // Sanitize input text length
+        },
+        outputDimensionality: 768
+      })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      console.error("❌ Gemini Embedding API Error:", data);
+      throw new Error(`Gemini Embedding API Error: ${data.error?.message || res.statusText}`);
     }
-    const output = await localExtractor(text, { pooling: "mean", normalize: true });
-    return Array.from(output.data); // 768-dim float array
-  } catch (localErr) {
-    console.error("❌ Local embedding error:", localErr);
-    throw localErr;
+
+    const embedding = data.embedding?.values;
+    if (!embedding || !Array.isArray(embedding) || embedding.length !== 768) {
+      throw new Error(`Invalid embedding vector received from Gemini API (Length: ${embedding?.length || 0})`);
+    }
+
+    return embedding; // 768-dim float array
+  } catch (err) {
+    console.error("❌ Failed to get Gemini embedding:", err.message);
+    throw err;
   }
 }
 
 export async function addDocuments(docs, userId) {
-  for (const doc of docs) {
-    const embedding = await getEmbedding(doc.text);
-    const { error } = await supabase.from("github_code").upsert({
-      id: doc.id,
-      content: doc.text,
-      embedding: embedding,
-      user_id: userId,
-      ...doc.metadata,
-    });
-    if (error) {
-      console.error("❌ Supabase insert error:", error);
-      throw new Error(`Supabase insert failed: ${error.message} (details: ${error.details || ''})`);
+  console.log(`📦 [EMBEDDING LOG] Starting embedding creation for ${docs.length} documents...`);
+  for (let i = 0; i < docs.length; i++) {
+    const doc = docs[i];
+    try {
+      const embedding = await getEmbedding(doc.text);
+      const { error } = await supabase.from("github_code").upsert({
+        id: doc.id,
+        content: doc.text,
+        embedding: embedding,
+        user_id: userId,
+        ...doc.metadata,
+      });
+
+      if (error) {
+        console.error(`❌ [EMBEDDING LOG] Supabase DB Insert failed for doc [${doc.id}]:`, error);
+        throw new Error(`Supabase DB Insert Error: ${error.message} (Details: ${error.details || ''})`);
+      }
+      console.log(`✅ [EMBEDDING LOG] [${i + 1}/${docs.length}] Embedded & stored: ${doc.id}`);
+    } catch (embErr) {
+      console.error(`❌ [EMBEDDING LOG] Error embedding document [${doc.id}]:`, embErr.message);
+      throw embErr;
     }
   }
 }

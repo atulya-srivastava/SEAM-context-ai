@@ -4,19 +4,18 @@ import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// Tell @xenova/transformers to look for models in the classifier directory
-env.localModelPath = __dirname;
-env.allowRemoteModels = false;
-
 let classifier = null;
 
 export async function loadClassifier() {
   if (!classifier) {
-    console.log("🧠 Loading intent classifier...");
+    console.log("🧠 Loading local fine-tuned intent classifier...");
+    env.localModelPath = __dirname;
+    env.allowRemoteModels = false;
     classifier = await pipeline("text-classification", "model", {
       quantized: true,
+      local_files_only: true,
     });
-    console.log("✅ Intent classifier loaded");
+    console.log("✅ Local fine-tuned intent classifier loaded");
   }
   return classifier;
 }
