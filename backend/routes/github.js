@@ -29,6 +29,37 @@ router.get("/status", ClerkExpressRequireAuth(), async (req, res) => {
     }
 });
 
+// Debug route to inspect stored Supabase vectors for logged in user
+router.get("/debug-supabase", ClerkExpressRequireAuth(), async (req, res) => {
+    try {
+        const { userId } = req.auth;
+        const { supabase } = await import("../lib/supabase.js");
+        const { count, error } = await supabase
+            .from("github_code")
+            .select("*", { count: "exact", head: true })
+            .eq("user_id", userId);
+
+        if (error) {
+            return res.status(500).json({ status: "error", error: error.message });
+        }
+
+        const { data: sampleDocs } = await supabase
+            .from("github_code")
+            .select("id, repo, branch, file, created_at")
+            .eq("user_id", userId)
+            .limit(5);
+
+        return res.json({
+            status: "connected",
+            userId,
+            totalDocsInSupabase: count,
+            sampleDocs: sampleDocs || []
+        });
+    } catch (err) {
+        return res.status(500).json({ status: "exception", error: err.message });
+    }
+});
+
 // Connect via GitHub Personal Access Token (PAT)
 router.post("/connect-pat", ClerkExpressRequireAuth(), async (req, res) => {
     try {
@@ -151,31 +182,35 @@ router.get("/repos", async (req, res) => {
 // Architecture: ChatPromptTemplate → ChatGroq → JsonOutputParser
 // Both chains enforce JSON-only output, eliminating fragile regex parsing.
 
-const FILE_CHANGE_SYSTEM = `You are an expert assistant analyzing GitHub code changes.
-Respond ONLY with valid JSON (no markdown fences, no extra text) matching this shape:
+const FILE_CHANGE_SYSTEM = `You are SEAM (Context AI), an expert developer assistant analyzing code changes in a GitHub repository.
+Respond ONLY with valid JSON (no markdown fences, no extra text) matching this JSON format:
 {{
-  "summary": "beginner-friendly explanation of what changed",
-  "contributor": "author name (username)",
-  "lastEdited": "ISO timestamp or empty string",
-  "commitUrl": "GitHub commit URL or empty string",
-  "combinedCode": "relevant merged code snippet",
-  "project_name": "repository name",
-  "language": "primary programming language",
-  "database": "database technology if present, else empty string"
+  "summary": "A detailed, technical, step-by-step explanation answering the user's specific question based on the provided code snippets and context.",
+  "contributor": "Author or contributor name if mentioned in context, else empty string",
+  "lastEdited": "ISO timestamp or commit date if present in context, else empty string",
+  "commitUrl": "GitHub commit URL if present in context, else empty string",
+  "combinedCode": "Key code snippet or diff related to the user query",
+  "project_name": "Repository or project name if present in context, else empty string",
+  "language": "Programming language of the snippets",
+  "database": "Database technology if identified in code, else empty string"
 }}`;
 
-const GENERAL_QA_SYSTEM = `You are an expert assistant for GitHub repository Q&A.
-Respond ONLY with valid JSON (no markdown fences, no extra text) matching this shape:
+const GENERAL_QA_SYSTEM = `You are SEAM (Context AI), an intelligent developer assistant answering questions about a user's GitHub codebase.
+
+CRITICAL INSTRUCTION:
+Your 'summary' field MUST directly and thoroughly answer the user's SPECIFIC question using the provided code context. Do NOT give a generic project summary. Explain the relevant functions, logic, architecture, or code files in detail.
+
+Respond ONLY with valid JSON (no markdown fences, no extra text) matching this JSON format:
 {{
-  "summary": "clear, user-friendly answer to the question",
-  "contributor": "primary contributor if identifiable, else empty string",
-  "repo": "repository name",
-  "file": "relevant file path if applicable, else empty string",
-  "branch": "branch name if applicable, else empty string",
-  "commit": "commit SHA if applicable, else empty string",
-  "project_name": "project name",
-  "language": "primary programming language",
-  "database": "database technology if present, else empty string"
+  "summary": "Detailed, comprehensive, code-backed answer directly addressing the user's specific question.",
+  "contributor": "Author or primary contributor if relevant to the query, else empty string",
+  "repo": "Repository name if present in context, else empty string",
+  "file": "Most relevant file path for this answer if applicable, else empty string",
+  "branch": "Branch name if present in context, else empty string",
+  "commit": "Commit SHA if present in context, else empty string",
+  "project_name": "Project name if present in context, else empty string",
+  "language": "Programming language if identifiable, else empty string",
+  "database": "Database technology if present in code, else empty string"
 }}`;
 
 const jsonParser = new JsonOutputParser();
@@ -297,10 +332,22 @@ Commit: ${doc.commit_sha || "Unknown"}`;
             });
         }
 
-        // 🔗 Run LangChain LCEL chain: PromptTemplate → ChatGroq → JsonOutputParser
-        const chain = match ? fileChangeChain : generalChain;
-        const metadata = await chain.invoke({ question, context });
-        const explanation = metadata.summary || "";
+        // 🔗 Run LangChain LCEL chain with resilient fallback
+        let metadata = {};
+        try {
+            const chain = match ? fileChangeChain : generalChain;
+            metadata = await chain.invoke({ question, context });
+        } catch (chainErr) {
+            console.warn("⚠️ Chain JSON parsing failed, running raw Groq fallback:", chainErr.message);
+            const rawResponse = await chatModel.invoke([
+                ["system", "You are SEAM (Context AI). Answer the user's question directly, clearly, and in detail based on the codebase context provided:\n\n" + context],
+                ["user", question]
+            ]);
+            metadata = {
+                summary: typeof rawResponse.content === "string" ? rawResponse.content : JSON.stringify(rawResponse.content)
+            };
+        }
+        const explanation = metadata.summary || "No explanation generated.";
 
         finalResponse = {
             ...finalResponse,
@@ -348,34 +395,12 @@ Commit: ${doc.commit_sha || "Unknown"}`;
 
         return res.json({ chatId: chat._id, ...finalResponse });
     } catch (err) {
-        console.error("❌ Query error:", err);
-        
-        // Demo fallback for interview presentations if API keys are missing/invalid
-        const lowerQ = (question || "").toLowerCase();
-        let fallbackSummary = "I analyzed the repository. ";
-        if (lowerQ.includes("db") || lowerQ.includes("database")) {
-            fallbackSummary += "The database connection is initiated in `db.js` using Mongoose and connects to MongoDB. Vector embeddings are stored and searched in Supabase pgvector.";
-        } else if (lowerQ.includes("auth") || lowerQ.includes("login") || lowerQ.includes("clerk")) {
-            fallbackSummary += "Authentication is managed via Clerk in the frontend and validated in the backend with ClerkExpressRequireAuth. GitHub connections use Passport-GitHub OAuth.";
-        } else {
-            fallbackSummary += "Here is a quick summary: The codebase consists of a Next.js 15 frontend under `hackfest-fe/` and an Express backend under `backend/`. It uses Supabase pgvector for semantic vector searches of codebase files.";
-        }
-
-        const fallbackResponse = {
-            chatId: chatId || "demo-chat-id",
-            question,
-            summary: fallbackSummary,
-            combinedCode: "// Demo code snippet\nconst connection = await GithubConnection.findOne({ userId });",
-            contributor: "atulya-srivastava",
-            lastEdited: new Date().toISOString(),
-            commitUrl: "https://github.com/atulya-srivastava/seam",
-            project_name: "SEAM-context-ai",
-            language: "JavaScript / TypeScript",
-            database: "MongoDB / Supabase pgvector",
-            matches: []
-        };
-        
-        return res.json(fallbackResponse);
+        console.error("❌ Error in /ask endpoint:", err);
+        return res.status(500).json({
+            error: "Failed to process question",
+            details: err.message,
+            stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
+        });
     }
 });
 

@@ -37,7 +37,10 @@ export async function addDocuments(docs, userId) {
       user_id: userId,
       ...doc.metadata,
     });
-    if (error) console.error("Insert error:", error);
+    if (error) {
+      console.error("❌ Supabase insert error:", error);
+      throw new Error(`Supabase insert failed: ${error.message} (details: ${error.details || ''})`);
+    }
   }
 }
 
