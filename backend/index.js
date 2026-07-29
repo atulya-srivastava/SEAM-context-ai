@@ -14,6 +14,8 @@ import chatRoutes from "./routes/chatRoutes.js"
 import { classifyIntent, loadClassifier } from "./classifier/classify.js"
 
 
+import MongoStore from "connect-mongo";
+
 dotenv.config();
 const app = express();
 const corsOptions = {
@@ -30,8 +32,17 @@ app.use(
     ClerkExpressWithAuth()
 );
 
-// Session (needed for passport GitHub)
-app.use(session({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: false }));
+// Session (persisted in MongoDB via connect-mongo)
+app.use(
+    session({
+        secret: process.env.SESSION_SECRET || "seam-secret-key",
+        resave: false,
+        saveUninitialized: false,
+        store: MongoStore.create({
+            mongoUrl: process.env.MONGODB_URI,
+        }),
+    })
+);
 app.use(passport.initialize());
 app.use(passport.session());
 
