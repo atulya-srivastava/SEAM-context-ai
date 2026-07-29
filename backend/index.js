@@ -32,17 +32,21 @@ app.use(
     ClerkExpressWithAuth()
 );
 
-// Session (persisted in MongoDB via connect-mongo)
-app.use(
-    session({
-        secret: process.env.SESSION_SECRET || "seam-secret-key",
-        resave: false,
-        saveUninitialized: false,
-        store: MongoStore.create({
-            mongoUrl: process.env.MONGODB_URI,
-        }),
-    })
-);
+// Session setup
+const sessionOptions = {
+    secret: process.env.SESSION_SECRET || "seam-secret-key",
+    resave: false,
+    saveUninitialized: false,
+};
+
+const mongoUri = process.env.MONGO_DB_URI;
+if (mongoUri) {
+    sessionOptions.store = MongoStore.create({
+        mongoUrl: mongoUri,
+    });
+}
+
+app.use(session(sessionOptions));
 app.use(passport.initialize());
 app.use(passport.session());
 
