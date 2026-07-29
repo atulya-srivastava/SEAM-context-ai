@@ -470,103 +470,113 @@ router.post("/repos/:owner/:repo/sync-branch", ClerkExpressRequireAuth(), async 
         const { owner, repo } = req.params;
         const { branch } = req.body;
 
+        if (!branch) return res.status(400).json({ error: "Branch parameter is required" });
+
         const connection = await GithubConnection.findOne({ userId });
-        if (!connection) return res.status(403).json({ error: "No GitHub token" });
+        if (!connection || !connection.accessToken) return res.status(403).json({ error: "No GitHub token" });
+
+        const authHeader = `Bearer ${connection.accessToken}`;
 
         // 1. Delete old branch data
         await deleteByBranch(repo, branch, userId);
 
         // 2. Fetch commit history for this branch
-        const commitsRes = await fetch(
-            `https://api.github.com/repos/${owner}/${repo}/commits?sha=${branch}&per_page=100`,
-            { headers: { Authorization: `token ${connection.accessToken}` } }
-        );
-        const commits = await commitsRes.json();
-
-        // ✅ build a lookup: latest commit per file
         const fileLastCommit = {};
-        for (const commit of commits) {
-            const commitSha = commit.sha;
-            const commitDate = commit.commit?.author?.date;
-            const commitAuthor = commit.commit?.author?.name;
-            const commitEmail = commit.commit?.author?.email;
-            const commitUser = commit.author?.login;
-
-            // fetch changed files for each commit
-            const commitDetailsRes = await fetch(
-                `https://api.github.com/repos/${owner}/${repo}/commits/${commitSha}`,
-                { headers: { Authorization: `token ${connection.accessToken}` } }
+        try {
+            const commitsRes = await fetch(
+                `https://api.github.com/repos/${owner}/${repo}/commits?sha=${branch}&per_page=15`,
+                { headers: { Authorization: authHeader, "User-Agent": "SEAM-App" } }
             );
-            const commitDetails = await commitDetailsRes.json();
+            const commits = await commitsRes.json();
 
-            if (Array.isArray(commitDetails.files)) {
-                for (const f of commitDetails.files) {
-                    if (!fileLastCommit[f.filename]) {
-                        fileLastCommit[f.filename] = {
-                            sha: commitSha,
-                            author: commitAuthor,
-                            email: commitEmail,
-                            username: commitUser,
-                            lastEdited: commitDate
-                        };
+            if (Array.isArray(commits)) {
+                for (const commit of commits.slice(0, 10)) {
+                    const commitSha = commit.sha;
+                    const commitDate = commit.commit?.author?.date;
+                    const commitAuthor = commit.commit?.author?.name;
+                    const commitEmail = commit.commit?.author?.email;
+                    const commitUser = commit.author?.login;
+
+                    const commitDetailsRes = await fetch(
+                        `https://api.github.com/repos/${owner}/${repo}/commits/${commitSha}`,
+                        { headers: { Authorization: authHeader, "User-Agent": "SEAM-App" } }
+                    );
+                    const commitDetails = await commitDetailsRes.json();
+
+                    if (Array.isArray(commitDetails.files)) {
+                        for (const f of commitDetails.files) {
+                            if (!fileLastCommit[f.filename]) {
+                                fileLastCommit[f.filename] = {
+                                    sha: commitSha,
+                                    author: commitAuthor,
+                                    email: commitEmail,
+                                    username: commitUser,
+                                    lastEdited: commitDate
+                                };
+                            }
+                        }
                     }
                 }
             }
+        } catch (commitErr) {
+            console.warn("⚠️ Could not fetch commit details, continuing without metadata:", commitErr.message);
         }
 
         // 3. Fetch repo tree for branch
         const treeRes = await fetch(
             `https://api.github.com/repos/${owner}/${repo}/git/trees/${branch}?recursive=1`,
-            { headers: { Authorization: `token ${connection.accessToken}` } }
+            { headers: { Authorization: authHeader, "User-Agent": "SEAM-App" } }
         );
         const tree = await treeRes.json();
-        if (!tree.tree) return res.json({ message: "No files in branch" });
+        if (!tree.tree || !Array.isArray(tree.tree)) return res.json({ message: "No files found in branch" });
 
         // 4. Filter code files
         const codeFiles = tree.tree.filter(
-            f => f.type === "blob" && /\.(js|ts|tsx|json|go|py|sql|md)$/i.test(f.path)
+            f => f.type === "blob" && /\.(js|ts|tsx|jsx|json|go|py|sql|md|css|html|java|c|cpp|h|rs)$/i.test(f.path)
         );
 
         let totalFiles = 0;
 
         // 5. Process each file
         for (const file of codeFiles) {
-            const fileRes = await fetch(
-                `https://api.github.com/repos/${owner}/${repo}/contents/${file.path}?ref=${branch}`,
-                { headers: { Authorization: `token ${connection.accessToken}` } }
-            );
-            const data = await fileRes.json();
-            if (!data.content) continue;
+            try {
+                const fileRes = await fetch(
+                    `https://api.github.com/repos/${owner}/${repo}/contents/${file.path}?ref=${branch}`,
+                    { headers: { Authorization: authHeader, "User-Agent": "SEAM-App" } }
+                );
+                const data = await fileRes.json();
+                if (!data.content) continue;
 
-            const content = Buffer.from(data.content, "base64").toString("utf8");
+                const content = Buffer.from(data.content, "base64").toString("utf8");
+                const commitMeta = fileLastCommit[file.path] || {};
 
-            // get last commit info for this file
-            const commitMeta = fileLastCommit[file.path] || {};
+                // Split into chunks
+                const size = 800;
+                for (let i = 0; i < content.length; i += size) {
+                    const chunk = content.slice(i, i + size);
+                    await addDocuments([{
+                        id: `${repo}-${branch}-${file.path.replace(/[^a-zA-Z0-9-_]/g, "_")}-${i}`,
+                        text: chunk,
+                        metadata: {
+                            repo,
+                            branch,
+                            file: file.path,
+                            chunk: i,
+                            author: commitMeta.author || "Unknown",
+                            email: commitMeta.email || "Unknown",
+                            username: commitMeta.username || "Unknown",
+                            commit_sha: commitMeta.sha || "Unknown",
+                            last_edited: commitMeta.lastEdited || "Unknown",
+                        },
+                    }], userId);
+                }
 
-            // Split into chunks
-            const size = 800;
-            for (let i = 0; i < content.length; i += size) {
-                const chunk = content.slice(i, i + size);
-                await addDocuments([{
-                    id: `${repo}-${branch}-${file.path}-${i}`,
-                    text: chunk,
-                    metadata: {
-                        repo,
-                        branch,
-                        file: file.path,
-                        chunk: i,
-                        author: commitMeta.author || "Unknown",
-                        email: commitMeta.email || "Unknown",
-                        username: commitMeta.username || "Unknown",
-                        commit_sha: commitMeta.sha || "Unknown",
-                        last_edited: commitMeta.lastEdited || "Unknown",
-                    },
-                }], userId);
+                totalFiles++;
+            } catch (fileErr) {
+                console.error(`⚠️ Failed to process file ${file.path}:`, fileErr.message);
             }
-
-            totalFiles++;
         }
-        console.log(`Synced ${totalFiles} files from ${repo}/${branch} with commit metadata`);
+        console.log(`✅ Synced ${totalFiles} files from ${repo}/${branch} with commit metadata`);
         res.json({ message: `✅ Synced ${totalFiles} files from ${repo}/${branch} with commit metadata` });
     } catch (err) {
         console.error("❌ Error syncing branch:", err);
