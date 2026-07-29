@@ -97,11 +97,18 @@ const Navbar = () => {
               Ask
             </Link>
             <Link
-              href="/dashboard"
+              href="/dashboard/repos"
               onMouseEnter={handleMouseEnter}
               className="relative z-10 px-4 py-1 hover:text-white transition-colors duration-200"
             >
-              Connect 
+              Repos
+            </Link>
+            <Link
+              href="/dashboard/settings"
+              onMouseEnter={handleMouseEnter}
+              className="relative z-10 px-4 py-1 hover:text-white transition-colors duration-200"
+            >
+              Settings
             </Link>
 
             

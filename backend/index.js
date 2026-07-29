@@ -14,8 +14,6 @@ import chatRoutes from "./routes/chatRoutes.js"
 import { classifyIntent, loadClassifier } from "./classifier/classify.js"
 
 
-
-
 dotenv.config();
 const app = express();
 const corsOptions = {
@@ -78,53 +76,90 @@ passport.deserializeUser((obj, done) => done(null, obj));
 // Health check
 app.get("/", (req, res) => res.json({ status: "Backend running ✅" }));
 
-// GitHub Login
-app.get("/auth/github", (req, res, next) => {
+// GitHub OAuth Login
+app.get("/auth/github", (req, res) => {
     const { userId } = req.query;
-    passport.authenticate("github", {
-        scope: ["repo"],
-        state: userId
-    })(req, res, next);
+    if (!userId) {
+        return res.status(400).send("userId query parameter is required for GitHub authentication.");
+    }
+    const clientId = process.env.GITHUB_CLIENT_ID;
+    const callbackUrl = process.env.GITHUB_CALLBACK_URL || `${req.protocol}://${req.get('host')}/auth/github/callback`;
+    const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo,user&state=${encodeURIComponent(userId)}&redirect_uri=${encodeURIComponent(callbackUrl)}`;
+    return res.redirect(githubAuthUrl);
 });
 
-// GitHub Callback
-app.get("/auth/github/callback", (req, res, next) => {
-    passport.authenticate("github", (err, user, info) => {
-        if (err) {
-            console.error("❌ Passport authentication error:", err);
-            return res.redirect(`${process.env.FRONTEND_URL || "http://localhost:3000"}/dashboard?githubStatus=failed&error=${encodeURIComponent(err.message)}`);
-        }
-        if (!user) {
-            console.warn("⚠️ No user returned from passport:", info);
-            return res.redirect(`${process.env.FRONTEND_URL || "http://localhost:3000"}/dashboard?githubStatus=failed`);
-        }
-        req.logIn(user, async (loginErr) => {
-            if (loginErr) {
-                console.error("❌ Passport login error:", loginErr);
-                return res.redirect(`${process.env.FRONTEND_URL || "http://localhost:3000"}/dashboard?githubStatus=failed`);
-            }
-            
-            const userId = req.query.state;
-            const { profile, accessToken } = user;
+// GitHub OAuth Callback
+app.get("/auth/github/callback", async (req, res) => {
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+    const { code, state, error, error_description } = req.query;
 
-            if (!userId) {
-                console.warn("⚠️ No userId (state) found in callback query parameters.");
-                return res.redirect(`${process.env.FRONTEND_URL || "http://localhost:3000"}/dashboard?githubStatus=failed&error=missing_userid`);
-            }
+    if (error) {
+        console.error("❌ GitHub OAuth authorization denied/error:", error, error_description);
+        return res.redirect(`${frontendUrl}/dashboard/settings?githubStatus=failed&error=${encodeURIComponent(error_description || error)}`);
+    }
 
-            try {
-                await GithubConnection.findOneAndUpdate(
-                    { userId },
-                    { userId, githubUsername: profile.username, accessToken },
-                    { upsert: true, new: true }
-                );
-                return res.redirect(`${process.env.FRONTEND_URL || "http://localhost:3000"}/dashboard?githubStatus=success`);
-            } catch (dbErr) {
-                console.error("❌ DB save error:", dbErr);
-                return res.redirect(`${process.env.FRONTEND_URL || "http://localhost:3000"}/dashboard?githubStatus=failed`);
-            }
+    const userId = state;
+    if (!userId || !code) {
+        console.warn("⚠️ Missing code or userId (state) in callback query parameters.");
+        return res.redirect(`${frontendUrl}/dashboard/settings?githubStatus=failed&error=missing_parameters`);
+    }
+
+    try {
+        const callbackUrl = process.env.GITHUB_CALLBACK_URL || `${req.protocol}://${req.get('host')}/auth/github/callback`;
+        
+        // Exchange code for access_token
+        const tokenRes = await fetch("https://github.com/login/oauth/access_token", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+            },
+            body: JSON.stringify({
+                client_id: process.env.GITHUB_CLIENT_ID,
+                client_secret: process.env.GITHUB_CLIENT_SECRET,
+                code,
+                redirect_uri: callbackUrl,
+            }),
         });
-    })(req, res, next);
+
+        const tokenData = await tokenRes.json();
+
+        if (!tokenData.access_token) {
+            console.error("❌ Failed to exchange code for GitHub token:", tokenData);
+            return res.redirect(`${frontendUrl}/dashboard/settings?githubStatus=failed&error=${encodeURIComponent(tokenData.error_description || "token_exchange_failed")}`);
+        }
+
+        const accessToken = tokenData.access_token;
+
+        // Fetch user profile from GitHub API
+        const profileRes = await fetch("https://api.github.com/user", {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+                "User-Agent": "SEAM-App",
+            },
+        });
+
+        if (!profileRes.ok) {
+            console.error("❌ Failed to fetch user profile from GitHub:", profileRes.statusText);
+            return res.redirect(`${frontendUrl}/dashboard/settings?githubStatus=failed&error=profile_fetch_failed`);
+        }
+
+        const profileData = await profileRes.json();
+        const githubUsername = profileData.login;
+
+        // Upsert into MongoDB
+        await GithubConnection.findOneAndUpdate(
+            { userId },
+            { userId, githubUsername, accessToken },
+            { upsert: true, new: true }
+        );
+
+        console.log(`✅ GitHub account @${githubUsername} successfully connected for user ${userId}`);
+        return res.redirect(`${frontendUrl}/dashboard/settings?githubStatus=success&username=${encodeURIComponent(githubUsername)}`);
+    } catch (err) {
+        console.error("❌ GitHub OAuth callback error:", err);
+        return res.redirect(`${frontendUrl}/dashboard/settings?githubStatus=failed&error=${encodeURIComponent(err.message)}`);
+    }
 });
 
 app.get("/api/github/repos", ClerkExpressRequireAuth(), async (req, res) => {

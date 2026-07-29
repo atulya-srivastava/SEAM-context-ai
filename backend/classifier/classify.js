@@ -21,8 +21,40 @@ export async function loadClassifier() {
   return classifier;
 }
 
+/*
+const GENERAL_GREETINGS = [
+  "hello", "hi", "hey", "hello there", "hi there", "hey there",
+  "good morning", "good afternoon", "good evening", "how are you",
+  "who are you", "what can you do", "help", "thanks", "thank you"
+];
+
+const GITHUB_KEYWORDS = [
+  "in this project", "this project", "in this repo", "in this repository",
+  "our project", "our repo", "project", "repo", "repository", "github",
+  "commit", "routing", "route", "routes", "branch", "pr", "pull request",
+  "function", "codebase", "api gateway", "api-gateway", "annotationplus",
+  "seam", "backend", "frontend", "file", "line", "variable", "class", "method"
+];
+*/
+
 export async function classifyIntent(text) {
+  const startTime = Date.now();
+
+  // Keyword overrides commented out to test raw ONNX model predictions directly
   const clf = await loadClassifier();
   const [result] = await clf(text);
-  return result.label; // "github" | "integration" | "general"
+  const label = result.label;
+  const score = result.score;
+
+  const duration = Date.now() - startTime;
+  const confidence = (score * 100).toFixed(2);
+
+  console.log(`\n=================== INTENT CLASSIFIER LOG ===================`);
+  console.log(` User Query: "${text}"`);
+  console.log(` Predicted Intent: [ ${label.toUpperCase()} ]`);
+  console.log(` Confidence Score: ${confidence}%`);
+  console.log(` Inference Time: ${duration}ms`);
+  console.log(`=================================================================\n`);
+
+  return label; // "github" | "integration" | "general"
 }

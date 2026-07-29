@@ -1,203 +1,188 @@
-what is a REST API,general
-explain how OAuth works,general
-what's the difference between SQL and NoSQL,general
-what is the purpose of the HTTP 403 status code,general
-how does a CDN speed up website loading,general
-what is the difference between encryption and hashing,general
-explain the concept of object-relational mapping,general
-what does ACID compliance mean in databases,general
-what is the role of a reverse proxy server,general
-how do websockets differ from standard HTTP,general
-what is the purpose of a subnet mask,general
-explain how DNS resolution works step by step,general
-what is asymmetric cryptography,general
-what is the difference between a process and a thread,general
-explain the Model-View-Controller design pattern,general
-what is the difference between authentication and authorization,general
-how does public key infrastructure work,general
-what is cross-origin resource sharing,general
-explain the concept of a dead-letter queue,general
-what is the difference between a symmetric and asymmetric cipher,general
-what is the difference between compiler and interpreter,general
-explain functional programming paradigm basics,general
-what are the solid principles in object-oriented design,general
-what is a memory leak and how does it happen,general
-explain the difference between pass-by-value and pass-by-reference,general
-what is garbage collection in Java,general
-what's the difference between abstract class and interface,general
-what are dynamic programming algorithms used for,general
-explain duck typing in Python,general
-what is a closure in JavaScript,general
-what is the difference between synchronous and asynchronous code,general
-how does type casting work in C++,general
-what is the purpose of pointers in C,general
-explain polymorphism with a real-world example,general
-what is a higher-order function,general
-what is method overloading vs method overriding,general
-explain the concept of concurrency vs parallelism,general
-what is lazy loading in web development,general
-what are generics in programming languages,general
-explain mutable vs immutable objects,general
-what is infrastructure as code,general
-explain the difference between horizontal and vertical scaling,general
-what is a microservice architecture,general
-how does serverless computing work,general
-what is the purpose of a load balancer,general
-explain containerization vs virtualization,general
-what is Kubernetes and why is it used,general
-what is a blue-green deployment strategy,general
-explain the CAP theorem in distributed systems,general
-what is continuous integration and continuous deployment,general
-what is edge computing,general
-how does a message broker like Kafka work,general
-what is log aggregation in microservices,general
-explain the purpose of a health check endpoint,general
-what is a relational database management system,general
-what's the difference between a data warehouse and a data lake,general
-how does a multi-tenant application architecture work,general
-what is sharding in database systems,general
-explain circuit breaker pattern in microservices,general
-what is the role of an API gateway,general
-what is the time complexity of binary search,general
-explain how a hash table handles collisions,general
-what's the difference between a stack and a queue,general
-how does the quicksort algorithm work,general
-what is a directed acyclic graph,general
-explain the difference between BFS and DFS,general
-what is a binary search tree,general
-how does Dijkstra's algorithm find the shortest path,general
-what is big O notation used for,general
-what is a linked list and when should you use it,general
-explain the concept of space complexity,general
-what is a heap data structure,general
-how does merge sort work,general
-what is the difference between a tree and a graph,general
-what is a memoization technique,general
-explain how a trie data structure works,general
-what is a priority queue,general
-how does a red-black tree maintain balance,general
-what is the time complexity of inserting into an array,general
-explain the bubble sort algorithm,general
-what is a man-in-the-middle attack,general
-how does a firewall protect a network,general
-what is the difference between TCP and UDP,general
-explain how SQL injection works,general
-what is cross-site scripting,general
-what does the TLS handshake do,general
-how do JSON Web Tokens work,general
-what is a DDoS attack,general
-explain the concept of zero trust security,general
-what is the difference between IPv4 and IPv6,general
-how does a VPN encrypt your traffic,general
-what is multi-factor authentication,general
-explain salt in password hashing,general
-what is a buffer overflow vulnerability,general
-what's the difference between symmetric and public-key encryption,general
-how does port forwarding work,general
-what is the purpose of the SSH protocol,general
-explain cross-site request forgery,general
-what is penetration testing,general
-what are security certificates used for,general
-what is the capital of Australia,general
-how many planets are in the solar system,general
-who wrote Romeo and Juliet,general
-what is the speed of light in a vacuum,general
-which is the largest ocean on Earth,general
-what year did World War II end,general
-what are the three states of matter,general
-who painted the Mona Lisa,general
-what is the tallest mountain in the world,general
-how long does it take for Earth to orbit the Sun,general
-what is the chemical symbol for gold,general
-who discovered penicillin,general
-what is the smallest country in the world,general
-how many bones are in the adult human body,general
-what is the currency of Japan,general
-who was the first person to step on the moon,general
-what is the main language spoken in Brazil,general
-what causes a solar eclipse,general
-who developed the theory of relativity,general
-what is the deep ocean trench called,general
-what is inflation in economics,general
-explain the concept of supply and demand,general
-how do central banks determine interest rates,general
-what is the difference between stocks and bonds,general
-how does photosynthesis work in plants,general
-what is the purpose of the United Nations,general
-how many continents are there on Earth,general
-what is the boiling point of water in Celsius,general
-who invented the printing press,general
-what is the greenhouse effect,general
-what is the function of the human heart,general
-how do vaccines stimulate the immune system,general
-what is the capital of Canada,general
-who was the first president of the United States,general
-what is the primary component of the air we breathe,general
-how deep is the Mariana Trench,general
-what is the hardiest animal known to science,general
-who wrote the Odyssey,general
-what is the difference between a virus and a bacteria,general
-how does a magnifying glass work,general
-what is machine learning,general
-explain how a neural network learns,general
-what's the difference between supervised and unsupervised learning,general
-what is a large language model,general
-how do self-driving cars perceive their surroundings,general
-what is the difference between AI and machine learning,general
-explain computer vision basics,general
-what is reinforcement learning,general
-how does natural language processing work,general
-what is a decision tree in machine learning,general
-explain overfitting in data science,general
-what is deep learning,general
-how do recommendation algorithms work,general
-what is a Turing test,general
-what is data mining,general
-explain generative adversarial networks,general
-what is an artificial neuron,general
-what is linear regression used for,general
-explain natural language generation,general
-what is bias in machine learning models,general
-what is an operating system,general
-how does open-source software license work,general
-what is the purpose of the Linux kernel,general
-what's the difference between Unix and Linux,general
-how does virtual memory work in an OS,general
-what is a file system,general
-explain the difference between BIOS and UEFI,general
-what is the function of RAM in a computer,general
-how does a CPU process instructions,general
-what is a GPU used for besides gaming,general
-what is a URL shortener and how does it work,general
-explain how markdown text formatting works,general
-what is the difference between a web browser and a search engine,general
-how does a cache memory function,general
-what is pixel density,general
-explain cookies vs local storage,general
-what is a bit and a byte,general
-how does cloud storage ensure data redundancy,general
-what is open-source hardware,general
-what is a command line interface,general
-what is JSON and why is it popular,general
-what's the difference between XML and HTML,general
-what is responsive web design,general
-explain the difference between SVG and PNG images,general
-what is Unicode encoding,general
-what does UI and UX stand for,general
-explain the purpose of CSS variables,general
-what is accessible design or WCAG,general
-what is the difference between dark mode and light mode contrast standards,general
-explain semantic HTML elements,general
-what is an aspect ratio,general
-what is vector graphics,general
-how does gzip compression work,general
-what is base64 encoding used for,general
-explain the typography terms serif vs sans-serif,general
-what is metadata,general
-what is the difference between UTF-8 and UTF-16,general
-what is information architecture,general
-explain wireframing in design,general
-what is color theory basics,general
+Hello there,general
+Good morning,general
+Good evening,general
+What is up?,general
+Nice to meet you,general
+How have you been lately?,general
+Are you doing okay?,general
+I am feeling a bit tired today,general
+Why are you so happy?,general
+Is it going to rain today?,general
+What day of the week is it?,general
+What year is it?,general
+When does the sun set?,general
+What is your favorite color?,general
+Do you like listening to music?,general
+Are you a cat or dog person?,general
+What is the best food in the world?,general
+Can you help me with something?,general
+I could really use some advice,general
+What should I do with my free time?,general
+How do I make new friends?,general
+Sing me a song,general
+Tell me a really hard riddle,general
+Do you know any bedtime stories?,general
+Who created you?,general
+Are you a human or a robot?,general
+What exactly are your capabilities?,general
+Do you ever need to sleep?,general
+Where do you live?,general
+How old are you?,general
+What is the capital of France?,general
+Can you speak Spanish?,general
+What is the true meaning of all this?,general
+Tell me a fun fact about space,general
+Do you have any hobbies?,general
+What are you thinking about right now?,general
+I just need someone to talk to,general
+Do you ever dream?,general
+What is your absolute favorite holiday?,general
+Is it cold outside right now?,general
+Do you believe in aliens?,general
+What is the best way to learn a language?,general
+Can you write a poem for me?,general
+What is the most popular sport?,general
+How do I cook pasta?,general
+What is the speed of light?,general
+Do you like playing games?,general
+Tell me something I do not know,general
+I am bored what should I do?,general
+Goodbye for now,general
+How are you doing today?,general
+How is the weather?,general
+What is the weather forecast for tomorrow?,general
+How are things going?,general
+What time is it right now?,general
+What is your name?,general
+How's your day going?,general
+What are you up to?,general
+Can you tell me a joke?,general
+Tell me something interesting,general
+What is the latest news?,general
+What is the meaning of life?,general
+How is life treating you?,general
+Can we chat for a bit?,general
+What is your favorite book?,general
+What should I eat for lunch?,general
+How do I stay productive today?,general
+What is a good movie to watch?,general
+How was your day?,general
+What is the temperature outside?,general
+How do you feel today?,general
+Do you have any fun plans for the weekend?,general
+What is a random fun fact for today?,general
+How can I relax after work?,general
+What's on your mind?,general
+Help me understand the difference between a promise and a callback,general
+Help me understand the difference between the fetchUserData function and getUserProfile in this project,github
+Can you explain what a memory leak is?,general
+Can you explain why there is a memory leak in our backend?,github
+What is the difference between unit testing and integration testing?,general
+What is the difference between the auth tests and the routing tests in this repo?,github
+Help me understand how OAuth 2.0 works under the hood,general
+Help me understand how we implemented OAuth in this repository,github
+Explain the difference between functional and object-oriented programming,general
+Explain the difference between the UserService class and the AuthManager class,github
+Can you clarify the difference between continuous integration and continuous deployment?,general
+Can you clarify how our CI/CD pipeline runs on a pull request?,github
+Help me understand why multithreading is useful,general
+Help me understand why this specific method is blocking the main thread,github
+What is the purpose of an API gateway?,general
+What is the purpose of the api-gateway folder in this codebase?,github
+How do web sockets generally handle real-time communication?,general
+How does the real-time routing work in our project?,github
+Help me understand the difference between a GET and POST request,general
+Help me understand the difference between the two POST routes in the seam module,github
+Why would someone use a microservices architecture?,general
+Why did we choose a microservices architecture for this specific project?,github
+What is the difference between authentication and authorization?,general
+How is authorization handled for the annotationplus feature in this repo?,github
+Can you teach me how dependency injection works?,general
+Can you show me where dependency injection is used in this file?,github
+What is the best way to handle state management in frontend?,general
+How is state management handled in the frontend of our app?,github
+Help me understand the concept of a reverse proxy,general
+Help me understand how the reverse proxy is configured in our codebase,github
+How do I find the main entry point in this project?,github
+What are the core dependencies for this project?,github
+Where is the documentation located in this repo?,github
+How do I contribute to this repository?,github
+What is the deployment process for our project?,github
+Who are the active maintainers of our repo?,github
+How do I build the project locally?,github
+What is the command to clone the repo?,github
+Is there a specific license for this repository?,github
+How do I push my local changes to github?,github
+How can I undo my last commit?,github
+How does the application handle routing?,github
+What is the best way to add a new route?,github
+Where are all the backend API routes defined?,github
+How do I create and switch to a new branch?,github
+What are the guidelines for reviewing a pr?,github
+How do I resolve merge conflicts in a pull request?,github
+What is the time complexity of this function?,github
+How do I search globally across the codebase?,github
+Where are the rate limits set in the api gateway?,github
+How do we test the api-gateway?,github
+What is the purpose of the annotationplus module?,github
+How do I set up the seam development environment?,github
+Which database is the backend connected to?,github
+How do I start the frontend development server?,github
+Why is this specific file being ignored by git?,github
+What is causing a syntax error on this line?,github
+Where is the global state variable initialized?,github
+How do I inherit properties from this class?,github
+What arguments are required for this method?,github
+How do I optimize a SQL query?,general
+How is the SQL query optimized in this repository?,github
+What is the difference between a Docker image and a container?,general
+Where is the Dockerfile located in our project?,github
+What are the best practices for error handling in Node.js?,general
+Why is the error handling failing on line 42 of this file?,github
+Explain how webhooks work under the hood,general
+How are webhooks configured in the backend of this codebase?,github
+What is Redis typically used for in caching?,general
+Where is the Redis cache initialized in our project?,github
+How does JWT authentication work?,general
+Which file handles the JWT validation in this repo?,github
+What is cursor-based pagination?,general
+How did we implement pagination in the API gateway?,github
+What are the differences between Redux and the Context API?,general
+Why are we using Redux for state in this frontend component?,github
+What is the exact role of middleware in Express?,general
+Can you check the logging middleware in this PR?,github
+How should developers securely store API keys?,general
+Which environment variables are required to run this project?,github
+What are GitHub Actions and how do they work?,general
+Why did the GitHub Action fail on my last commit?,github
+How do you conduct a thorough code review?,general
+Can you review the code changes in my pull request?,github
+What is a hash map data structure?,general
+Why did we use a hash map in this specific class?,github
+What does a code linter actually do?,general
+How do I fix the linting errors in this branch?,github
+How do you generally deploy a Next.js application?,general
+What is the deployment process for the staging branch in this repo?,github
+What are the main benefits of using Tailwind CSS?,general
+Where are the Tailwind configuration files in this repository?,github
+How does async and await work in JavaScript?,general
+Why is this async method in the seam module timing out?,github
+What is a mock function when using Jest?,general
+How do I mock the database response for this function in our repo?,github
+How do I safely rebase a Git branch?,general
+Do I need to rebase my branch before merging this PR into main?,github
+How do you measure frontend rendering performance?,general
+Why is the rendering so slow on the dashboard route of our project?,github
+What is event-driven architecture?,general
+How are events propagated through the annotationplus module here?,github
+What is the difference between dependencies and devDependencies?,general
+Are there any unused dependencies we can remove in this codebase?,github
+When should a developer choose GraphQL over REST?,general
+Where is the GraphQL schema defined in our project?,github
+What is a database migration?,general
+How do I apply the latest database migrations in this repo?,github
+Why do companies use TypeScript instead of plain JavaScript?,general
+Where are the TypeScript interfaces defined for this variable?,github
 show me all my public repositories,github
 list my repositories updated in the last week,github
 do I have any archived repositories?,github
@@ -610,7 +595,7 @@ show me slack messages from the marketing channel last week,integration
 did anyone share the wifi password on slack?,integration
 find direct messages from Mark about the contract,integration
 search slack for code snippets shared in the last 24 hours,integration
-what were the action items listed in the project channel?,integration
+what were the action items listed in the project channel?,github
 find slack messages from yesterday about the deployment status,integration
 did someone upload a PDF to the general slack channel?,integration
 search my slack stars or pinned items for the roadmap,integration
@@ -635,7 +620,7 @@ show me the last message in the customer support channel,integration
 find slack threads discussing the security vulnerability,integration
 did anyone drop a spreadsheet in the ops slack channel?,integration
 search slack for the latest API token updates,integration
-what did the product manager say about the release date?,integration
+what did the product manager say about the release date?,github
 find slack messages containing the phrase urgent support,integration
 show me unread slack messages in the project alpha channel,integration
 did anyone post the notes from the standup on slack?,integration
@@ -655,7 +640,7 @@ what did the tech lead say about microservices on slack?,integration
 find slack messages regarding the customer onboarding flow,integration
 did anyone attach an image to the ui-feedback channel?,integration
 search slack for the performance review template,integration
-show me messages from today mentioning the client presentation,integration
+show me messages from today mentioning the client presentation,github
 find slack threads where I need to reply,integration
 did someone link the dashboard in the analytics channel?,integration
 search slack for messages about the hackathon,integration
@@ -665,7 +650,7 @@ did anyone ping me about the code deployment?,integration
 search slack for messages from the data science group,integration
 show me mentions of the quarter end in slack,integration
 find slack messages talking about the user churn rate,integration
-did anyone share the slide deck on the presentation channel?,integration
+did anyone share the slide deck on the presentation channel?,github
 search slack for instructions on setting up the dev environment,integration
 what did the intern ask in the help channel?,integration
 find slack messages about the database backup failure,integration
@@ -675,7 +660,7 @@ did anyone give a shoutout in the kudos channel?,integration
 find slack messages regarding the new feature flags,integration
 show me the thread about the mobile app crash logs,integration
 search slack for user feedback screenshots,integration
-did anyone outline the sprint goals in the agile channel?,integration
+did anyone outline the sprint goals in the agile channel?,github
 find slack messages about updating the npm packages,integration
 what was the feedback on the product demo shared on slack?,integration
 search my drive for the budget spreadsheet,integration
@@ -701,7 +686,7 @@ look for the team structure presentation in drive,integration
 find the onboarding document for new hires in drive,integration
 search drive for documents with expense report in the name,integration
 show me the latest files added to the shared drive,integration
-find the google sheet tracking project milestones,integration
+find the google sheet tracking project milestones,github
 look for the vendor agreement doc in google drive,integration
 search my drive for brainstorming docs,integration
 find the wireframes presentation on drive,integration
@@ -710,7 +695,7 @@ search drive for the Q4 sales forecast sheet,integration
 look for the backup data zip file in drive,integration
 find the release notes document in google drive,integration
 search drive for folders named client assets,integration
-show me spreadsheets that contain formulas for ROI,integration
+show me spreadsheets that contain formulas for ROI,github
 find the brand guidelines presentation in drive,integration
 look for the content calendar google sheet,integration
 search my drive for resume or CV files,integration
@@ -725,7 +710,7 @@ find the google doc about the hiring plan,integration
 look for the pricing matrix spreadsheet in drive,integration
 search my drive for the database schema document,integration
 find the press release draft in google drive,integration
-show me presentation slides created this month,integration
+show me presentation slides created this month,github
 search drive for files with compliance in the title,integration
 look for the case study document in google drive,integration
 find the sprint planning document on drive,integration
@@ -740,12 +725,12 @@ search drive for the penetration testing report,integration
 look for the customer journey map doc on drive,integration
 find the project checklist spreadsheet in google drive,integration
 search drive for the office safety protocol,integration
-show me files inside the marketing campaign folder,integration
-find the google doc containing the privacy policy,integration
+show me files inside the marketing campaign folder,github
+find the google doc containing the privacy policy,github
 look for the API specification sheet in drive,integration
 search my drive for the hardware inventory list,integration
 find the contractor timesheet document on drive,integration
-show me all presentation files related to the AGM,integration
+show me all presentation files related to the AGM,github
 search drive for documents matching key metrics,integration
 look for the performance metrics spreadsheet in drive,integration
 find the product roadmap slide deck in google drive,integration
@@ -755,7 +740,7 @@ find the board meeting presentation in google drive,integration
 look for the user testing feedback document in drive,integration
 search my drive for the software license agreement,integration
 find the SEO audit report document on drive,integration
-show me the latest revisions on the project plan sheet,integration
+show me the latest revisions on the project plan sheet,github
 search drive for the server setup guide,integration
 look for the beta tester list spreadsheet in drive,integration
 search notion for the engineering wiki,integration
@@ -998,56 +983,56 @@ did anyone share the wireframe images on teams?,integration
 search teams for instructions on troubleshooting the local environment,integration
 find teams messages regarding the partner integration api keys,integration
 show me the last thread in the general discussion teams channel,integration
-how do i build a repository pattern in C#,general
+how do i build a repository pattern in C#,github
 "my slack history has a branch office discussion, find it",integration
-what is the legal definition of a commit agreement,general
-pull request template download for real estate contract,general
+what is the legal definition of a commit agreement,github
+pull request template download for real estate contract,github
 search my google drive for the branch audit file,integration
-explain the git protocol specification standard,general
+explain the git protocol specification standard,github
 did anyone email me about the tree branch cleanup,integration
-what is a file system in operating systems,general
+what is a file system in operating systems,github
 find notion pages talking about human resources branches,integration
-who wrote the book called The Commit,general
-show me the master branch settings for our corporate banking login,integration
-what does a repository of knowledge mean,general
+who wrote the book called The Commit,github
+show me the master branch settings for our corporate banking login,github
+what does a repository of knowledge mean,github
 is there an open pull on the stock market today,integration
 search teams for messages about the main avenue branch,integration
 explain how to push an array in javascript,general
 find emails with the subject line code red emergency,integration
 what is the definition of a conflict of interest,general
 search drive for the origin story document,integration
-how do trees manage branching factors in biology,general
+how do trees manage branching factors in biology,github
 show me slack messages containing the phrase check out this car,integration
 search the web for the best cloud storage integrations,general
 find the email i sent to github support last year,integration
-what is the standard definition of an email client,general
-how do i configure a webhook manually in my nodejs application,general
+what is the standard definition of an email client,integration
+how do i configure a webhook manually in my nodejs application,integration
 show me the git log for my team chat app project,github
 search notion for the definition of rest apis,integration
-what is the main purpose of slack in communication theory,general
+what is the main purpose of slack in communication theory,integration
 look for the spreadsheet containing github repository metrics in drive,integration
-how does Microsoft Teams handle video compression algorithms,general
+how does Microsoft Teams handle video compression algorithms,integration
 find slack messages discussing how to fix git merge conflicts,integration
-what is the storage limit of a standard google drive account,general
+what is the storage limit of a standard google drive account,integration
 did I get a github notification email about my pull request,integration
-how do you write a professional email template,general
+how do you write a professional email template,integration
 search teams for the link to the backend code repository,integration
-what is the history of the company named Notion,general
-find the markdown file explaining how to integrate slack bots in our code,github
-how do i sync my google drive files locally via terminal,general
+what is the history of the company named Notion,integration
+find the markdown file explaining how to integrate slack bots in our code,integration
+how do i sync my google drive files locally via terminal,integration
 show me recent emails containing raw patch files from developers,integration
 what is an integration test in software engineering,general
 search my slack messages for the phrase git checkout main,integration
-what is a database commit,general
-how do i branch my logic in an if-else statement,general
+what is a database commit,github
+how do i branch my logic in an if-else statement,github
 what is an api integration,general
-explain the structure of an email header fields,general
-how does a computer open a file from the hard drive,general
-what is the difference between a main method and a helper method,general
-what does it mean to fork a process in linux,general
+explain the structure of an email header fields,integration
+how does a computer open a file from the hard drive,integration
+what is the difference between a main method and a helper method,github
+what does it mean to fork a process in linux,github
 how do you request a pull on a hardware pin,general
-what is slack time in project management network diagrams,general
-explain the concept of a shared drive in operating systems,general
+what is slack time in project management network diagrams,integration
+explain the concept of a shared drive in operating systems,integration
 what is the blame game psychology definition,general
 how do i check out an item from an online shopping cart via api,general
 what is a tag cloud in web design,general
@@ -1055,69 +1040,69 @@ explain the concept of data integration in warehouses,general
 what is the master record in database synchronization,general
 how do networks merge data packets,general
 what is an origin server in a content delivery network,general
-explain the difference between public and private access modifiers,general
-what is an archive file format like zip or tar,general
+explain the difference between public and private access modifiers,github
+what is an archive file format like zip or tar,github
 how does a remote control send signals to a receiver,general
-how do i write code to send an email in python,general
+how do i write code to send an email in python,integration
 search my drive for the github access token list,integration
 show me the code repository settings on our dev server,github
 what does the git status command return exactly,general
 did anyone message me on teams about the git push failure,integration
 find the file path for the main controller in our code,github
-what is the difference between a branch office and headquarters,general
+what is the difference between a branch office and headquarters,github
 search slack for code snippets targeting the database migration,integration
 show the line of code that threw the file not found exception,github
 how do you merge two company departments smoothly,general
 did john email the project roadmap notion page link,integration
 list all commits that modified the dockerfile in the dev repo,github
-what is a public repository of medical records called,general
+what is a public repository of medical records called,github
 search drive for the spreadsheet tracking my github contributions,integration
 where is the oauth configuration file in the backend repo,github
-explain how the internet routing table handles matching branches,general
+explain how the internet routing table handles matching branches,github
 find teams chats containing the phrase reset my master password,integration
 show me who approved the last pull request on the frontend repository,github
 what is the definition of a push notification in mobile apps,general
 search notion for the instructions on how to clone a repository,integration
 what is the time complexity of merging two sorted arrays,general
 how do cellular networks handle call handoffs between towers,general
-what does it mean when a git repository is corrupt,general
-explain the concept of branch prediction in modern CPUs,general
-how do i commit changes to a sqlite database in python,general
-what is the difference between an upstream and downstream server,general
+what does it mean when a git repository is corrupt,github
+explain the concept of branch prediction in modern CPUs,github
+how do i commit changes to a sqlite database in python,github
+what is the difference between an upstream and downstream server,github
 how does a mechanical pull switch work,general
-what is the function of the public key in standard ssh logins,general
-explain the corporate structure of a regional bank branch,general
+what is the function of the public key in standard ssh logins,github
+explain the corporate structure of a regional bank branch,github
 how do i push an item onto a stack data structure in c++,general
-what is a repository library in academic research,general
-how do you merge cells in a microsoft excel spreadsheet,general
+what is a repository library in academic research,github
+how do you merge cells in a microsoft excel spreadsheet,github
 what is the meaning of a line item veto in politics,general
 explain how to resolve interpersonal conflicts in a team setting,general
-what is the primary origin of the english language,general
+what is the primary origin of the english language,github
 how do i setup a local area network without internet access,general
-what is the default file extension for a markdown document,general
-explain the mechanics of a pull request in physical logistics retail,general
+what is the default file extension for a markdown document,github
+explain the mechanics of a pull request in physical logistics retail,github
 what is a blind carbon copy in traditional mail formatting,general
 how do you configure a master slave architecture in databases,general
-find the file containing the slack incoming webhook token in our repository,github
-show me the commit where we integrated the google drive api,github
-who wrote the code that automatically emails users upon registration,github
-is the code for our teams notification bot in this repository,github
-show me the diff for the notion sync script in the main branch,github
-where in the codebase do we parse incoming emails,github
+find the file containing the slack incoming webhook token in our repository,integration
+show me the commit where we integrated the google drive api,integration
+who wrote the code that automatically emails users upon registration,integration
+is the code for our teams notification bot in this repository,integration
+show me the diff for the notion sync script in the main branch,integration
+where in the codebase do we parse incoming emails,integration
 list all pull requests that add a new external integration module,github
 find the configuration file that links our repository to jira,github
-show the git blame for the code handling the slack challenge validation,github
+show the git blame for the code handling the slack challenge validation,integration
 did I commit the google calendar integration code to main yet,github
-which branch contains the fix for the team messaging webhook crash,github
-show me lines of code in server.js that mention the word email,github
-find the database migration file that dropped the slack_channels table,github
-who changed the package.json dependencies for the microsoft teams sdk,github
-show the history of the file that configures our notion client authentication,github
+which branch contains the fix for the team messaging webhook crash,integration
+show me lines of code in server.js that mention the word email,integration
+find the database migration file that dropped the slack_channels table,integration
+who changed the package.json dependencies for the microsoft teams sdk,integration
+show the history of the file that configures our notion client authentication,integration
 what files were modified when we updated the google oauth flow in our repo,github
 list all branches matching the name integration/* in this repository,github
-where is the entry point for the worker script that polls drive documents,github
-show me the latest merge commit from the branch feature/slack-integration,github
-who authored the line of code that sets the slack bot avatar url,github
+where is the entry point for the worker script that polls drive documents,integration
+show me the latest merge commit from the branch feature/slack-integration,integration
+who authored the line of code that sets the slack bot avatar url,integration
 search my emails for the git conflict log output error,integration
 did anyone post a zip file of the repository backup on slack,integration
 find notion pages tracking our team's pull request review metrics,integration
@@ -1128,7 +1113,7 @@ did I receive an email confirmation from github about my organization invite,int
 search my drive folders for the technical specification of git internal plumbing,integration
 look for teams chats discussing the cherry pick strategy for the release,integration
 find a notion page titled code repository ownership matrix,integration
-search my inbox for a list of all forks of our open source project,integration
+search my inbox for a list of all forks of our open source project,github
 did anyone slack me the commit hash for the hotfix deployment,integration
 find teams messages from the qa team discussing the protected branch status,integration
 search google drive for the PDF document showing the git branching strategy diagram,integration
@@ -1138,165 +1123,165 @@ find slack channels dedicated entirely to git repository webhook alerts,integrat
 look for the word commit inside my personal journal document in google drive,integration
 search teams for messages containing the markdown link to the open pull request,integration
 did the boss send a calendar invite via email to discuss the repository migration,integration
-how can a company create a unified git blame file line for all its internal document template assets,general
-find where the slack credentials are hardcoded in the codebase tag branch,github
+how can a company create a unified git blame file line for all its internal document template assets,github
+find where the slack credentials are hardcoded in the codebase tag branch,integration
 did I get an email or a teams chats alert about the new git commit hash,integration
-what is the technical definition of a spreadsheet row interface,general
-explain the standard workflow for a pull request in software development,general
-show the lines of code where we authenticate with the google drive api,github
-list all files in the repository fork that handle teams chats webhooks,github
-explain the standard workflow for a repository fork in software development,general
+what is the technical definition of a spreadsheet row interface,github
+explain the standard workflow for a pull request in software development,github
+show the lines of code where we authenticate with the google drive api,integration
+list all files in the repository fork that handle teams chats webhooks,integration
+explain the standard workflow for a repository fork in software development,github
 did anyone share the protected branch details over the shared drive today,integration
 search my slack account for the backup of the protected branch,integration
-list all files in the pull request that handle google drive webhooks,github
+list all files in the pull request that handle google drive webhooks,integration
 search notion history for any mention of the codebase tag ID,integration
-show the lines of code where we authenticate with the the shared drive api,github
+show the lines of code where we authenticate with the the shared drive api,integration
 did anyone share the protected branch details over slack today,integration
 search my the shared drive account for the backup of the protected branch,integration
-how do i write code to automate notion database uploads,general
-find my inbox items containing the word git commit hash,integration
-how do i resolve a merge or conflict when syncing my email history sync folders,general
-find where the teams chats credentials are hardcoded in the protected branch branch,github
-who wrote the script that extracts data from the shared drive into our git blame file line,github
+how do i write code to automate notion database uploads,integration
+find my inbox items containing the word git commit hash,github
+how do i resolve a merge or conflict when syncing my email history sync folders,integration
+find where the teams chats credentials are hardcoded in the protected branch branch,integration
+who wrote the script that extracts data from the shared drive into our git blame file line,integration
 what is the technical definition of a document template interface,general
 did I get an email or a the shared drive alert about the new pull request,integration
-show me the git blame file line history for the file managing email attachment,github
-find where the my email history credentials are hardcoded in the protected branch branch,github
-what is the difference between a git blame file line and a drive folder sync,general
+show me the git blame file line history for the file managing email attachment,integration
+find where the my email history credentials are hardcoded in the protected branch branch,integration
+what is the difference between a git blame file line and a drive folder sync,integration
 search my inbox history for any mention of the merge conflict ID,integration
 find google drive items containing the word merge conflict,integration
-explain the standard workflow for a protected branch in software development,general
+explain the standard workflow for a protected branch in software development,github
 find google drive items containing the word repository fork,integration
 look for a spreadsheet row document in slack that discusses our pull request,integration
-show the git diff for the module that interacts with my email history,github
-list all files in the repository fork that handle google drive webhooks,github
+show the git diff for the module that interacts with my email history,integration
+list all files in the repository fork that handle google drive webhooks,integration
 look for a email attachment document in notion that discusses our git commit hash,integration
-what is the difference between a repository fork and a teams message sync,general
+what is the difference between a repository fork and a teams message sync,integration
 did anyone share the codebase tag details over notion today,integration
-who wrote the script that extracts data from slack into our codebase tag,github
-how do i resolve a merge or conflict when syncing teams chats sync folders,general
-how can a company create a unified repository fork for all its internal email attachment assets,general
+who wrote the script that extracts data from slack into our codebase tag,integration
+how do i resolve a merge or conflict when syncing teams chats sync folders,integration
+how can a company create a unified repository fork for all its internal email attachment assets,integration
 did anyone share the protected branch details over notion today,integration
-explain the standard workflow for a git blame file line in software development,general
+explain the standard workflow for a git blame file line in software development,github
 look for a notion database document in slack that discusses our git commit hash,integration
-what is the technical definition of a notion database interface,general
+what is the technical definition of a notion database interface,integration
 did anyone share the git commit hash details over slack today,integration
 find slack items containing the word git commit hash,integration
 look for a email attachment document in notion that discusses our pull request,integration
-list all files in the git commit hash that handle my email history webhooks,github
-find where the my email history credentials are hardcoded in the codebase tag branch,github
-show the git diff for the module that interacts with google drive,github
-show the git diff for the module that interacts with notion,github
-what is the technical definition of a drive folder interface,general
-search my my inbox account for the backup of the repository fork,integration
+list all files in the git commit hash that handle my email history webhooks,integration
+find where the my email history credentials are hardcoded in the codebase tag branch,integration
+show the git diff for the module that interacts with google drive,integration
+show the git diff for the module that interacts with notion,integration
+what is the technical definition of a drive folder interface,integration
+search my my inbox account for the backup of the repository fork,github
 search slack for discussions regarding the git blame file line,integration
 look for a drive folder document in my inbox that discusses our protected branch,integration
 search teams chats for discussions regarding the codebase tag,integration
 search slack history for any mention of the pull request ID,integration
 search my my email history account for the backup of the repository fork,integration
-search my inbox history for any mention of the codebase tag ID,integration
+search my inbox history for any mention of the codebase tag ID,github
 search my email history for discussions regarding the merge conflict,integration
-show the lines of code where we authenticate with the my email history api,github
-show me the protected branch history for the file managing teams message,github
+show the lines of code where we authenticate with the my email history api,integration
+show me the protected branch history for the file managing teams message,integration
 look for a teams message document in my email history that discusses our pull request,integration
 find my email history items containing the word protected branch,integration
-what is the difference between a git commit hash and a notion database sync,general
-find where the my email history credentials are hardcoded in the merge conflict branch,github
-explain the standard workflow for a git commit hash in software development,general
-how can a company create a unified codebase tag for all its internal document template assets,general
+what is the difference between a git commit hash and a notion database sync,integration
+find where the my email history credentials are hardcoded in the merge conflict branch,integration
+explain the standard workflow for a git commit hash in software development,github
+how can a company create a unified codebase tag for all its internal document template assets,github
 explain the standard workflow for a merge conflict in software development,general
 did I get an email or a slack alert about the new git blame file line,integration
 did I get an email or a notion alert about the new git blame file line,integration
 find slack items containing the word pull request,integration
-list all files in the codebase tag that handle teams chats webhooks,github
+list all files in the codebase tag that handle teams chats webhooks,integration
 search slack history for any mention of the repository fork ID,integration
-how do i resolve a merge or conflict when syncing google drive sync folders,general
+how do i resolve a merge or conflict when syncing google drive sync folders,integration
 search notion for discussions regarding the codebase tag,integration
 did I get an email or a slack alert about the new repository fork,integration
-what is the technical definition of a slack channel interface,general
+what is the technical definition of a slack channel interface,integration
 find the shared drive items containing the word codebase tag,integration
 look for a drive folder document in slack that discusses our git commit hash,integration
-did anyone share the git commit hash details over my inbox today,integration
-search my inbox history for any mention of the protected branch ID,integration
-what does it mean to execute a remote merge conflict without authorization,general
+did anyone share the git commit hash details over my inbox today,github
+search my inbox history for any mention of the protected branch ID,github
+what does it mean to execute a remote merge conflict without authorization,github
 how do i write code to automate document template uploads,general
 search notion for discussions regarding the git blame file line,integration
 find teams chats items containing the word merge conflict,integration
 search the shared drive history for any mention of the merge conflict ID,integration
-list all files in the merge conflict that handle notion webhooks,github
+list all files in the merge conflict that handle notion webhooks,integration
 search my email history for discussions regarding the repository fork,integration
-show me the pull request history for the file managing slack channel,github
-find where the the shared drive credentials are hardcoded in the pull request branch,github
-how do i resolve a merge or conflict when syncing notion sync folders,general
-what does it mean to execute a remote pull request without authorization,general
-who wrote the script that extracts data from my email history into our codebase tag,github
-how do i resolve a merge or conflict when syncing the shared drive sync folders,general
+show me the pull request history for the file managing slack channel,integration
+find where the the shared drive credentials are hardcoded in the pull request branch,integration
+how do i resolve a merge or conflict when syncing notion sync folders,integration
+what does it mean to execute a remote pull request without authorization,github
+who wrote the script that extracts data from my email history into our codebase tag,integration
+how do i resolve a merge or conflict when syncing the shared drive sync folders,integration
 did I get an email or a my inbox alert about the new repository fork,integration
 did anyone share the git blame file line details over the shared drive today,integration
 search teams chats for discussions regarding the pull request,integration
 search google drive history for any mention of the repository fork ID,integration
-what does it mean to execute a remote git commit hash without authorization,general
-list all files in the protected branch that handle slack webhooks,github
-what is the difference between a protected branch and a teams message sync,general
-what is the difference between a codebase tag and a teams message sync,general
-list all files in the repository fork that handle the shared drive webhooks,github
-show the git diff for the module that interacts with the shared drive,github
+what does it mean to execute a remote git commit hash without authorization,github
+list all files in the protected branch that handle slack webhooks,integration
+what is the difference between a protected branch and a teams message sync,integration
+what is the difference between a codebase tag and a teams message sync,integration
+list all files in the repository fork that handle the shared drive webhooks,integration
+show the git diff for the module that interacts with the shared drive,integration
 search my google drive account for the backup of the codebase tag,integration
-how can a company create a unified git commit hash for all its internal email attachment assets,general
+how can a company create a unified git commit hash for all its internal email attachment assets,integration
 did I get an email or a teams chats alert about the new codebase tag,integration
-what is the technical definition of a teams message interface,general
+what is the technical definition of a teams message interface,integration
 did anyone share the codebase tag details over teams chats today,integration
 who wrote the script that extracts data from my inbox into our protected branch,github
-find where the slack credentials are hardcoded in the git blame file line branch,github
+find where the slack credentials are hardcoded in the git blame file line branch,integration
 search my my email history account for the backup of the merge conflict,integration
-how can a company create a unified merge conflict for all its internal notion database assets,general
+how can a company create a unified merge conflict for all its internal notion database assets,integration
 find slack items containing the word protected branch,integration
-what is the difference between a merge conflict and a teams message sync,general
-who wrote the script that extracts data from google drive into our protected branch,github
-what is the difference between a codebase tag and a email attachment sync,general
-how do i resolve a merge or conflict when syncing slack sync folders,general
-who wrote the script that extracts data from google drive into our git blame file line,github
-search my inbox history for any mention of the pull request ID,integration
+what is the difference between a merge conflict and a teams message sync,integration
+who wrote the script that extracts data from google drive into our protected branch,integration
+what is the difference between a codebase tag and a email attachment sync,integration
+how do i resolve a merge or conflict when syncing slack sync folders,integration
+who wrote the script that extracts data from google drive into our git blame file line,integration
+search my inbox history for any mention of the pull request ID,github
 search teams chats history for any mention of the pull request ID,integration
 did I get an email or a the shared drive alert about the new merge conflict,integration
 did I get an email or a my email history alert about the new git commit hash,integration
 did anyone share the git commit hash details over notion today,integration
-how do i write code to automate spreadsheet row uploads,general
-did anyone share the repository fork details over my inbox today,integration
+how do i write code to automate spreadsheet row uploads,github
+did anyone share the repository fork details over my inbox today,github
 show me the protected branch history for the file managing spreadsheet row,github
-find where the slack credentials are hardcoded in the merge conflict branch,github
-show me the git blame file line history for the file managing notion database,github
+find where the slack credentials are hardcoded in the merge conflict branch,integration
+show me the git blame file line history for the file managing notion database,integration
 look for a email attachment document in slack that discusses our pull request,integration
-list all files in the git commit hash that handle notion webhooks,github
+list all files in the git commit hash that handle notion webhooks,integration
 did I get an email or a notion alert about the new merge conflict,integration
-find where the teams chats credentials are hardcoded in the pull request branch,github
+find where the teams chats credentials are hardcoded in the pull request branch,integration
 who wrote the script that extracts data from my inbox into our codebase tag,github
 look for a teams message document in notion that discusses our repository fork,integration
-how can a company create a unified git commit hash for all its internal notion database assets,general
+how can a company create a unified git commit hash for all its internal notion database assets,integration
 search my teams chats account for the backup of the git blame file line,integration
 did anyone share the pull request details over slack today,integration
 did anyone share the merge conflict details over notion today,integration
-who wrote the script that extracts data from my email history into our repository fork,github
-show me the repository fork history for the file managing notion database,github
+who wrote the script that extracts data from my email history into our repository fork,integration
+show me the repository fork history for the file managing notion database,integration
 find slack items containing the word codebase tag,integration
 did anyone share the pull request details over my email history today,integration
 did I get an email or a notion alert about the new codebase tag,integration
-how can a company create a unified protected branch for all its internal spreadsheet row assets,general
+how can a company create a unified protected branch for all its internal spreadsheet row assets,github
 look for a document template document in slack that discusses our protected branch,integration
 search my teams chats account for the backup of the pull request,integration
-show the lines of code where we authenticate with the teams chats api,github
+show the lines of code where we authenticate with the teams chats api,integration
 show me the git commit hash history for the file managing spreadsheet row,github
-how do i write code to automate slack channel uploads,general
-what is the difference between a merge conflict and a email attachment sync,general
-who wrote the script that extracts data from teams chats into our repository fork,github
-list all files in the merge conflict that handle google drive webhooks,github
-who wrote the script that extracts data from the shared drive into our git commit hash,github
+how do i write code to automate slack channel uploads,integration
+what is the difference between a merge conflict and a email attachment sync,integration
+who wrote the script that extracts data from teams chats into our repository fork,integration
+list all files in the merge conflict that handle google drive webhooks,integration
+who wrote the script that extracts data from the shared drive into our git commit hash,integration
 search my email history history for any mention of the merge conflict ID,integration
-who wrote the script that extracts data from teams chats into our codebase tag,github
+who wrote the script that extracts data from teams chats into our codebase tag,integration
 search slack for discussions regarding the codebase tag,integration
-who wrote the script that extracts data from my email history into our git blame file line,github
+who wrote the script that extracts data from my email history into our git blame file line,integration
 search google drive for discussions regarding the git commit hash,integration
-explain the standard workflow for a codebase tag in software development,general
+explain the standard workflow for a codebase tag in software development,github
 how do i resolve a merge or conflict when syncing my inbox sync folders,general
 find the email where my manager reviewed the recent pull request,integration
 search slack for comments on the index.js file,integration
@@ -1309,16 +1294,12 @@ find slack conversations where someone pasted a git blame snippet,integration
 did I get an email confirmation from github about my organization invite,integration
 search my drive folders for the technical specification of git internals,integration
 look for teams chats discussing the cherry pick strategy for release,integration
-find a notion page titled code repository ownership matrix,integration
-search my inbox for a list of all forks of our open source project,integration
 did anyone slack me the commit hash for the deployment?,integration
 find teams messages from QA discussing the protected branch status,integration
 search google drive for the PDF showing the git branching strategy diagram,integration
 is there a notion page listing our active repository descriptions?,integration
-search my emails for the automated message code validation pin,integration
 find slack channels dedicated entirely to repository webhook alerts,integration
 look for the word commit inside my personal journal document in drive,integration
-search teams for messages containing the markdown link to the open pull request,integration
 did the manager send a calendar invite via email to discuss the repository migration?,integration
 find slack threads where someone mentioned line 45 of server.js,integration
 search my inbox for emails containing the raw patch files from developers,integration
@@ -1370,129 +1351,126 @@ search google drive for the markdown files listing our open source documentation
 look for teams chats matching the keyword pull request tracking,integration
 is there a PR discussing the Jira ticket #450?,github
 where did we define the database credentials in the source code?,github
-find the file containing the slack incoming webhook token in our repository,github
-show me the commit where we integrated the google drive api,github
-who wrote the code that automatically emails users upon registration,github
-is the code for our teams notification bot in this repository,github
-show me the diff for the notion sync script in the main branch,github
-where in the codebase do we parse incoming emails,github
-list all pull requests that add a new external integration module,github
-find the configuration file that links our repository to jira,github
-show the git blame for the code handling the slack challenge validation,github
-did I commit the google calendar integration code to main yet,github
-which branch contains the fix for the team messaging webhook crash,github
-show me lines of code in server.js that mention the word email,github
-find the database migration file that dropped the slack_channels table,github
-who changed the package.json dependencies for the microsoft teams sdk,github
-show the history of the file that configures our notion client authentication,github
-what files were modified when we updated the google oauth flow in our repo,github
-list all branches matching the name integration/* in this repository,github
-where is the entry point for the worker script that polls drive documents,github
-show me the latest merge commit from the branch feature/slack-integration,github
-who authored the line of code that sets the slack bot avatar url,github
-find the unit tests in our code that mock the email delivery service,github
+find the unit tests in our code that mock the email delivery service,integration
 show me the open pull request that adds support for the outlook calendar api,github
-where in the source code do we catch errors returned by the google drive client,github
-list all commits that mention the word teams or chat in their message,github
-find the script in our repository that backs up issues to a notion page,github
-show me the git blame history for the code handling email verification tokens,github
-which codebase file defines the webhook payload parser for incoming slack alerts,github
+where in the source code do we catch errors returned by the google drive client,integration
+list all commits that mention the word teams or chat in their message,integration
+find the script in our repository that backs up issues to a notion page,integration
+show me the git blame history for the code handling email verification tokens,integration
+which codebase file defines the webhook payload parser for incoming slack alerts,integration
 find the pull request that removed the deprecated mailgun integration,github
-show the code changes where we switched from sendgrid to aws ses for emails,github
-where is the exact line of code initializing the slack web client object,github
+show the code changes where we switched from sendgrid to aws ses for emails,integration
+where is the exact line of code initializing the slack web client object,integration
 find all references to the confluence api endpoint in our repository files,github
-show me the commit logs for the utility script that handles drive file downloads,github
-who wrote the implementation code for our custom microsoft teams webhook notifier,github
-is there a specific branch dedicated to fixing the notion database sync performance?,github
-show me the code changes in PR #88 that modify the email layout templates,github
-where are the environment variables for the slack app token loaded in the app?,github
+show me the commit logs for the utility script that handles drive file downloads,integration
+who wrote the implementation code for our custom microsoft teams webhook notifier,integration
+is there a specific branch dedicated to fixing the notion database sync performance?,integration
+show me the code changes in PR #88 that modify the email layout templates,integration
+where are the environment variables for the slack app token loaded in the app?,integration
 find the configuration schema file that validates the incoming calendar payload,github
-list all modified files in the commit that fixed the teams connector crash,github
-show me the lines of code in index.js that reference the drive folder ID,github
-who authorized the merge of the branch feature/email-notifications into main,github
-find the controller file in our code that generates notifications for slack,github
-show the git diff for the file responsible for authenticating with the notion platform,github
-where did we write the logic to extract attachments from incoming email streams?,github
-list all repository branches that contain references to the teams api sdk,github
-show the history of changes made to the configuration file for google drive storage,github
-who refactored the code block that formats text messages for slack channels,github
-find the pull request that addresses the security flaw in our email verification logic,github
-where in the codebase are the api tokens for the notion workspace securely stored?,github
+list all modified files in the commit that fixed the teams connector crash,integration
+show me the lines of code in index.js that reference the drive folder ID,integration
+who authorized the merge of the branch feature/email-notifications into main,integration
+find the controller file in our code that generates notifications for slack,integration
+show the git diff for the file responsible for authenticating with the notion platform,integration
+where did we write the logic to extract attachments from incoming email streams?,integration
+list all repository branches that contain references to the teams api sdk,integration
+show the history of changes made to the configuration file for google drive storage,integration
+who refactored the code block that formats text messages for slack channels,integration
+find the pull request that addresses the security flaw in our email verification logic,integration
+where in the codebase are the api tokens for the notion workspace securely stored?,integration
 show me the latest commit on develop that touches the mail server integration,github
-list all files in the repository that contain the term slack-bot or chat-app,github
-who wrote the middleware that validates requests coming from the teams webhook service,github
-find the database schema file that creates the table tracking user email preferences,github
-show the code modifications made to the google drive upload handler function,github
-where is the code file that implements the markdown parser for our notion exporter,github
-list the open pull requests that mention fixing the broken email dispatch queue,github
-show me the git blame details for the line setting the slack API base URL,github
-find all shell scripts in the codebase that automate repo syncs to drive storage,github
-who committed the logic that filters out spam entries from the incoming email data?,github
-where do we initialize the event listener for incoming microsoft teams chat mentions?,github
-show the git log history for the file defining our notion block conversion logic,github
-list the changes made in the last commit to the module managing email validation rules,github
-who wrote the helper function that formats log outputs directly into slack messages?,github
+list all files in the repository that contain the term slack-bot or chat-app,integration
+who wrote the middleware that validates requests coming from the teams webhook service,integration
+find the database schema file that creates the table tracking user email preferences,integration
+show the code modifications made to the google drive upload handler function,integration
+where is the code file that implements the markdown parser for our notion exporter,integration
+list the open pull requests that mention fixing the broken email dispatch queue,integration
+show me the git blame details for the line setting the slack API base URL,integration
+find all shell scripts in the codebase that automate repo syncs to drive storage,integration
+who committed the logic that filters out spam entries from the incoming email data?,integration
+where do we initialize the event listener for incoming microsoft teams chat mentions?,integration
+show the git log history for the file defining our notion block conversion logic,integration
+list the changes made in the last commit to the module managing email validation rules,integration
+who wrote the helper function that formats log outputs directly into slack messages?,integration
 find the source file where the google client secret string is loaded into the runtime,github
-show me the open branch that implements the new chat notification commands for teams,github
-where is the code block that handles pagination when reading from the notion database?,github
-list all commits that upgraded the external email service node package dependency,github
+show me the open branch that implements the new chat notification commands for teams,integration
+where is the code block that handles pagination when reading from the notion database?,integration
+list all commits that upgraded the external email service node package dependency,integration
 how do I run docker-compose up locally?,general
-what is the difference between a git merge and a git rebase?,general
-what is the time complexity of merging two sorted arrays,general
-how do cellular networks handle call handoffs between towers,general
-what does it mean when a git repository is corrupt,general
-explain the concept of branch prediction in modern CPUs,general
-what is the difference between an upstream and downstream server,general
-how does a mechanical pull switch work,general
-what is the function of the public key in standard ssh logins,general
-explain the corporate structure of a regional bank branch,general
-how do i push an item onto a stack data structure in c++,general
-what is a repository library in academic research,general
-how do you merge cells in a microsoft excel spreadsheet,general
-what is the meaning of a line item veto in politics,general
-explain how to resolve interpersonal conflicts in a team setting,general
-what is the primary origin of the english language,general
-how do i setup a local area network without internet access,general
-what is the default file extension for a markdown document,general
-explain the mechanics of a pull request in physical logistics retail,general
-what is a blind carbon copy in traditional mail formatting,general
-how do you configure a master slave architecture in databases,general
-what is the function of an index in a relational database,general
-explain how the http protocol handles stateless sessions,general
-what does the word repository mean in literary prose,general
-how do you write an efficient recursive function in javascript,general
+what is the difference between a git merge and a git rebase?,github
+what is the function of an index in a relational database,github
+explain how the http protocol handles stateless sessions,github
+what does the word repository mean in literary prose,github
+how do you write an efficient recursive function in javascript,github
 what is a memory leak and how can it be detected in software,general
 explain the concept of encapsulation in object oriented design,general
-what is the role of an interpreter in programming languages,general
+what is the role of an interpreter in programming languages,github
 how do web browsers render HTML and CSS step by step,general
 explain the concept of garbage collection in high level languages,general
-what is a hash function and what properties must it possess,general
+what is a hash function and what properties must it possess,github
 how do asymmetric key algorithms secure internet traffic,general
 what is the purpose of the subnet mask in IP networking,general
 explain how load balancing algorithms distribute network requests,general
 what is the meaning of a race condition in concurrent systems,general
-how does a compiler optimize loops during build processing,general
-what is the difference between a functional and imperative language,general
+how does a compiler optimize loops during build processing,github
+what is the difference between a functional and imperative language,github
 explain the layout of the standard model of particle physics,general
-what is the purpose of a router in a home network configuration,general
+what is the purpose of a router in a home network configuration,github
 how do you perform a binary search on an ordered sequence,general
-what are the solid principles of object oriented programming,general
-explain the concept of dynamic programming using an example,general
+what are the solid principles of object oriented programming,github
+explain the concept of dynamic programming using an example,github
 what is the definition of a data structure in computer science,general
 how do web servers handle incoming cross origin resource sharing checks,general
-what is a dead lock and how can it be prevented in an OS,general
+what is a dead lock and how can it be prevented in an OS,github
 explain the purpose of the domain name system on the internet,general
-what is the difference between client side and server side rendering,general
-how does vertical scaling differ from horizontal scaling in the cloud,general
+what is the difference between client side and server side rendering,github
+how does vertical scaling differ from horizontal scaling in the cloud,github
 what is a microservice and how does it communicate with other services,general
 explain the cap theorem in the context of distributed databases,general
-what is a proxy server and why do companies use them,general
-how does basic authentication work over the http protocol,general
-what is a pointer variable and how is it used in c programming,general
-explain the difference between method overloading and method overriding,general
-what is the purpose of an abstract class in software design,general
-how do you handle exception propagation in modern backend runtimes,general
+what is a proxy server and why do companies use them,github
+how does basic authentication work over the http protocol,github
+what is a pointer variable and how is it used in c programming,github
+explain the difference between method overloading and method overriding,github
+what is the purpose of an abstract class in software design,github
+how do you handle exception propagation in modern backend runtimes,github
 what is the time complexity of the quicksort algorithm on average,general
 explain how a hash table handles key collision scenarios internally,general
 what is a directed acyclic graph and where is it applied,general
 how does a content delivery network reduce latency for global users,general
+hello,general
+hi there,general
+hey assistant,general
+good morning,general
+who are you,general
+what can you do,general
+tell me a joke,general
+write a poem about space,general
+what is 2 + 2,general
+what is the capital of France,general
+explain quantum mechanics simply,general
+how does photosynthesis work,general
+give me tips to sleep better,general
+what is the difference between a fruit and a vegetable,github
+how is routing done in this project,github
+how does routing work in the api gateway,github
+where is the API gateway routing handled,github
+what is the name of the variable used for routing,github
+show me the commit history for main branch,github
+who committed the database connection code,github
+where is authentication implemented in backend,github
+explain the structure of index.js,github
+find functions related to user login,github
+what dependencies are used in package.json,github
+check if there are any hardcoded API keys in the repo,github
+show me recent pull requests,github
+which branch has the latest feature code,github
+explain how vector embeddings are saved in supabase,github
+send a summary of this commit to Slack,integration
+create a new document in Notion,integration
+check my recent emails in Gmail,integration
+send a message in MS Teams general channel,integration
+upload this file to Google Drive,integration
+notify the team on Slack about the build error,integration
+add a task to Notion workspace,integration
+get updates from MS Teams channel,integration

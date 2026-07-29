@@ -10,6 +10,81 @@ import Chat from "../models/chatModel.js";
 
 const router = express.Router();
 
+// Check GitHub Connection Status
+router.get("/status", ClerkExpressRequireAuth(), async (req, res) => {
+    try {
+        const { userId } = req.auth;
+        const connection = await GithubConnection.findOne({ userId });
+        if (!connection || !connection.accessToken) {
+            return res.json({ connected: false, githubUsername: null });
+        }
+        return res.json({
+            connected: true,
+            githubUsername: connection.githubUsername,
+            createdAt: connection.createdAt,
+        });
+    } catch (err) {
+        console.error("Error fetching GitHub connection status:", err);
+        res.status(500).json({ error: "Failed to fetch GitHub status" });
+    }
+});
+
+// Connect via GitHub Personal Access Token (PAT)
+router.post("/connect-pat", ClerkExpressRequireAuth(), async (req, res) => {
+    try {
+        const { userId } = req.auth;
+        const { token } = req.body;
+
+        if (!token || typeof token !== "string" || !token.trim()) {
+            return res.status(400).json({ error: "Personal Access Token is required" });
+        }
+
+        const cleanToken = token.trim();
+
+        // Validate token against GitHub API
+        const ghRes = await fetch("https://api.github.com/user", {
+            headers: {
+                Authorization: `Bearer ${cleanToken}`,
+                "User-Agent": "SEAM-App",
+            },
+        });
+
+        if (!ghRes.ok) {
+            return res.status(400).json({ error: "Invalid GitHub Personal Access Token or missing permissions" });
+        }
+
+        const ghUser = await ghRes.json();
+        const githubUsername = ghUser.login;
+
+        await GithubConnection.findOneAndUpdate(
+            { userId },
+            { userId, githubUsername, accessToken: cleanToken },
+            { upsert: true, new: true }
+        );
+
+        return res.json({
+            message: "GitHub Personal Access Token connected successfully",
+            connected: true,
+            githubUsername,
+        });
+    } catch (err) {
+        console.error("Error connecting GitHub PAT:", err);
+        res.status(500).json({ error: "Failed to connect GitHub token" });
+    }
+});
+
+// Disconnect GitHub Connection
+router.delete("/disconnect", ClerkExpressRequireAuth(), async (req, res) => {
+    try {
+        const { userId } = req.auth;
+        await GithubConnection.deleteOne({ userId });
+        return res.json({ message: "GitHub connection disconnected successfully", connected: false });
+    } catch (err) {
+        console.error("Error disconnecting GitHub:", err);
+        res.status(500).json({ error: "Failed to disconnect GitHub" });
+    }
+});
+
 router.post("/sync-issues", ClerkExpressRequireAuth(), async (req, res) => {
     const { userId } = req.auth; // Clerk middleware
     const connection = await GithubConnection.findOne({ userId });
@@ -178,24 +253,46 @@ Commit: ${doc.commit_sha}`;
                 })
                 .join("\n\n");
         } else {
-            // Fallback semantic search
+            // Semantic search via Supabase pgvector RPC
             result = await searchDocuments(question, userId);
 
-            context = result
-                .map((doc, idx) => {
-                    return `From ${doc.repo}/${doc.branch}/${doc.file}:\n${doc.content}\n
-Author: ${doc.author}
-Commit: ${doc.commit_sha}`;
+            // Fallback: If RPC match threshold returned 0 records, retrieve user's indexed code directly
+            if (!result || result.length === 0) {
+                const { data: dbData } = await supabase
+                    .from("github_code")
+                    .select("*")
+                    .eq("user_id", userId)
+                    .limit(5);
+
+                if (dbData && dbData.length > 0) {
+                    result = dbData.map((d) => ({
+                        content: d.content,
+                        repo: d.repo,
+                        branch: d.branch || "main",
+                        file: d.file,
+                        author: d.author || "Unknown",
+                        commit_sha: d.commit_sha || "Unknown",
+                        last_edited: d.last_edited || "Unknown",
+                        similarity: 0.5,
+                    }));
+                }
+            }
+
+            context = (result || [])
+                .map((doc) => {
+                    return `From ${doc.repo}/${doc.branch || "main"}/${doc.file}:\n${doc.content}\n
+Author: ${doc.author || "Unknown"}
+Commit: ${doc.commit_sha || "Unknown"}`;
                 })
                 .join("\n\n");
         }
 
         // Guard: no relevant documents found — return early instead of hallucinating
-        if (result.length === 0) {
+        if (!result || result.length === 0) {
             return res.json({
                 chatId: chatId || null,
                 question,
-                summary: "No relevant documents found in your indexed repositories for this query. Try syncing your repos or rephrasing the question.",
+                summary: "No indexed repository files found. Please make sure to sync your repositories on the Repos page first.",
                 matches: [],
             });
         }

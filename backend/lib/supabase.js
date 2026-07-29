@@ -1,12 +1,6 @@
-// Supabase client + Gemini embedding (replaces chroma.js + Cohere)
-// 
-// SECURITY: Row-Level Security (RLS) is enabled on the github_code table.
-// Policies enforce that authenticated users can only access their own rows
-// via (user_id = auth.jwt() ->> 'sub'). The backend uses service_role key
-// which bypasses RLS for server-side operations. All queries still filter
-// by userId from Clerk auth as an application-level safeguard.
 import { createClient } from "@supabase/supabase-js";
 import { GoogleGenAI } from "@google/genai";
+import { pipeline } from "@xenova/transformers";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -16,14 +10,21 @@ export const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY // service role for backend operations
 );
 
-const genai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+let localExtractor = null;
 
 export async function getEmbedding(text) {
-  const result = await genai.models.embedContent({
-    model: "text-embedding-004",
-    contents: text,
-  });
-  return result.embedding.values; // 768-dim float array
+  // Always use local 768-dim model (Xenova/all-mpnet-base-v2) for 100% vector consistency with stored Supabase embeddings
+  try {
+    if (!localExtractor) {
+      console.log("📦 Loading local 768-dim embedding model (Xenova/all-mpnet-base-v2)...");
+      localExtractor = await pipeline("feature-extraction", "Xenova/all-mpnet-base-v2");
+    }
+    const output = await localExtractor(text, { pooling: "mean", normalize: true });
+    return Array.from(output.data); // 768-dim float array
+  } catch (localErr) {
+    console.error("❌ Local embedding error:", localErr);
+    throw localErr;
+  }
 }
 
 export async function addDocuments(docs, userId) {
@@ -32,7 +33,7 @@ export async function addDocuments(docs, userId) {
     const { error } = await supabase.from("github_code").upsert({
       id: doc.id,
       content: doc.text,
-      embedding: JSON.stringify(embedding),
+      embedding: embedding,
       user_id: userId,
       ...doc.metadata,
     });
@@ -43,7 +44,7 @@ export async function addDocuments(docs, userId) {
 export async function searchDocuments(query, userId, filters = {}, limit = 5) {
   const embedding = await getEmbedding(query);
   const { data, error } = await supabase.rpc("match_github_code", {
-    query_embedding: JSON.stringify(embedding),
+    query_embedding: embedding,
     match_count: limit,
     filter_user_id: userId,
     filter_repo: filters.repo || null,

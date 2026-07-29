@@ -4,7 +4,9 @@ import { ClerkExpressRequireAuth } from '@clerk/clerk-sdk-node'; // <-- import a
 
 const router = express.Router();
 
-// --- Chat Routes ---
+// POST to send a general AI chat prompt via Groq
+// Route: POST /api/chats/general
+router.post('/general', ClerkExpressRequireAuth(), chatController.handleGeneralChat);
 
 // GET all chat sessions
 // Route: GET /api/chats

@@ -1,5 +1,31 @@
 import Chat from '../models/chatModel.js';
 import { ClerkExpressRequireAuth } from '@clerk/clerk-sdk-node';
+import { chatModel } from '../lib/groq.js';
+import { SystemMessage, HumanMessage } from "@langchain/core/messages";
+
+const SEAM_SYSTEM_PROMPT = `You are SEAM (Context AI), an intelligent workspace assistant and developer context bot.
+Your role is to help users navigate and manage their development workspace and team integrations:
+- GitHub Context: Searching code, analyzing repositories, explaining commits, branches, PRs, and issue tracking.
+- Team Integrations: Sending messages and syncing context with Slack, Notion, Gmail, MS Teams, Google Drive, and webhooks.
+- General AI Assistance: Answering technical queries, debugging code, explaining concepts, and assisting developers.
+
+When asked questions such as "what can you do?", "who are you?", or general questions, introduce yourself as SEAM, summarize how you assist with GitHub, Slack, Notion, and workspace context, and offer your help naturally. Always respond dynamically and conversationally without hardcoded responses.`;
+
+export const handleGeneralChat = async (req, res) => {
+  try {
+    const { prompt } = req.body;
+    if (!prompt) return res.status(400).json({ error: "Prompt is required" });
+
+    const response = await chatModel.invoke([
+      new SystemMessage(SEAM_SYSTEM_PROMPT),
+      new HumanMessage(prompt),
+    ]);
+    return res.json({ text: response.content });
+  } catch (error) {
+    console.error("General AI Error:", error);
+    return res.status(500).json({ error: error.message });
+  }
+};
 
 
 // 1. Create a new chat

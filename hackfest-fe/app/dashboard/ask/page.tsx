@@ -331,74 +331,55 @@ How can I help you today?`,
         return aiText;
     };
 
-    // Simplify response through Gemini
+    // Simplify response through Groq backend
     const simplifyResponse = async (originalResponse: string) => {
-        const GEMINI_API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
-
-        if (!GEMINI_API_KEY) {
-            return originalResponse; // Return original if no API key
-        }
-
         try {
-            const model = "gemini-3.5-flash";
-            const simplifyPrompt = `Please analyze the following response and provide a simplified, concise version that highlights only the essential points and key information. Make it easy to understand and focus on the most important aspects:
+            const token = await getToken();
+            const simplifyPrompt = `Please analyze the following response and provide a simplified, concise version that highlights only the essential points and key information:
 
 ${originalResponse}`;
 
-            const response = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`,
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: simplifyPrompt }] }],
-                    }),
-                }
-            );
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chats/general`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ prompt: simplifyPrompt }),
+            });
 
-            if (!response.ok) {
-                return originalResponse; // Return original if API fails
-            }
-
-            const data = await response.json();
-            return data.candidates[0]?.content?.parts[0]?.text || originalResponse;
+            if (!res.ok) return originalResponse;
+            const data = await res.json();
+            return data.text || originalResponse;
         } catch (error) {
             console.error("Error simplifying response:", error);
-            return originalResponse; // Return original if error occurs
+            return originalResponse;
         }
     };
 
-    // General AI Handler (Gemini)
+    // General AI Handler (Groq via backend)
     const handleGeneralAI = async (currentInput: string) => {
-        const GEMINI_API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
-
-        if (!GEMINI_API_KEY) {
-            return new Promise<string>((resolve) => {
-                setTimeout(() => {
-                    resolve("Hello! I am SEAM, your intelligent search assistant. To use live Gemini responses, please set the `NEXT_PUBLIC_GEMINI_API_KEY` environment variable in your `.env` file. Currently, I am running in local demonstration mode.");
-                }, 500);
-            });
-        }
-
-        const model = "gemini-3.5-flash"; // Using a standard model name
-        const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`,
-            {
+        try {
+            const token = await getToken();
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chats/general`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: currentInput }] }],
-                }),
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ prompt: currentInput }),
+            });
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.error || errorData.message || "Failed to generate AI response.");
             }
-        );
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error?.message || "API request failed.");
+            const data = await res.json();
+            return data.text || "No response received.";
+        } catch (error) {
+            throw new Error(`General AI Error: ${error instanceof Error ? error.message : error}`);
         }
-
-        const data = await response.json();
-        return data.candidates[0]?.content?.parts[0]?.text || "Sorry, I couldn't get a response.";
     };
 
     // Master Form Submit Function
@@ -414,9 +395,15 @@ ${originalResponse}`;
         setIsLoading(true);
 
         try {
-            let apiMode = currentMode === "auto" ? await determineAPIMode(currentInput) :
-                currentMode === "github" ? "github" :
-                    Object.values(activeIntegrations).some(Boolean) ? "integration" : "general";
+            let apiMode: "github" | "integration" | "general" = "general";
+
+            if (currentMode === "github") {
+                apiMode = "github";
+            } else if (Object.values(activeIntegrations).some(Boolean)) {
+                apiMode = "integration";
+            } else if (currentMode === "auto") {
+                apiMode = await determineAPIMode(currentInput);
+            }
 
             let aiResponse: Message = {
                 sender: "ai",
