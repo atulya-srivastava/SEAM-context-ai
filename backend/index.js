@@ -18,9 +18,24 @@ import MongoStore from "connect-mongo";
 
 dotenv.config();
 const app = express();
+const allowedOrigins = [
+    process.env.FRONTEND_URL,
+    "https://seam-context-ai.vercel.app",
+    "http://seam-context-ai.vercel.app",
+    "http://localhost:3000",
+    "http://localhost:3001"
+].filter(Boolean).map(url => url.replace(/\/$/, ""));
+
 const corsOptions = {
-    origin: process.env.FRONTEND_URL, // Specify the allowed origin
-    credentials: true, // Allow credentials
+    origin: (origin, callback) => {
+        if (!origin) return callback(null, true);
+        const normalizedOrigin = origin.replace(/\/$/, "");
+        if (allowedOrigins.includes(normalizedOrigin) || normalizedOrigin.endsWith(".vercel.app")) {
+            return callback(null, true);
+        }
+        return callback(new Error(`CORS not allowed for origin: ${origin}`));
+    },
+    credentials: true,
 };
 
 app.use(cors(corsOptions));
