@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter, useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
@@ -25,7 +25,7 @@ interface GithubStatusResponse {
   createdAt?: string;
 }
 
-export default function SettingsPage() {
+function SettingsContent() {
   const { userId, getToken } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -476,5 +476,20 @@ export default function SettingsPage() {
       )}
 
     </div>
+  );
+}
+
+export default function SettingsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-black text-white flex items-center justify-center p-10">
+        <div className="flex items-center gap-3 text-gray-400 text-sm">
+          <RefreshCw className="w-5 h-5 animate-spin text-purple-400" />
+          Loading settings...
+        </div>
+      </div>
+    }>
+      <SettingsContent />
+    </Suspense>
   );
 }
