@@ -8,7 +8,7 @@ import { Strategy as GitHubStrategy } from "passport-github2";
 import { ClerkExpressWithAuth, ClerkExpressRequireAuth } from "@clerk/clerk-sdk-node";
 import connectDB from "./config/db.js";
 import GithubConnection from "./models/GithubConnection.js";
-import fetch from "node-fetch";
+import { Octokit } from "@octokit/rest";
 import GithubRoutes from "./routes/github.js"
 import chatRoutes from "./routes/chatRoutes.js"
 import { classifyIntent, loadClassifier } from "./classifier/classify.js"
@@ -104,7 +104,7 @@ passport.deserializeUser((obj, done) => done(null, obj));
 // ---------- ROUTES ----------
 
 // Health check
-app.get("/", (req, res) => res.json({ status: "Backend running ✅" }));
+app.get("/", (req, res) => res.json({ status: "Backend running" }));
 
 // GitHub OAuth Login
 app.get("/auth/github", (req, res) => {
@@ -124,13 +124,13 @@ app.get("/auth/github/callback", async (req, res) => {
     const { code, state, error, error_description } = req.query;
 
     if (error) {
-        console.error("❌ GitHub OAuth authorization denied/error:", error, error_description);
+        console.error("GitHub OAuth authorization denied/error:", error, error_description);
         return res.redirect(`${frontendUrl}/dashboard/settings?githubStatus=failed&error=${encodeURIComponent(error_description || error)}`);
     }
 
     const userId = state;
     if (!userId || !code) {
-        console.warn("⚠️ Missing code or userId (state) in callback query parameters.");
+        console.warn("Missing code or userId (state) in callback query parameters.");
         return res.redirect(`${frontendUrl}/dashboard/settings?githubStatus=failed&error=missing_parameters`);
     }
 
@@ -155,7 +155,7 @@ app.get("/auth/github/callback", async (req, res) => {
         const tokenData = await tokenRes.json();
 
         if (!tokenData.access_token) {
-            console.error("❌ Failed to exchange code for GitHub token:", tokenData);
+            console.error("Failed to exchange code for GitHub token:", tokenData);
             return res.redirect(`${frontendUrl}/dashboard/settings?githubStatus=failed&error=${encodeURIComponent(tokenData.error_description || "token_exchange_failed")}`);
         }
 
@@ -170,7 +170,7 @@ app.get("/auth/github/callback", async (req, res) => {
         });
 
         if (!profileRes.ok) {
-            console.error("❌ Failed to fetch user profile from GitHub:", profileRes.statusText);
+            console.error("Failed to fetch user profile from GitHub:", profileRes.statusText);
             return res.redirect(`${frontendUrl}/dashboard/settings?githubStatus=failed&error=profile_fetch_failed`);
         }
 
@@ -184,44 +184,54 @@ app.get("/auth/github/callback", async (req, res) => {
             { upsert: true, new: true }
         );
 
-        console.log(`✅ GitHub account @${githubUsername} successfully connected for user ${userId}`);
+        console.log(`GitHub account @${githubUsername} successfully connected for user ${userId}`);
         return res.redirect(`${frontendUrl}/dashboard/settings?githubStatus=success&username=${encodeURIComponent(githubUsername)}`);
     } catch (err) {
-        console.error("❌ GitHub OAuth callback error:", err);
+        console.error("GitHub OAuth callback error:", err);
         return res.redirect(`${frontendUrl}/dashboard/settings?githubStatus=failed&error=${encodeURIComponent(err.message)}`);
     }
 });
 
 app.get("/api/github/repos", ClerkExpressRequireAuth(), async (req, res) => {
-    const { userId } = req.auth;
+    try {
+        const { userId } = req.auth;
+        const connection = await GithubConnection.findOne({ userId });
+        if (!connection || !connection.accessToken) {
+            return res.status(403).json({ error: "No GitHub connection found" });
+        }
 
-    const connection = await GithubConnection.findOne({ userId });
-    if (!connection) {
-        return res.status(403).json({ error: "No GitHub connection found" });
+        const octokit = new Octokit({ auth: connection.accessToken });
+        const { data: repos } = await octokit.rest.repos.listForAuthenticatedUser({
+            sort: "updated",
+            per_page: 100,
+        });
+
+        res.json(repos);
+    } catch (err) {
+        console.error("Error fetching repos with Octokit:", err);
+        res.status(500).json({ error: "Failed to fetch repositories" });
     }
-
-    const ghRes = await fetch("https://api.github.com/user/repos", {
-        headers: { Authorization: `token ${connection.accessToken}` },
-    });
-
-    const repos = await ghRes.json();
-    res.json(repos);
 });
 
 app.get("/api/github/issues", ClerkExpressRequireAuth(), async (req, res) => {
-    const { userId } = req.auth;
-    const connection = await GithubConnection.findOne({ userId });
+    try {
+        const { userId } = req.auth;
+        const connection = await GithubConnection.findOne({ userId });
+        if (!connection || !connection.accessToken) {
+            return res.status(403).json({ error: "No GitHub connection found" });
+        }
 
-    if (!connection) {
-        return res.status(403).json({ error: "No GitHub connection found" });
+        const octokit = new Octokit({ auth: connection.accessToken });
+        const { data: issues } = await octokit.rest.issues.listForAuthenticatedUser({
+            filter: "all",
+            state: "all",
+        });
+
+        res.json(issues);
+    } catch (err) {
+        console.error("Error fetching issues with Octokit:", err);
+        res.status(500).json({ error: "Failed to fetch issues" });
     }
-
-    const ghRes = await fetch("https://api.github.com/issues", {
-        headers: { Authorization: `token ${connection.accessToken}` },
-    });
-
-    const issues = await ghRes.json();
-    res.json(issues);
 });
 
 
@@ -234,4 +244,4 @@ app.get("/api/org-data", ClerkExpressRequireAuth(), (req, res) => {
 // ----------------------------
 
 connectDB();
-app.listen(3001, () => console.log("✅ Backend running at http://localhost:3001"));
+app.listen(3001, () => console.log("Backend running at http://localhost:3001"));

@@ -257,7 +257,7 @@ router.post("/ask", ClerkExpressRequireAuth(), async (req, res) => {
             matches: [],
         };
 
-        // 🔎 Detect file-change query (e.g., "changes in db.go in main branch of Assignment")
+        // Detect file-change query (e.g., "changes in db.go in main branch of Assignment")
         const match = question.match(
             /changes.*in\s+(.+)\s+in\s+(\w+)\s+branch\s+of\s+(\w+)/i
         );
@@ -268,7 +268,7 @@ router.post("/ask", ClerkExpressRequireAuth(), async (req, res) => {
         if (match) {
             // File-specific query
             const [_, fileName, branchName, repoName] = match;
-            console.log(`📂 Detected file-change query for ${repoName}/${branchName}/${fileName}`);
+            console.log(`Detected file-change query for ${repoName}/${branchName}/${fileName}`);
 
             try {
                 let results = await searchDocuments(question, userId, { repo: repoName, branch: branchName }, 20);
@@ -277,14 +277,14 @@ router.post("/ask", ClerkExpressRequireAuth(), async (req, res) => {
                     result = fileFiltered.length > 0 ? fileFiltered.slice(0, 10) : results.slice(0, 10);
                 }
             } catch (searchErr) {
-                console.warn("⚠️ File vector search error:", searchErr.message);
+                console.warn("File vector search error:", searchErr.message);
             }
         } else {
             // Semantic search via Supabase pgvector RPC
             try {
                 result = await searchDocuments(question, userId);
             } catch (searchErr) {
-                console.warn("⚠️ Vector search error, attempting direct table query:", searchErr.message);
+                console.warn("Vector search error, attempting direct table query:", searchErr.message);
             }
 
             // Fallback: If RPC match threshold returned 0 records, retrieve user's indexed code directly
@@ -309,7 +309,7 @@ router.post("/ask", ClerkExpressRequireAuth(), async (req, res) => {
                         }));
                     }
                 } catch (dbErr) {
-                    console.warn("⚠️ Direct table query error:", dbErr.message);
+                    console.warn("Direct table query error:", dbErr.message);
                 }
             }
         }
@@ -326,13 +326,13 @@ Commit: ${doc.commit_sha || "Unknown"}`;
             context = "No specific indexed codebase context found. Please answer the question accurately using general programming knowledge.";
         }
 
-        // 🔗 Run LangChain LCEL chain with resilient fallback
+        // Run LangChain LCEL chain with resilient fallback
         let metadata = {};
         try {
             const chain = match ? fileChangeChain : generalChain;
             metadata = await chain.invoke({ question, context });
         } catch (chainErr) {
-            console.warn("⚠️ Chain JSON parsing failed, running raw Groq fallback:", chainErr.message);
+            console.warn("Chain JSON parsing failed, running raw Groq fallback:", chainErr.message);
             try {
                 const rawResponse = await chatModel.invoke([
                     ["system", "You are SEAM (Context AI). Answer the user's question directly, clearly, and in detail based on the codebase context provided:\n\n" + context],
@@ -342,7 +342,7 @@ Commit: ${doc.commit_sha || "Unknown"}`;
                     summary: typeof rawResponse.content === "string" ? rawResponse.content : JSON.stringify(rawResponse.content)
                 };
             } catch (groqErr) {
-                console.error("❌ Groq fallback error:", groqErr.message);
+                console.error("Groq fallback error:", groqErr.message);
                 metadata = { summary: "Sorry, I could not process your request at this time." };
             }
         }
@@ -383,12 +383,12 @@ Commit: ${doc.commit_sha || "Unknown"}`;
             await chat.save();
             responseChatId = chat._id;
         } catch (chatErr) {
-            console.warn("⚠️ Failed to save chat to database:", chatErr.message);
+            console.warn("Failed to save chat to database:", chatErr.message);
         }
 
         return res.json({ chatId: responseChatId, ...finalResponse });
     } catch (err) {
-        console.error("❌ Error in /ask endpoint:", err);
+        console.error("Error in /ask endpoint:", err);
         return res.status(500).json({
             error: "Failed to process question",
             details: err.message,
@@ -427,7 +427,7 @@ router.post("/sync-all-repos-code", ClerkExpressRequireAuth(), async (req, res) 
             const repoName = repo.name;
             const branch = repo.default_branch || "main";
 
-            console.log(`🔄 Syncing ${owner}/${repoName} (${branch})`);
+            console.log(`Syncing ${owner}/${repoName} (${branch})`);
 
             // fetch repo tree
             const treeRes = await fetch(
@@ -470,12 +470,12 @@ router.post("/sync-all-repos-code", ClerkExpressRequireAuth(), async (req, res) 
         }
 
         res.json({
-            message: "✅ Synced all repos into Supabase pgvector",
+            message: "Synced all repos into Supabase pgvector",
             repos: totalRepos,
             files: totalFiles,
         });
     } catch (err) {
-        console.error("❌ Error in /sync-all-repos-code:", err);
+        console.error("Error in /sync-all-repos-code:", err);
         res.status(500).json({ error: "Failed to sync repos", details: err.message });
     }
 });
@@ -537,7 +537,7 @@ router.post("/repos/:owner/:repo/sync-branch", ClerkExpressRequireAuth(), async 
                 }
             }
         } catch (commitErr) {
-            console.warn("⚠️ Could not fetch commit details, continuing without metadata:", commitErr.message);
+            console.warn("Could not fetch commit details, continuing without metadata:", commitErr.message);
         }
 
         // 3. Fetch repo tree for branch
@@ -591,13 +591,13 @@ router.post("/repos/:owner/:repo/sync-branch", ClerkExpressRequireAuth(), async 
 
                 totalFiles++;
             } catch (fileErr) {
-                console.error(`⚠️ Failed to process file ${file.path}:`, fileErr.message);
+                console.error(`Failed to process file ${file.path}:`, fileErr.message);
             }
         }
-        console.log(`✅ Synced ${totalFiles} files from ${repo}/${branch} with commit metadata`);
-        res.json({ message: `✅ Synced ${totalFiles} files from ${repo}/${branch} with commit metadata` });
+        console.log(`Synced ${totalFiles} files from ${repo}/${branch} with commit metadata`);
+        res.json({ message: `Synced ${totalFiles} files from ${repo}/${branch} with commit metadata` });
     } catch (err) {
-        console.error("❌ Error syncing branch:", err);
+        console.error("Error syncing branch:", err);
         res.status(500).json({ error: "Failed to sync branch", details: err.message });
     }
 });

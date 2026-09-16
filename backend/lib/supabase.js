@@ -34,7 +34,7 @@ export async function getEmbedding(text) {
     const data = await res.json();
 
     if (!res.ok) {
-      console.error("❌ Gemini Embedding API Error:", data);
+      console.error("Gemini Embedding API Error:", data);
       throw new Error(`Gemini Embedding API Error: ${data.error?.message || res.statusText}`);
     }
 
@@ -45,13 +45,13 @@ export async function getEmbedding(text) {
 
     return embedding; // 768-dim float array
   } catch (err) {
-    console.error("❌ Failed to get Gemini embedding:", err.message);
+    console.error("Failed to get Gemini embedding:", err.message);
     throw err;
   }
 }
 
 export async function addDocuments(docs, userId) {
-  console.log(`📦 [EMBEDDING LOG] Starting embedding creation for ${docs.length} documents...`);
+  console.log(`[EMBEDDING LOG] Starting embedding creation for ${docs.length} documents...`);
   for (let i = 0; i < docs.length; i++) {
     const doc = docs[i];
     try {
@@ -65,12 +65,12 @@ export async function addDocuments(docs, userId) {
       });
 
       if (error) {
-        console.error(`❌ [EMBEDDING LOG] Supabase DB Insert failed for doc [${doc.id}]:`, error);
+        console.error(`[EMBEDDING LOG] Supabase DB Insert failed for doc [${doc.id}]:`, error);
         throw new Error(`Supabase DB Insert Error: ${error.message} (Details: ${error.details || ''})`);
       }
-      console.log(`✅ [EMBEDDING LOG] [${i + 1}/${docs.length}] Embedded & stored: ${doc.id}`);
+      console.log(`[EMBEDDING LOG] [${i + 1}/${docs.length}] Embedded & stored: ${doc.id}`);
     } catch (embErr) {
-      console.error(`❌ [EMBEDDING LOG] Error embedding document [${doc.id}]:`, embErr.message);
+      console.error(`[EMBEDDING LOG] Error embedding document [${doc.id}]:`, embErr.message);
       throw embErr;
     }
   }

@@ -8,33 +8,18 @@ let classifier = null;
 
 export async function loadClassifier() {
   if (!classifier) {
-    console.log("🧠 Loading local fine-tuned intent classifier...");
+    console.log(" Loading local fine-tuned intent classifier...");
     env.localModelPath = __dirname;
     env.allowRemoteModels = false;
     classifier = await pipeline("text-classification", "model", {
       quantized: true,
       local_files_only: true,
     });
-    console.log("✅ Local fine-tuned intent classifier loaded");
+    console.log(" Local fine-tuned intent classifier loaded");
   }
   return classifier;
 }
 
-/*
-const GENERAL_GREETINGS = [
-  "hello", "hi", "hey", "hello there", "hi there", "hey there",
-  "good morning", "good afternoon", "good evening", "how are you",
-  "who are you", "what can you do", "help", "thanks", "thank you"
-];
-
-const GITHUB_KEYWORDS = [
-  "in this project", "this project", "in this repo", "in this repository",
-  "our project", "our repo", "project", "repo", "repository", "github",
-  "commit", "routing", "route", "routes", "branch", "pr", "pull request",
-  "function", "codebase", "api gateway", "api-gateway", "annotationplus",
-  "seam", "backend", "frontend", "file", "line", "variable", "class", "method"
-];
-*/
 
 export async function classifyIntent(text) {
   const startTime = Date.now();

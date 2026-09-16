@@ -29,7 +29,7 @@ function decrypt(text) {
     decrypted = Buffer.concat([decrypted, decipher.final()]);
     return decrypted.toString();
   } catch (err) {
-    console.error("⚠️ Failed to decrypt GitHub token:", err);
+    console.error("Failed to decrypt GitHub token:", err);
     return text; // Return raw value if decryption fails (e.g. for legacy plain tokens)
   }
 }

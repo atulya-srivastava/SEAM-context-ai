@@ -30,7 +30,7 @@ function decrypt(text) {
     decrypted = Buffer.concat([decrypted, decipher.final()]);
     return decrypted.toString();
   } catch (err) {
-    console.error("⚠️ Failed to decrypt integration token:", err);
+    console.error("Failed to decrypt integration token:", err);
     return text; // fallback for legacy plain tokens
   }
 }
