@@ -15,7 +15,7 @@ function HeroSection() {
         <GlowingArcCircle />
       </div>
 
-      <div className="relative z-10 flex flex-col items-center justify-center gap-4 pt-40">
+      <div className="relative z-10 flex flex-col items-center justify-center gap-4 pt-24">
         <FundRaiserButton />
         <h1 className="bg-gradient-to-b bg-clip-text text-transparent from-gray-300 to-white text-7xl font-medium">
           SEAM is the new

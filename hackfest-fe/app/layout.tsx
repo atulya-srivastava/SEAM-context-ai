@@ -21,14 +21,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark bg-black overflow-x-hidden">
       <body
-        className={`${inter.variable} antialiased`}
+        className={`${inter.variable} antialiased bg-black text-white min-h-screen overflow-x-hidden w-full max-w-full`}
       >
         <ClerkProvider>
-          <div className="flex h-full  bg-gradient-to-b from-black to-gray-900  flex-col gap-1 ">
+          <div className="flex min-h-screen w-full max-w-full overflow-x-hidden bg-gradient-to-b from-black to-gray-900 flex-col">
             <Navbar />
-            <div className="pt-[80px] ">
+            <div className="pt-[80px] w-full max-w-full overflow-x-hidden flex-1">
               {children}
             </div>
           </div>

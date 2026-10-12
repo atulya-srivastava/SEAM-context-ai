@@ -162,7 +162,7 @@ export default function GithubReposPage() {
     };
 
     return (
-        <div className="pt-[80px] p-6 min-h-screen bg-gray-900 text-white">
+        <div className="p-6 min-h-[calc(100vh-80px)] bg-gray-900 text-white w-full max-w-full">
             <div className="flex items-center justify-between mb-6">
                 <h1 className="text-2xl font-bold">Sync Repositories</h1>
                 <button

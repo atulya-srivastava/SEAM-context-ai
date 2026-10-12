@@ -60,15 +60,15 @@ const Navbar = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "pt-2" : "pt-0"
+      className={`fixed top-0 left-0 right-0 z-50 max-w-full transition-all duration-300 ${isScrolled ? "pt-2" : "pt-0"
         }`}
     >
       <div
-        className={`mx-auto flex items-center justify-between transition-all duration-300 ${isScrolled ? "px-4" : "border-b-white/2 px-0"
+        className={`mx-auto flex items-center justify-between w-full max-w-full transition-all duration-300 ${isScrolled ? "px-4" : "border-b-white/2 px-0"
           }`}
       >
         <nav
-          className={`flex items-center justify-between w-full  transition-all duration-300 ${isScrolled ? " p-2" : "backdrop-blur-xl bg-white/2 p-4  px-20"
+          className={`flex items-center justify-between w-full max-w-full transition-all duration-300 ${isScrolled ? " p-2" : "backdrop-blur-xl bg-white/2 p-4 px-4 sm:px-8 md:px-12 lg:px-16"
             }`}
         >
           <div onClick={() => redirect("/")}
@@ -82,7 +82,7 @@ const Navbar = () => {
           <div
             ref={navLinksRef}
             onMouseLeave={handleMouseLeave}
-            className={`relative flex items-center gap-1 text-base text-gray-300 bg-transparent border border-white/10 backdrop-blur-xs rounded-full px-1 py-1 transition-all duration-300`}
+            className={`absolute left-1/2 -translate-x-1/2 flex items-center gap-1 text-base text-gray-300 bg-transparent border border-white/10 backdrop-blur-xs rounded-full px-1 py-1 transition-all duration-300`}
           >
 
             <div
