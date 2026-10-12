@@ -1,5 +1,6 @@
 import React from 'react'
 import { AuroraText } from './ui/aurora-text'
+import { Github } from 'lucide-react'
 
 function Footer() {
   return (
@@ -16,6 +17,17 @@ function Footer() {
             <p className="text-[#acb1c8] mb-4 max-w-md">
               The intelligent search platform that connects all your tools and breaks down knowledge silos.
             </p>
+            <div className="mb-4">
+              <a
+                href="https://github.com/atulya-srivastava/SEAM-context-ai"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm text-[#acb1c8] hover:text-white transition-colors group"
+              >
+                <Github className="w-4 h-4 group-hover:scale-110 transition-transform duration-200" />
+                <span>GitHub Repository</span>
+              </a>
+            </div>
             <div className="text-[#acb1c8] text-sm">
               © 2024 SEAM. All rights reserved.
             </div>
@@ -27,6 +39,17 @@ function Footer() {
             <ul className="space-y-2 text-[#acb1c8]">
               <li><a href="#" className="hover:text-white transition-colors">Features</a></li>
               <li><a href="#" className="hover:text-white transition-colors">Integrations</a></li>
+              <li>
+                <a
+                  href="https://github.com/atulya-srivastava/SEAM-context-ai"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition-colors flex items-center gap-1.5"
+                >
+                  <Github className="w-3.5 h-3.5" />
+                  <span>GitHub</span>
+                </a>
+              </li>
               <li><a href="#" className="hover:text-white transition-colors">API</a></li>
               <li><a href="#" className="hover:text-white transition-colors">Security</a></li>
             </ul>
@@ -48,7 +71,17 @@ function Footer() {
           <div className="text-[#acb1c8] text-sm mb-4 md:mb-0">
             Built with ❤️ for teams who value productivity
           </div>
-          <div className="flex space-x-6 text-[#acb1c8] text-sm">
+          <div className="flex items-center space-x-6 text-[#acb1c8] text-sm">
+            <a
+              href="https://github.com/atulya-srivastava/SEAM-context-ai"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-white transition-colors flex items-center gap-1.5"
+              aria-label="GitHub repository"
+            >
+              <Github className="w-4 h-4" />
+              <span>GitHub</span>
+            </a>
             <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
             <a href="#" className="hover:text-white transition-colors">Cookie Policy</a>

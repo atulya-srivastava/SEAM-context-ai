@@ -3,6 +3,7 @@ import { Show, SignInButton, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import React, { useState, useEffect, useRef } from "react";
+import { Github } from "lucide-react";
 
 const DimensionLogoIcon = () => (
   <div className="w-8 h-8 bg-gradient-to-br from-fuchsia-500 via-purple-500 to-indigo-600 rounded-lg" />
@@ -74,7 +75,7 @@ const Navbar = () => {
             className={`flex items-center space-x-3 transition-all duration-300 ${isScrolled ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
               }`}
           >
-            <DimensionLogoIcon />
+            {/* <DimensionLogoIcon /> */}
             <span className="text-xl font-bold text-white">SEAM</span>
           </div>
 
@@ -116,11 +117,22 @@ const Navbar = () => {
             
           </div>
 
-          {/* join before */}
+          {/* GitHub repo link & login */}
           <div
-            className={`transition-opacity duration-300 ${isScrolled ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
+            className={`flex items-center gap-3 transition-opacity duration-300 ${isScrolled ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
               }`}
           >
+            <a
+              href="https://github.com/atulya-srivastava/SEAM-context-ai"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="GitHub Repository"
+              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-300 hover:text-white rounded-md bg-white/5 border border-white/10 hover:border-white/25 hover:bg-white/10 backdrop-blur-xl transition-all duration-200"
+            >
+              <Github className="w-4 h-4" />
+              <span className="hidden sm:inline">GitHub Repo Link</span>
+            </a>
+
             <div className="px-5 py-2 text-sm font-medium text-white rounded-sm bg-gradient-to-b from-black/10 to-white/10 border border-white/20 backdrop-blur-xl hover:bg-white/20 transition-all duration-300">
               <Show when="signed-out">
                 <SignInButton mode="modal">

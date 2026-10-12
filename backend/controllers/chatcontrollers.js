@@ -14,12 +14,17 @@ When asked questions such as "what can you do?", "who are you?", or general ques
 export const handleGeneralChat = async (req, res) => {
   try {
     const { prompt } = req.body;
-    if (!prompt) return res.status(400).json({ error: "Prompt is required" });
+    console.log(`\n================== [SEAM General AI] ==================`);
+    console.log(`User Prompt: "${prompt}"`);
 
     const response = await chatModel.invoke([
       new SystemMessage(SEAM_SYSTEM_PROMPT),
       new HumanMessage(prompt),
     ]);
+
+    console.log(`AI Answer:\n${response.content}`);
+    console.log(`=======================================================\n`);
+
     return res.json({ text: response.content });
   } catch (error) {
     console.error("General AI Error:", error);

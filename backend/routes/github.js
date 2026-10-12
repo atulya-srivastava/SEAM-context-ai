@@ -348,6 +348,19 @@ Commit: ${doc.commit_sha || "Unknown"}`;
         }
         const explanation = metadata.summary || "No explanation generated.";
 
+        console.log(`\n================== [SEAM GitHub AI Answer] ==================`);
+        console.log(`Question: "${question}"`);
+        console.log(`AI Answer:\n${explanation}`);
+        if (metadata.repo || metadata.file || metadata.contributor) {
+            console.log(`Details:`, {
+                repo: metadata.repo || metadata.project_name || "N/A",
+                file: metadata.file || "N/A",
+                contributor: metadata.contributor || "N/A",
+                commit: metadata.commit || "N/A"
+            });
+        }
+        console.log(`============================================================\n`);
+
         finalResponse = {
             ...finalResponse,
             summary: explanation,
@@ -400,6 +413,37 @@ Commit: ${doc.commit_sha || "Unknown"}`;
 
 
 
+// Helper to filter out non-relevant files (lockfiles, generated builds, minified assets, huge files)
+// Keeps package.json, tsconfig.json, and all meaningful source code files!
+function isRelevantCodeFile(file) {
+    if (file.type !== "blob") return false;
+
+    const path = file.path;
+
+    // 1. Exclude ignored directories
+    if (/(^|\/)(\.next|\.nuxt|\.cache|\.git|node_modules|dist|build|out|coverage|target|vendor|venv|\.venv|__pycache__)\//i.test(path)) {
+        return false;
+    }
+
+    // 2. Exclude lockfiles (package.json, tsconfig.json etc. are explicitly kept!)
+    if (/(^|\/)(package-lock|yarn|pnpm-lock|composer|Cargo|Gemfile|poetry|mix|pubspec)\.(json|lock|yaml)$/i.test(path)) {
+        return false;
+    }
+
+    // 3. Exclude minified bundles, sourcemaps, and build caches
+    if (/\.(min|bundle|chunk)\.(js|css)$/i.test(path) || /\.(map|tsbuildinfo|log)$/i.test(path)) {
+        return false;
+    }
+
+    // 4. Ignore oversized files (> 80KB) - code files should not be giant blobs
+    if (file.size && file.size > 80000) {
+        return false;
+    }
+
+    // 5. Must be a recognized code/config file extension
+    return /\.(js|ts|tsx|jsx|json|py|go|rs|java|c|cpp|h|hpp|sql|md|css|html|sh|yml|yaml)$/i.test(path);
+}
+
 router.post("/sync-all-repos-code", ClerkExpressRequireAuth(), async (req, res) => {
     try {
         const { userId } = req.auth;
@@ -437,10 +481,8 @@ router.post("/sync-all-repos-code", ClerkExpressRequireAuth(), async (req, res) 
             const tree = await treeRes.json();
             if (!tree.tree) continue;
 
-            // filter code files
-            const codeFiles = tree.tree.filter(
-                f => f.type === "blob" && /\.(js|ts|tsx|json|go|py|sql|md)$/i.test(f.path)
-            );
+            // filter code files (ignores lockfiles, builds, bundles)
+            const codeFiles = tree.tree.filter(isRelevantCodeFile);
 
             for (const file of codeFiles) {
                 const fileRes = await fetch(
@@ -481,22 +523,57 @@ router.post("/sync-all-repos-code", ClerkExpressRequireAuth(), async (req, res) 
 });
 
 
-// Sync a specific branch of a repo with commit metadata
+// Sync a specific branch of a repo with commit metadata (supports SSE progress streaming)
 router.post("/repos/:owner/:repo/sync-branch", ClerkExpressRequireAuth(), async (req, res) => {
+    const isSSE = req.headers.accept?.includes("text/event-stream") || req.query.stream === "true";
+
+    const sendProgress = (data) => {
+        if (isSSE) {
+            res.write(`data: ${JSON.stringify(data)}\n\n`);
+            if (typeof res.flush === "function") {
+                res.flush();
+            }
+        }
+    };
+
+    if (isSSE) {
+        res.setHeader("Content-Type", "text/event-stream");
+        res.setHeader("Cache-Control", "no-cache");
+        res.setHeader("Connection", "keep-alive");
+        res.setHeader("X-Accel-Buffering", "no");
+        res.flushHeaders?.();
+    }
+
     try {
         const { userId } = req.auth;
         const { owner, repo } = req.params;
         const { branch } = req.body;
 
-        if (!branch) return res.status(400).json({ error: "Branch parameter is required" });
+        if (!branch) {
+            if (isSSE) {
+                sendProgress({ error: "Branch parameter is required" });
+                return res.end();
+            }
+            return res.status(400).json({ error: "Branch parameter is required" });
+        }
 
         const connection = await GithubConnection.findOne({ userId });
-        if (!connection || !connection.accessToken) return res.status(403).json({ error: "No GitHub token" });
+        if (!connection || !connection.accessToken) {
+            if (isSSE) {
+                sendProgress({ error: "No GitHub token found" });
+                return res.end();
+            }
+            return res.status(403).json({ error: "No GitHub token" });
+        }
 
         const authHeader = `Bearer ${connection.accessToken}`;
 
+        sendProgress({ percent: 5, message: "Connecting to GitHub & cleaning old branch index..." });
+
         // 1. Delete old branch data
         await deleteByBranch(repo, branch, userId);
+
+        sendProgress({ percent: 10, message: "Fetching commit history and file tree..." });
 
         // 2. Fetch commit history for this branch
         const fileLastCommit = {};
@@ -546,17 +623,39 @@ router.post("/repos/:owner/:repo/sync-branch", ClerkExpressRequireAuth(), async 
             { headers: { Authorization: authHeader, "User-Agent": "SEAM-App" } }
         );
         const tree = await treeRes.json();
-        if (!tree.tree || !Array.isArray(tree.tree)) return res.json({ message: "No files found in branch" });
+        if (!tree.tree || !Array.isArray(tree.tree)) {
+            if (isSSE) {
+                sendProgress({ percent: 100, done: true, message: "No files found in branch" });
+                return res.end();
+            }
+            return res.json({ message: "No files found in branch" });
+        }
 
-        // 4. Filter code files
-        const codeFiles = tree.tree.filter(
-            f => f.type === "blob" && /\.(js|ts|tsx|jsx|json|go|py|sql|md|css|html|java|c|cpp|h|rs)$/i.test(f.path)
-        );
+        // 4. Filter code files (ignores lockfiles, builds, bundles, files > 80KB)
+        const codeFiles = tree.tree.filter(isRelevantCodeFile);
 
-        let totalFiles = 0;
+        const totalFiles = codeFiles.length;
+        if (totalFiles === 0) {
+            if (isSSE) {
+                sendProgress({ percent: 100, done: true, message: "No code files to index in branch" });
+                return res.end();
+            }
+            return res.json({ message: "No code files to index in branch" });
+        }
+
+        sendProgress({
+            percent: 15,
+            total: totalFiles,
+            processed: 0,
+            message: `Found ${totalFiles} code files to index`
+        });
+
+        let processedFiles = 0;
 
         // 5. Process each file
-        for (const file of codeFiles) {
+        for (let i = 0; i < totalFiles; i++) {
+            const file = codeFiles[i];
+
             try {
                 const fileRes = await fetch(
                     `https://api.github.com/repos/${owner}/${repo}/contents/${file.path}?ref=${branch}`,
@@ -568,18 +667,38 @@ router.post("/repos/:owner/:repo/sync-branch", ClerkExpressRequireAuth(), async 
                 const content = Buffer.from(data.content, "base64").toString("utf8");
                 const commitMeta = fileLastCommit[file.path] || {};
 
-                // Split into chunks
-                const size = 800;
-                for (let i = 0; i < content.length; i += size) {
-                    const chunk = content.slice(i, i + size);
+                // Split into chunks (1200 chars for richer context and 2x faster indexing)
+                const size = 1200;
+                const chunks = [];
+                for (let j = 0; j < content.length; j += size) {
+                    chunks.push({
+                        chunk: content.slice(j, j + size),
+                        index: j
+                    });
+                }
+
+                for (let j = 0; j < chunks.length; j++) {
+                    const { chunk, index } = chunks[j];
+                    const fileBase = i / totalFiles;
+                    const chunkFraction = ((j + 1) / Math.max(1, chunks.length)) * (1 / totalFiles);
+                    const currentPercent = Math.min(99, Math.round(15 + (fileBase + chunkFraction) * 83));
+
+                    sendProgress({
+                        percent: currentPercent,
+                        processed: i + 1,
+                        total: totalFiles,
+                        currentFile: file.path,
+                        message: `Chunking ${file.path}`
+                    });
+
                     await addDocuments([{
-                        id: `${repo}-${branch}-${file.path.replace(/[^a-zA-Z0-9-_]/g, "_")}-${i}`,
+                        id: `${repo}-${branch}-${file.path.replace(/[^a-zA-Z0-9-_]/g, "_")}-${index}`,
                         text: chunk,
                         metadata: {
                             repo,
                             branch,
                             file: file.path,
-                            chunk: i,
+                            chunk: index,
                             author: commitMeta.author || "Unknown",
                             email: commitMeta.email || "Unknown",
                             username: commitMeta.username || "Unknown",
@@ -589,15 +708,31 @@ router.post("/repos/:owner/:repo/sync-branch", ClerkExpressRequireAuth(), async 
                     }], userId);
                 }
 
-                totalFiles++;
+                processedFiles++;
             } catch (fileErr) {
                 console.error(`Failed to process file ${file.path}:`, fileErr.message);
             }
         }
-        console.log(`Synced ${totalFiles} files from ${repo}/${branch} with commit metadata`);
-        res.json({ message: `Synced ${totalFiles} files from ${repo}/${branch} with commit metadata` });
+
+        console.log(`Synced ${processedFiles} files from ${repo}/${branch} with commit metadata`);
+        if (isSSE) {
+            sendProgress({
+                percent: 100,
+                done: true,
+                processed: processedFiles,
+                total: totalFiles,
+                message: `Indexed ${processedFiles} files successfully`
+            });
+            return res.end();
+        }
+
+        res.json({ message: `Synced ${processedFiles} files from ${repo}/${branch} with commit metadata` });
     } catch (err) {
         console.error("Error syncing branch:", err);
+        if (isSSE) {
+            sendProgress({ error: err.message || "Failed to sync branch" });
+            return res.end();
+        }
         res.status(500).json({ error: "Failed to sync branch", details: err.message });
     }
 });

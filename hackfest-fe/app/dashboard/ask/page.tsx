@@ -21,11 +21,12 @@ import {
 import { useAuth } from "@clerk/nextjs";
 import toast from "react-hot-toast";
 import TextareaAutosize from "react-textarea-autosize";
+import { marked } from "marked";
+import DOMPurify from "dompurify";
 
 // TypeScript declaration for CDN scripts
 declare global {
     interface Window {
-        marked: { parse: (text: string, options?: object) => string };
         hljs: { highlightAll: () => void };
     }
 }
@@ -113,12 +114,19 @@ const INTEGRATIONS_CONFIG = [
     },
 ];
 
-// Helper to safely render markdown
-const renderMarkdown = (text: string) => {
-    if (typeof window !== "undefined" && typeof window.marked !== "undefined") {
-        return window.marked.parse(text, { gfm: true, breaks: true });
+// Helper to safely render markdown immediately upon initial render
+const renderMarkdown = (text: string): string => {
+    if (!text) return "";
+    try {
+        const raw = marked.parse(text, { gfm: true, breaks: true, async: false }) as string;
+        if (typeof window !== "undefined" && typeof DOMPurify?.sanitize === "function") {
+            return DOMPurify.sanitize(raw);
+        }
+        return raw;
+    } catch (err) {
+        console.error("Markdown render error:", err);
+        return text.replace(/\n/g, "<br />");
     }
-    return text.replace(/\n/g, "<br />");
 };
 
 const UnifiedChatPage = () => {
@@ -193,10 +201,7 @@ How can I help you today?`,
             document.head.appendChild(link);
         };
 
-        loadScript(
-            "https://cdn.jsdelivr.net/npm/marked/marked.min.js",
-            "marked-script"
-        );
+
 
         loadScript(
             "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js",
