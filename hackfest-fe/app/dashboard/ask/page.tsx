@@ -363,7 +363,7 @@ ${originalResponse}`;
     };
 
     // General AI Handler (Groq via backend)
-    const handleGeneralAI = async (currentInput: string) => {
+    const handleGeneralAI = async (currentInput: string, history: Message[] = []) => {
         try {
             const token = await getToken();
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chats/general`, {
@@ -372,7 +372,10 @@ ${originalResponse}`;
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({ prompt: currentInput }),
+                body: JSON.stringify({
+                    prompt: currentInput,
+                    history: history.map((m) => ({ sender: m.sender, text: m.text })),
+                }),
             });
 
             if (!res.ok) {
@@ -431,7 +434,7 @@ ${originalResponse}`;
 
                 case "general":
                 default:
-                    const generalResponse = await handleGeneralAI(currentInput);
+                    const generalResponse = await handleGeneralAI(currentInput, messages);
                     aiResponse.text = isSimplifyEnabled ? await simplifyResponse(generalResponse) : generalResponse;
                     break;
             }

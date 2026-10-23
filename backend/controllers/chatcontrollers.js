@@ -1,7 +1,7 @@
 import Chat from '../models/chatModel.js';
 import { ClerkExpressRequireAuth } from '@clerk/clerk-sdk-node';
 import { chatModel } from '../lib/groq.js';
-import { SystemMessage, HumanMessage } from "@langchain/core/messages";
+import { SystemMessage, HumanMessage, AIMessage } from "@langchain/core/messages";
 
 const SEAM_SYSTEM_PROMPT = `You are SEAM (Context AI), an intelligent workspace assistant and developer context bot.
 Your role is to help users navigate and manage their development workspace and team integrations:
@@ -13,12 +13,19 @@ When asked questions such as "what can you do?", "who are you?", or general ques
 
 export const handleGeneralChat = async (req, res) => {
   try {
-    const { prompt } = req.body;
+    const { prompt, history = [] } = req.body;
     console.log(`\n================== [SEAM General AI] ==================`);
     console.log(`User Prompt: "${prompt}"`);
 
+    const historyMessages = history.slice(-10).map((msg) =>
+      (msg.sender === "ai" || msg.role === "assistant")
+        ? new AIMessage(msg.text || msg.content || "")
+        : new HumanMessage(msg.text || msg.content || "")
+    );
+
     const response = await chatModel.invoke([
       new SystemMessage(SEAM_SYSTEM_PROMPT),
+      ...historyMessages,
       new HumanMessage(prompt),
     ]);
 

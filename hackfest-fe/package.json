@@ -8,6 +8,9 @@
     "start": "next start",
     "lint": "next lint"
   },
+  "engines": {
+    "node": ">=22.23.4"
+  },
   "dependencies": {
     "@clerk/nextjs": "^7.5.2",
     "@radix-ui/react-slot": "^1.2.3",
