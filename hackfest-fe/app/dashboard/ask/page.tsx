@@ -3,13 +3,11 @@
 import { useState, useRef, useEffect, FormEvent } from "react";
 import {
     Plus,
-    Search,
     MessageSquare,
     ThumbsUp,
     ThumbsDown,
     Copy,
     Send,
-    MoreHorizontal,
     User,
     Bot,
     PanelLeftClose,
@@ -17,26 +15,20 @@ import {
     Menu,
     Github,
     Zap,
+    Trash2,
 } from "lucide-react";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import toast from "react-hot-toast";
 import TextareaAutosize from "react-textarea-autosize";
 import { marked } from "marked";
 import DOMPurify from "dompurify";
+import { useChat, Message } from "@/context/ChatContext";
 
 // TypeScript declaration for CDN scripts
 declare global {
     interface Window {
         hljs: { highlightAll: () => void };
     }
-}
-
-// Type for a single chat message
-interface Message {
-    sender: "user" | "ai";
-    text: string;
-    type?: "github" | "integration" | "general";
-    data?: any; // For storing GitHub response data
 }
 
 // GitHub Response Interface
@@ -130,44 +122,31 @@ const renderMarkdown = (text: string): string => {
 };
 
 const UnifiedChatPage = () => {
-    const [messages, setMessages] = useState<Message[]>([
-        {
-            sender: "ai",
-            text: `Hello! I'm SEAM, your AI assistant. I can help you with:
-      
-• **GitHub Repository Analysis** - Ask questions about your repos
-• **Slack, Google Drive, Notion, Gmail & Teams Integration** - Connect with your tools
-• **General AI Assistance** - Chat about anything
+    const {
+        messages,
+        setMessages,
+        input,
+        setInput,
+        isLoading,
+        setIsLoading,
+        currentMode,
+        setCurrentMode,
+        activeIntegrations,
+        handleIntegrationToggle,
+        isSimplifyEnabled,
+        setIsSimplifyEnabled,
+        chatSessions,
+        currentSessionId,
+        createNewChat,
+        selectSession,
+        deleteSession,
+    } = useChat();
 
-How can I help you today?`,
-            type: "general",
-        },
-    ]);
-
-    const [input, setInput] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-    const [currentMode, setCurrentMode] = useState<"auto" | "github" | "integration">("auto");
     const { getToken } = useAuth();
-    const [activeIntegrations, setActiveIntegrations] = useState({
-        slack: false,
-        drive: false,
-        notion: false,
-        gmail: false,
-        teams: false,
-    });
-    const [isSimplifyEnabled, setIsSimplifyEnabled] = useState(false);
+    const { user } = useUser();
 
     const chatContainerRef = useRef<HTMLDivElement>(null);
-
-    const handleIntegrationToggle = (
-        integrationId: "slack" | "notion" | "gmail" | "teams" | "drive"
-    ) => {
-        setActiveIntegrations((prev) => ({
-            ...prev,
-            [integrationId]: !prev[integrationId],
-        }));
-    };
 
     useEffect(() => {
         if (chatContainerRef.current) {
@@ -529,32 +508,17 @@ ${originalResponse}`;
 
     const SidebarContent = () => (
         <div className="flex flex-col h-full">
-            <div>
+            <div className="flex flex-col flex-1 min-h-0">
                 <div className="flex items-center justify-between mb-6">
                     <h1 className="text-xl font-bold tracking-wider text-white">SEAM</h1>
                 </div>
                 <div className="flex items-center gap-2">
                     <button
-                        onClick={() => {
-                            setMessages([{
-                                sender: "ai",
-                                text: `Hello! I'm SEAM, your AI assistant. I can help you with:
-                
-• **GitHub Repository Analysis** - Ask questions about your repos
-• **Slack,Google Drive , Notion, Gmail & Teams Integration** - Connect with your tools  
-• **General AI Assistance** - Chat about anything
-
-How can I help you today?`,
-                                type: "general",
-                            }]);
-                        }}
-                        className="flex-grow bg-gradient-to-r from-yellow-400 to-orange-500 text-white py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 text-sm font-semibold hover:from-yellow-500 hover:to-orange-600 transition-all shadow-md"
+                        onClick={createNewChat}
+                        className="flex-grow bg-gradient-to-r from-yellow-400 to-orange-500 text-white py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 text-sm font-semibold hover:from-yellow-500 hover:to-orange-600 transition-all shadow-md active:scale-95"
                     >
                         <Plus size={18} />
                         New chat
-                    </button>
-                    <button className="p-3 rounded-lg border border-gray-700 text-gray-300 hover:bg-gray-700 transition-colors">
-                        <Search size={18} />
                     </button>
                 </div>
 
@@ -564,7 +528,7 @@ How can I help you today?`,
                     <select
                         value={currentMode}
                         onChange={(e) => setCurrentMode(e.target.value as "auto" | "github" | "integration")}
-                        className="w-full bg-gray-700 text-white p-2 rounded text-sm border border-gray-600"
+                        className="w-full bg-gray-700 text-white p-2 rounded text-sm border border-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     >
                         <option value="auto">Auto-detect</option>
                         <option value="github">GitHub Only</option>
@@ -572,46 +536,85 @@ How can I help you today?`,
                     </select>
                 </div>
 
-                <div className="mt-4 border-b border-gray-700 pb-2 mb-2">
-                    <button className="w-full text-left text-sm font-semibold text-gray-400 hover:text-white p-2 rounded-md">
+                {/* Conversations Section */}
+                <div className="mt-5 border-b border-gray-700 pb-2 mb-2 flex items-center justify-between">
+                    <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
                         Your conversations
-                    </button>
+                    </span>
+                    <span className="text-xs text-gray-500 bg-gray-800 px-2 py-0.5 rounded-full">
+                        {chatSessions.length}
+                    </span>
                 </div>
-                <nav className="flex-1 flex-col gap-1 overflow-y-auto pr-1 -mr-1">
-                    {sidebarLinks.map((link, index) => (
-                        <a
-                            key={index}
-                            href="#"
-                            className={`flex items-center justify-between p-2.5 rounded-lg text-sm font-medium transition-colors ${link.active
-                                ? "bg-blue-500/10 text-blue-400"
-                                : "text-gray-300 hover:bg-gray-700"
+
+                <nav className="flex-1 overflow-y-auto pr-1 -mr-1 flex flex-col gap-1 min-h-0">
+                    {chatSessions.map((session) => {
+                        const isActive = session.id === currentSessionId;
+                        return (
+                            <div
+                                key={session.id}
+                                onClick={() => selectSession(session.id)}
+                                className={`group flex items-center justify-between p-2.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${
+                                    isActive
+                                        ? "bg-blue-500/15 text-blue-300 border border-blue-500/30 shadow-sm"
+                                        : "text-gray-300 hover:bg-gray-800/80 border border-transparent"
                                 }`}
-                        >
-                            <div className="flex items-center gap-3 truncate">
-                                <link.icon size={16} />
-                                <span className="truncate">{link.title}</span>
-                            </div>
-                            {link.active && (
-                                <button className="p-1 text-gray-500 hover:text-gray-300">
-                                    <MoreHorizontal size={16} />
+                            >
+                                <div className="flex items-center gap-2.5 truncate flex-1 min-w-0">
+                                    <MessageSquare
+                                        size={15}
+                                        className={`shrink-0 ${isActive ? "text-blue-400" : "text-gray-400 group-hover:text-gray-200"}`}
+                                    />
+                                    <span className="truncate text-xs sm:text-sm">
+                                        {session.title || "New Conversation"}
+                                    </span>
+                                </div>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        deleteSession(session.id);
+                                    }}
+                                    title="Delete conversation"
+                                    className="opacity-0 group-hover:opacity-100 p-1 text-gray-500 hover:text-red-400 hover:bg-gray-700/60 rounded transition-all shrink-0 ml-1"
+                                >
+                                    <Trash2 size={14} />
                                 </button>
-                            )}
-                        </a>
-                    ))}
+                            </div>
+                        );
+                    })}
+
+                    {chatSessions.length === 0 && (
+                        <div className="p-3 text-center text-xs text-gray-500 italic">
+                            No previous conversations yet.
+                        </div>
+                    )}
                 </nav>
             </div>
-            <div className="border-t border-gray-700 pt-4">
-                <a
-                    href="#"
-                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-700 transition-colors mt-2"
-                >
-                    <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-purple-400 to-blue-500 flex items-center justify-center text-white font-bold text-sm">
-                        AN
+
+            {/* User Footer Profile */}
+            <div className="border-t border-gray-700 pt-4 mt-2">
+                <div className="flex items-center gap-3 p-2 rounded-lg bg-gray-800/40 border border-gray-700/50">
+                    {user?.imageUrl ? (
+                        <img
+                            src={user.imageUrl}
+                            alt={user.fullName || "User"}
+                            className="w-9 h-9 rounded-full object-cover border border-purple-500/40 shrink-0"
+                        />
+                    ) : (
+                        <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-purple-400 to-blue-500 flex items-center justify-center text-white font-bold text-sm shrink-0">
+                            {(user?.firstName?.[0] || user?.fullName?.[0] || "U").toUpperCase()}
+                        </div>
+                    )}
+                    <div className="truncate flex-1 min-w-0">
+                        <span className="text-sm font-semibold text-gray-200 block truncate">
+                            {user?.fullName || user?.username || user?.primaryEmailAddress?.emailAddress || "Developer"}
+                        </span>
+                        {user?.primaryEmailAddress?.emailAddress && (
+                            <span className="text-xs text-gray-400 block truncate">
+                                {user.primaryEmailAddress.emailAddress}
+                            </span>
+                        )}
                     </div>
-                    <span className="text-sm font-semibold text-gray-200">
-                        Andrea Nelson
-                    </span>
-                </a>
+                </div>
             </div>
         </div>
     );

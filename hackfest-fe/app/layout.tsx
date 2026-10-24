@@ -4,6 +4,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Navbar from "@/components/NavBar";
 import { Toaster } from "react-hot-toast";
+import { ChatProvider } from "@/context/ChatContext";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -26,17 +27,20 @@ export default function RootLayout({
         className={`${inter.variable} antialiased bg-black text-white min-h-screen overflow-x-hidden w-full max-w-full`}
       >
         <ClerkProvider>
-          <div className="flex min-h-screen w-full max-w-full overflow-x-hidden bg-gradient-to-b from-black to-gray-900 flex-col">
-            <Navbar />
-            <div className="pt-[80px] w-full max-w-full overflow-x-hidden flex-1">
-              {children}
+          <ChatProvider>
+            <div className="flex min-h-screen w-full max-w-full overflow-x-hidden bg-gradient-to-b from-black to-gray-900 flex-col">
+              <Navbar />
+              <div className="pt-[80px] w-full max-w-full overflow-x-hidden flex-1">
+                {children}
+              </div>
             </div>
-          </div>
 
-          <Toaster />
+            <Toaster />
+          </ChatProvider>
         </ClerkProvider>
 
       </body>
     </html>
   );
 }
+
