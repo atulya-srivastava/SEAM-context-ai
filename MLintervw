@@ -1,0 +1,91 @@
+# 🧠 DistilBERT Fine-Tuning & ONNX Quantization: Interview Cheat Sheet
+
+This guide explains the exact machine learning concepts, architectural terms, and math behind the model you built in [train.py](file:///home/atulya/Desktop/seam/backend/classifier/train.py) so you can defend it confidently in technical interviews.
+
+---
+
+## 🏛️ 1. The Model Architecture: DistilBERT
+
+### What is BERT?
+*   **B**idirectional **E**ncoder **R**epresentations from **T**ransformers.
+*   It is an **Encoder-only Transformer model**.
+*   **Encoder-only vs. Decoder-only (Llama/GPT):** 
+    *   **Encoders** (BERT) look at the entire sentence *bidirectionally* (left-to-right and right-to-left simultaneously) to understand context. This makes them highly efficient for understanding tasks like **classification, NER, and semantic search**.
+    *   **Decoders** (GPT/Llama) use *causal masking* (looking only left-to-right) because their job is to predict the *next* token for text generation. Using a massive generative model for a 3-class classification is resource-wasting overkill.
+
+### What is DistilBERT?
+*   It is a distilled version of BERT. It uses **Knowledge Distillation** during pre-training:
+    *   A large **Teacher** model (BERT-base, 12 layers, 110M parameters) generates probability distributions.
+    *   A smaller **Student** model (DistilBERT, 6 layers, 66M parameters) is trained to copy the teacher's exact output distribution.
+*   **Key Metrics to memorize:** It is **40% smaller** (66M vs 110M parameters), **60% faster**, and retains **97%** of BERT's language understanding capabilities.
+
+---
+
+## 🧪 2. Data Preparation & Tokenization
+
+### How Tokenization Works in your Code
+Your code calls `AutoTokenizer.from_pretrained("distilbert-base-uncased")`.
+*   **Vocabulary Type:** It uses **WordPiece Tokenization**. It breaks words into sub-word units (e.g., "embeddings" -> `["em", "##bed", "##dings"]`). This solves the **Out-Of-Vocabulary (OOV)** problem because unknown words can be reconstructed from common sub-words.
+*   **Padding & Truncation:** 
+    *   You set `max_length=128`. Any user query longer than 128 tokens is truncated (cut off).
+    *   Shorter queries are padded with `[PAD]` tokens. The **Attention Mask** (a binary 1/0 array) tells the model's self-attention mechanism to ignore these `[PAD]` tokens so they don't skew predictions.
+
+### Dataset Splitting Strategy
+```python
+train_test_split(..., test_size=0.2, random_state=42, stratify=labels)
+```
+*   **Stratify:** This is critical. It guarantees that the 80/20 train/test split maintains the *exact same ratio* of classes (`general`, `github`, `integration`) in both sets. This prevents data bias where the validation set accidentally has zero samples of a rare class.
+
+---
+
+## ⚙️ 3. Training & Fine-Tuning Terms
+
+### Hyperparameters (Explain these if asked "How did you set up training?")
+*   **Learning Rate (`2e-5` / $2\times 10^{-5}$):** Standard for transfer learning. Pre-trained models already understand English grammar. We use a tiny learning rate to *fine-tune* the weights slightly without destroying the model's pre-trained knowledge (a failure mode known as **catastrophic forgetting**).
+*   **Weight Decay (`0.01`):** A form of **L2 Regularization**. It adds a penalty proportional to the size of the weights to the loss function. This forces weights to stay small, preventing the model from relying too heavily on any single feature, which **reduces overfitting**.
+*   **Batch Size (`16`):** The number of training samples processed before the model's internal parameters are updated.
+*   **Early Stopping (`patience=2`):** Your code evaluates the model at the end of every epoch. If the validation F1 score does not improve for 2 consecutive evaluations, training terminates early. This prevents the model from memorizing the training dataset (overfitting).
+
+---
+
+## 🚀 4. Deployment: ONNX & Quantization
+
+This is the most impressive engineering part of your project.
+
+```mermaid
+graph TD
+    A[PyTorch Model .safetensors / ~260MB] -->|Optimum Export| B[Unquantized ONNX .onnx / ~260MB]
+    B -->|INT8 Quantization| C[Quantized ONNX model_quantized.onnx / ~65MB]
+    C -->|Run directly in Node.js| D[@xenova/transformers]
+```
+
+### What is ONNX?
+*   **Open Neural Network Exchange**. It compiles the PyTorch calculation graph into an optimized execution format.
+*   It decouples the model from Python/PyTorch. We can run this `.onnx` file directly inside a Node.js process using a C++ execution engine runtime, eliminating the need to spin up a separate Flask/FastAPI Python server.
+
+### What is INT8 Quantization?
+*   By default, PyTorch models use **FP32** (32-bit Floating Point) numbers for weights.
+*   Quantization converts these weights to **INT8** (8-bit Integers).
+*   **Why do it?** 
+    1.  **Model size shrinks by 4x** (~260MB down to ~65MB).
+    2.  **Inference speed increases** because CPU integer math (using AVX-2 instructions) is much faster and requires less memory bandwidth than floating-point math.
+    3.  **Accuracy loss is negligible** (usually <1%).
+
+---
+
+## 💬 5. Top 5 Killer Interview Questions & Answers
+
+### Q1: "Why did you choose an F1-score metric over raw Accuracy?"
+> **Answer:** "Accuracy is deceptive when you have imbalanced datasets. If 80% of my data belongs to the `general` class, a dumb model that predicts `general` every single time gets 80% accuracy but is useless. F1-score is the harmonic mean of Precision (how many predicted hits were true hits) and Recall (how many true hits did we capture). Using a *weighted F1-score* ensures all classes contribute fairly to the metric based on their support count."
+
+### Q2: "What is the classification head of a sequence classifier like DistilBERT?"
+> **Answer:** "The base model outputs a 768-dimensional vector representation for the first token, which is the `[CLS]` (Classification) token. This vector represents the semantic summary of the entire sentence. I appended a classification head on top of this: a Linear layer that projects the 768 dimensions down to 3 outputs (one per class), followed by a Softmax function to turn those raw outputs (logits) into probabilities."
+
+### Q3: "Did you use Dynamic or Static Quantization?"
+> **Answer:** "I used **Dynamic Quantization**. In dynamic quantization, the model weights are quantized to integer (INT8) at-rest, but the activations are dynamically quantized to INT8 during the forward pass. This is standard and ideal for NLP/Transformer workloads because dynamic quantization doesn't require a calibration dataset, unlike static quantization."
+
+### Q4: "Why uncased model (`distilbert-base-uncased`) instead of cased?"
+> **Answer:** "For intent classification, capitalization doesn't change the meaning. 'how to sync slack' has the same intent as 'How to sync Slack'. Lowercasing everything makes the model invariant to capitalization and reduces the vocabulary footprint, making training more stable."
+
+### Q5: "If your model gets a query like 'Where is the db config file?', how does it know it belongs to 'github' and not 'general'?"
+> **Answer:** "Because BERT represents words contextually. The self-attention mechanism correlates the phrase 'db config file' with other codebase structure queries it saw during training. It doesn't look at words in isolation; it looks at how 'config file' relates to 'Where is'."

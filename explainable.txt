@@ -1,0 +1,19 @@
+Based on everything I've seen in the codebase, here are 4 strong bullets:
+
+---
+
+**1. RAG Pipeline with LangChain LCEL**
+> Built a Retrieval-Augmented Generation pipeline using LangChain's LCEL architecture — composing `ChatPromptTemplate → ChatGroq (LLaMA-3.3-70B) → JsonOutputParser` into type-safe chains for structured, hallucination-resistant GitHub codebase Q&A.
+
+**2. Vector Semantic Search with Supabase pgvector**
+> Engineered a semantic code search system using Supabase pgvector and Google Gemini `text-embedding-004` (768-dim), enabling cosine similarity search across multi-repo, multi-branch codebases with per-user row-level security.
+
+**3. On-Device Intent Classification with DistilBERT**
+> Fine-tuned and deployed a how to quantized DistilBERT ONNX model directly in Node.js via `@xenova/transformers` for zero-latency intent classification — routing queries between file-change analysis and general Q&A without external API calls.
+
+**4. Multi-Platform Auth & GitHub Integration**
+> Implemented a dual-auth architecture combining Clerk (JWT-based session management) and Passport.js GitHub OAuth2, with a full GitHub API integration — syncing repo trees, commit histories, and per-file contributor metadata into a vector store.
+
+---
+
+> 💡 **Pro tip for the interview:** The LangChain one is the most impressive to talk through — explain the *before* (raw SDK + regex parser) vs *after* (composable LCEL chain). It shows architectural thinking, not just "I used a library."
