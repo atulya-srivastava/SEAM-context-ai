@@ -5,3 +5,7 @@ backend/classifier/venv/
 backend/classifier/model/*.safetensors
 backend/classifier/checkpoints/
 backend/.env
+ai-service/.env
+ai-service/.venv/
+*.pyc
+__pycache__/
