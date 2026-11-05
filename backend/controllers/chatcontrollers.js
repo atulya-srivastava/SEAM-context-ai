@@ -2,6 +2,7 @@ import Chat from '../models/chatModel.js';
 import { ClerkExpressRequireAuth } from '@clerk/clerk-sdk-node';
 import { chatModel } from '../lib/groq.js';
 import { SystemMessage, HumanMessage, AIMessage } from "@langchain/core/messages";
+import { askAIService } from '../lib/aiService.js';
 
 const SEAM_SYSTEM_PROMPT = `You are SEAM (Context AI), an intelligent workspace assistant and developer context bot.
 Your role is to help users navigate and manage their development workspace and team integrations:
@@ -17,6 +18,17 @@ export const handleGeneralChat = async (req, res) => {
     console.log(`\n================== [SEAM General AI] ==================`);
     console.log(`User Prompt: "${prompt}"`);
 
+    // 1. Delegate to FastAPI AI microservice first
+    const aiResult = await askAIService(prompt, history);
+    if (aiResult && aiResult.text) {
+      console.log(`AI Answer (via FastAPI Microservice):\n${aiResult.text}`);
+      console.log(`Detected Intent: [${aiResult.intent || 'general'}]`);
+      console.log(`=======================================================\n`);
+      return res.json({ text: aiResult.text, intent: aiResult.intent });
+    }
+
+    // 2. Fallback to local Groq execution if FastAPI is offline
+    console.log(`[SEAM] Running local Groq fallback...`);
     const historyMessages = history.slice(-10).map((msg) =>
       (msg.sender === "ai" || msg.role === "assistant")
         ? new AIMessage(msg.text || msg.content || "")

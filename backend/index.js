@@ -12,6 +12,7 @@ import { Octokit } from "@octokit/rest";
 import GithubRoutes from "./routes/github.js"
 import chatRoutes from "./routes/chatRoutes.js"
 import { classifyIntent, loadClassifier } from "./classifier/classify.js"
+import { classifyWithAIService } from "./lib/aiService.js"
 
 
 import MongoStore from "connect-mongo";
@@ -69,13 +70,21 @@ app.use(passport.session());
 app.use('/api/chats', chatRoutes);
 app.use("/api/github", GithubRoutes);
 
-// Intent classification endpoint (DistilBERT)
+// Intent classification endpoint (FastAPI DistilBERT with local fallback)
 app.post("/api/classify", async (req, res) => {
     try {
         const { text } = req.body;
         if (!text) return res.status(400).json({ error: "text is required" });
+
+        // 1. Try high-performance FastAPI microservice first (<6ms ONNX)
+        const fastIntent = await classifyWithAIService(text);
+        if (fastIntent) {
+            return res.json({ intent: fastIntent, source: "fastapi_service" });
+        }
+
+        // 2. Fallback to local Xenova ONNX if FastAPI is offline
         const intent = await classifyIntent(text);
-        res.json({ intent });
+        res.json({ intent, source: "local_fallback" });
     } catch (err) {
         console.error("Classification error:", err);
         res.json({ intent: "general" }); // fallback to general on error
