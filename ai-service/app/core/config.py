@@ -22,7 +22,10 @@ class Settings(BaseSettings):
         "http://seam-context-ai.vercel.app",
     ]
 
+    # LLM Settings
+    GROQ_API_KEY: str = ""
     GROQ_MODEL: str = "openai/gpt-oss-20b"
+    GEMINI_API_KEY: str = ""
 
     # Model path for Intent Classification (points to backend/classifier/model by default)
     MODEL_DIR: Path = BACKEND_DIR / "classifier" / "model"

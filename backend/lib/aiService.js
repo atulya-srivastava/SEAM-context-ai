@@ -17,7 +17,8 @@ export async function askAIService(prompt, history = []) {
     });
 
     if (!response.ok) {
-      console.warn(`[AI Service] ${endpoint} returned HTTP ${response.status}. Falling back.`);
+      const errorBody = await response.text();
+      console.warn(`[AI Service] ${endpoint} returned HTTP ${response.status}: ${errorBody}. Falling back.`);
       return null;
     }
 

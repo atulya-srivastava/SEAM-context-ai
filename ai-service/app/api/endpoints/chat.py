@@ -1,10 +1,13 @@
 import json
+import logging
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 from app.schemas.chat import ChatRequest, ChatResponse
 from app.services.llm import llm_service
 from app.services.classifier import classifier_service
 from app.core.config import settings
+
+logger = logging.getLogger("seam.chat")
 
 router = APIRouter()
 
@@ -33,6 +36,7 @@ async def handle_chat(payload: ChatRequest):
             intent=intent,
         )
     except Exception as e:
+        logger.exception(f"LLM Chat Error: {e}")
         raise HTTPException(status_code=500, detail=f"LLM execution error: {str(e)}")
 
 @router.post("/chat/stream", tags=["AI Services"])
