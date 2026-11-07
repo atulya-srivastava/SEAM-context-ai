@@ -24,7 +24,8 @@ export const handleGeneralChat = async (req, res) => {
       console.log(`AI Answer (via FastAPI Microservice):\n${aiResult.text}`);
       console.log(`Detected Intent: [${aiResult.intent || 'general'}]`);
       console.log(`=======================================================\n`);
-      return res.json({ text: aiResult.text, intent: aiResult.intent });
+      res.setHeader("X-AI-Engine", "FastAPI-Microservice");
+      return res.json({ text: aiResult.text, intent: aiResult.intent, provider: "fastapi" });
     }
 
     // 2. Fallback to local Groq execution if FastAPI is offline
@@ -41,10 +42,11 @@ export const handleGeneralChat = async (req, res) => {
       new HumanMessage(prompt),
     ]);
 
-    console.log(`AI Answer:\n${response.content}`);
+    console.log(`AI Answer (via Local Fallback):\n${response.content}`);
     console.log(`=======================================================\n`);
 
-    return res.json({ text: response.content });
+    res.setHeader("X-AI-Engine", "Node-Local-Fallback");
+    return res.json({ text: response.content, provider: "local_fallback" });
   } catch (error) {
     console.error("General AI Error:", error);
     return res.status(500).json({ error: error.message });

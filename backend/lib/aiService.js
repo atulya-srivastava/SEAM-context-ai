@@ -1,29 +1,31 @@
 // backend/lib/aiService.js
-const AI_SERVICE_URL = process.env.AI_SERVICE_URL || "http://localhost:8000";
+const AI_SERVICE_URL = (process.env.AI_SERVICE_URL || "http://localhost:8000").replace(/\/$/, "");
 
 /**
  * Sends a chat request to the FastAPI AI microservice.
- * Returns { text, intent } on success, or null if service is offline/errored.
+ * Returns { text, intent, provider: "fastapi" } on success, or null if service is offline/errored.
  */
 export async function askAIService(prompt, history = []) {
+  const endpoint = `${AI_SERVICE_URL}/api/ai/chat`;
   try {
-    const response = await fetch(`${AI_SERVICE_URL}/api/ai/chat`, {
+    console.log(`[AI Service] Querying FastAPI at: ${endpoint}`);
+    const response = await fetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prompt, history }),
-      signal: AbortSignal.timeout(10000), // 10s timeout
+      signal: AbortSignal.timeout(15000), // 15s timeout
     });
 
     if (!response.ok) {
-      console.warn(`[AI Service] Returned status ${response.status}. Falling back.`);
+      console.warn(`[AI Service] ${endpoint} returned HTTP ${response.status}. Falling back.`);
       return null;
     }
 
     const data = await response.json();
-    return { text: data.text, intent: data.intent };
+    console.log(`[AI Service] ✅ FastAPI responded successfully (Intent: ${data.intent || 'general'})`);
+    return { text: data.text, intent: data.intent, provider: "fastapi" };
   } catch (err) {
-    // Graceful silent fallback if FastAPI is offline
-    console.warn(`[AI Service] Offline (${err.message}). Using local fallback.`);
+    console.warn(`[AI Service] ⚠️ Could not reach FastAPI at ${endpoint} (${err.message}). Using local Node fallback.`);
     return null;
   }
 }
@@ -33,12 +35,13 @@ export async function askAIService(prompt, history = []) {
  * Returns string intent (e.g. 'github' | 'integration' | 'general') or null on error.
  */
 export async function classifyWithAIService(text) {
+  const endpoint = `${AI_SERVICE_URL}/api/ai/classify`;
   try {
-    const response = await fetch(`${AI_SERVICE_URL}/api/ai/classify`, {
+    const response = await fetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text }),
-      signal: AbortSignal.timeout(3000), // 3s timeout
+      signal: AbortSignal.timeout(5000), // 5s timeout
     });
 
     if (!response.ok) return null;
