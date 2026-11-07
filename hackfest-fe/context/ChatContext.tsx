@@ -256,6 +256,16 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // Create a brand new chat session
   const createNewChat = useCallback(() => {
+    // If current conversation is already empty with no user messages, simply reset it
+    const activeSession = chatSessions.find((s: ChatSession) => s.id === currentSessionId);
+    const hasUserMessages = activeSession?.messages?.some((m: Message) => m.sender === "user");
+
+    if (activeSession && !hasUserMessages) {
+      setMessages([DEFAULT_WELCOME_MESSAGE]);
+      setInput("");
+      return;
+    }
+
     const newId = generateSessionId();
     const newSession: ChatSession = {
       id: newId,
@@ -265,7 +275,18 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       messages: [DEFAULT_WELCOME_MESSAGE],
     };
 
-    setChatSessions((prev: ChatSession[]) => [newSession, ...prev]);
+    setChatSessions((prev: ChatSession[]) => {
+      const updated = [newSession, ...prev];
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem(SESSIONS_STORAGE_KEY, JSON.stringify(updated));
+        } catch (err) {
+          console.error("Failed to save new session to localStorage:", err);
+        }
+      }
+      return updated;
+    });
+
     setCurrentSessionId(newId);
     setMessages([DEFAULT_WELCOME_MESSAGE]);
     setInput("");
@@ -278,7 +299,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         console.error("Failed to update active session key:", err);
       }
     }
-  }, [ACTIVE_SESSION_ID_KEY, DRAFT_INPUT_KEY]);
+  }, [chatSessions, currentSessionId, SESSIONS_STORAGE_KEY, ACTIVE_SESSION_ID_KEY, DRAFT_INPUT_KEY]);
 
   // Select an existing chat session from history
   const selectSession = useCallback(

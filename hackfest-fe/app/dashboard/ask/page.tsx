@@ -514,7 +514,12 @@ ${originalResponse}`;
                 </div>
                 <div className="flex items-center gap-2">
                     <button
-                        onClick={createNewChat}
+                        onClick={() => {
+                            createNewChat();
+                            if (typeof window !== "undefined" && window.innerWidth < 1024) {
+                                setIsSidebarOpen(false);
+                            }
+                        }}
                         className="flex-grow bg-gradient-to-r from-yellow-400 to-orange-500 text-white py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 text-sm font-semibold hover:from-yellow-500 hover:to-orange-600 transition-all shadow-md active:scale-95"
                     >
                         <Plus size={18} />
@@ -689,31 +694,49 @@ ${originalResponse}`;
           </aside>
 
           {/* ===== Main Chat Area ===== */}
-          <main className="flex-1 flex flex-col relative">
-            <button
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="absolute top-5 left-5 z-10 p-2 bg-gray-700/50 rounded-md hover:bg-gray-600/70 transition-colors"
-            >
-              {isSidebarOpen ? (
-                <>
-                  <span className="lg:hidden">
-                    <Menu size={20} />
-                  </span>
-                  <span className="hidden lg:block">
-                    <PanelLeftClose size={20} />
-                  </span>
-                </>
-              ) : (
-                <>
-                  <span className="lg:hidden">
-                    <Menu size={20} />
-                  </span>
-                  <span className="hidden lg:block">
-                    <PanelLeftOpen size={20} />
-                  </span>
-                </>
-              )}
-            </button>
+          <main className="flex-1 flex flex-col relative min-h-0">
+            {/* Top Bar with Sidebar Toggle & New Chat Button */}
+            <div className="absolute top-4 left-4 right-4 z-10 flex items-center justify-between pointer-events-none">
+              <button
+                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                className="pointer-events-auto p-2 bg-gray-800/80 backdrop-blur-md border border-gray-700/60 rounded-lg hover:bg-gray-700/80 text-gray-300 hover:text-white transition-all shadow-md active:scale-95"
+                title={isSidebarOpen ? "Collapse sidebar" : "Open sidebar"}
+              >
+                {isSidebarOpen ? (
+                  <>
+                    <span className="lg:hidden">
+                      <Menu size={18} />
+                    </span>
+                    <span className="hidden lg:block">
+                      <PanelLeftClose size={18} />
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <span className="lg:hidden">
+                      <Menu size={18} />
+                    </span>
+                    <span className="hidden lg:block">
+                      <PanelLeftOpen size={18} />
+                    </span>
+                  </>
+                )}
+              </button>
+
+              <button
+                onClick={() => {
+                  createNewChat();
+                  if (typeof window !== "undefined" && window.innerWidth < 1024) {
+                    setIsSidebarOpen(false);
+                  }
+                }}
+                className="pointer-events-auto flex items-center gap-2 py-2 px-3.5 bg-gray-800/80 backdrop-blur-md border border-gray-700/60 hover:bg-gray-700/80 text-gray-200 hover:text-white rounded-lg text-xs sm:text-sm font-medium transition-all shadow-md hover:border-gray-600 active:scale-95"
+                title="Start a new chat conversation"
+              >
+                <Plus size={16} className="text-yellow-400" />
+                <span>New chat</span>
+              </button>
+            </div>
 
             <div
               ref={chatContainerRef}

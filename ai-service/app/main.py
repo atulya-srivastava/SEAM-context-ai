@@ -51,7 +51,7 @@ app.add_middleware(
 # Include API routes
 app.include_router(api_router, prefix="/api")
 
-@app.get("/", tags=["Root"])
+@app.api_route("/", methods=["GET", "HEAD"], tags=["Root"])
 async def root():
     return {
         "service": settings.APP_NAME,
@@ -59,4 +59,11 @@ async def root():
         "status": "online",
         "docs": "/docs",
     }
+
+if __name__ == "__main__":
+    import uvicorn
+    import os
+    port = int(os.environ.get("PORT", settings.PORT or 8000))
+    host = os.environ.get("HOST", settings.HOST or "0.0.0.0")
+    uvicorn.run("app.main:app", host=host, port=port)
 

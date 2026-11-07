@@ -4,7 +4,7 @@ from app.services.classifier import classifier_service
 
 router = APIRouter()
 
-@router.get("/health", tags=["Health"])
+@router.api_route("/health", methods=["GET", "HEAD"], tags=["Health"])
 async def health_check():
     return {
         "status": "ok",
