@@ -1,0 +1,35 @@
+services:
+  # ==========================================================
+  # 1. Node.js Core Backend
+  # ==========================================================
+  - type: web
+    name: seam-backend
+    runtime: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 22.23.4
+      - key: AI_SERVICE_URL
+        fromService:
+          type: web
+          name: seam-ai-service
+          property: host
+
+  # ==========================================================
+  # 2. FastAPI AI Microservice
+  # ==========================================================
+  - type: web
+    name: seam-ai-service
+    runtime: python
+    plan: free
+    rootDir: ai-service
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.3
+      - key: GROQ_MODEL
+        value: openai/gpt-oss-20b
